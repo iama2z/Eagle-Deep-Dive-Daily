@@ -16,8 +16,9 @@ Only import public newsletters you have permission to republish.
 
 ### 1. Prepare the same spreadsheet
 
-Keep your existing `submissions` tab and submission script unchanged. **Back up
-your spreadsheet first.** The old link-per-row feed cannot supply full articles.
+Keep your existing `submissions` tab and submission logic. Update its `doPost`
+request parsing for form-encoded submissions as described below. **Back up your
+spreadsheet first.** The old link-per-row feed cannot supply full articles.
 Rename the old `smore_feed_raw` and `smore_feed_public` tabs to names ending in
 `_backup` (do not delete them). New tabs use **one row per newsletter issue**.
 
@@ -25,7 +26,10 @@ In **Extensions → Apps Script**, add a script file named `Smore` and paste the
 contents of [`apps-script/Smore.gs`](apps-script/Smore.gs).
 Remove/replace the old newsletter sync functions and **old `doGet`**; there must
 be exactly one `doGet`. Keep your existing `doPost`, `cleanText_`, and submission
-helpers. The new newsletter helpers are prefixed `smore` to avoid collisions.
+helpers. Since browser submissions are form-encoded, `doPost` must read values
+from `e.parameter` (for example, use `const body = e.parameter || {}` rather
+than `JSON.parse(e.postData.contents)`). Keep its validation and pending-row
+write. The new newsletter helpers are prefixed `smore` to avoid collisions.
 
 Run `setupSmoreFeed` from the function dropdown and authorize spreadsheet and
 external-fetch access. It creates these tabs/headers:
@@ -91,12 +95,13 @@ for the same issue. Old link-only public rows must be migrated, not retained.
 3. Click **Deploy**. Updating the existing deployment preserves this URL:
 
 ```text
-https://script.google.com/macros/s/AKfycbytRb0-UXs1XOt1XgETiVMJTBogJ3nCa3EZ-B3ZBQeAEBfkFBwZa9fMloGy-FvGOeNH/exec
+https://script.google.com/macros/s/AKfycbyAxb9nhP6H34pWi5icBPtWLoNSenmHalzwbkQr81p5WScUl1ez1Ym9RoglEk2RWWQb/exec
 ```
 
-Use the `/exec` web app URL, **not** the library URL or editor-only `/dev` URL.
-If you created a different deployment URL, update `SMORE_FEED_API_URL` in
-`index.html` (and the submission endpoint if they share the deployment).
+Use the currently active `/exec` web app URL, **not** the library URL or
+editor-only `/dev` URL. When the feed and submissions share this deployment,
+`SMORE_FEED_API_URL` and `SUBMISSION_API_URL` in `index.html` must both use the
+same active URL. If you create a different deployment, update both constants.
 
 ### 4. Add the automatic trigger
 
@@ -159,3 +164,7 @@ Browser JavaScript does not scrape Smore directly.
 - [ ] Close the reader; open a normal article. Classroom callouts/video controls,
       navigation, bookmarks, and lesson submissions still behave as before.
 - [ ] If the feed is unavailable/empty, Flight Wire displays a clear message.
+- [ ] Submit a lesson draft from **The Peer Lesson Studio**. Confirm the success
+      message and verify a new row appears in the spreadsheet's `submissions`
+      tab with `submission_type=lesson_draft` and `status=pending`.
+- [ ] Load Flight Wire and confirm the Smore feed displays its published issues.

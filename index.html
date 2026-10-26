@@ -1212,7 +1212,7 @@
 
   <!-- APPLICATION LOGIC -->
   <script>
-    const SUBMISSION_API_URL = "https://script.google.com/macros/s/AKfycbytRb0-UXs1XOt1XgETiVMJTBogJ3nCa3EZ-B3ZBQeAEBfkFBwZa9fMloGy-FvGOeNH/exec";
+    const SUBMISSION_API_URL = "https://script.google.com/macros/s/AKfycbyAxb9nhP6H34pWi5icBPtWLoNSenmHalzwbkQr81p5WScUl1ez1Ym9RoglEk2RWWQb/exec";
     const IMG_ENGAGEMENT = "user_uploaded_files/ttl=63d/tool_generated/opt_watermarked_img_10640110943084536436.jpg";
     const IMG_MANAGEMENT = "user_uploaded_files/ttl=63d/tool_generated/opt_watermarked_img_8563596362175423207.jpg";
     const IMG_SUPPORT = "user_uploaded_files/ttl=63d/tool_generated/opt_watermarked_img_573880434360361359.jpg";
@@ -2174,7 +2174,7 @@
     }
 
     // --- LIVE SMORE BULLETIN FEED (GOOGLE APPS SCRIPT) ---
-    const SMORE_FEED_API_URL = 'https://script.google.com/macros/s/AKfycbytRb0-UXs1XOt1XgETiVMJTBogJ3nCa3EZ-B3ZBQeAEBfkFBwZa9fMloGy-FvGOeNH/exec';
+    const SMORE_FEED_API_URL = 'https://script.google.com/macros/s/AKfycbyAxb9nhP6H34pWi5icBPtWLoNSenmHalzwbkQr81p5WScUl1ez1Ym9RoglEk2RWWQb/exec';
     let smoreIssues = [];
 
     function normalizeSmoreIssue(item) {
@@ -2746,17 +2746,17 @@
         showStatus('Submitting your lesson draft…');
 
         try {
+          const payload = new URLSearchParams({
+            submitter_name: '',
+            submitter_email: '',
+            submission_type: 'lesson_draft',
+            title,
+            content,
+            links: draftUrl.href
+          });
           const response = await fetch(SUBMISSION_API_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              submitter_name: '',
-              submitter_email: '',
-              submission_type: 'lesson_draft',
-              title,
-              content,
-              links: draftUrl.href
-            })
+            body: payload
           });
           if (!response.ok) throw new Error(`Request failed (${response.status}).`);
           let result;
