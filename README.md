@@ -18,9 +18,9 @@ Only import public newsletters you have permission to republish.
 
 Keep your existing `submissions` tab and submission logic. Update its `doPost`
 request parsing for form-encoded submissions as described below. **Back up your
-spreadsheet first.** The old link-per-row feed cannot supply full articles.
-Rename the old `smore_feed_raw` and `smore_feed_public` tabs to names ending in
-`_backup` (do not delete them). New tabs use **one row per newsletter issue**.
+spreadsheet first.** Existing `smore_feed_raw`/`smore_feed_public` tabs can be
+kept: the script never clears a tab (see *Headers and migration*). Each tab
+uses **one row per newsletter issue**.
 
 In **Extensions → Apps Script**, add a script file named `Smore` and paste the
 contents of [`apps-script/Smore.gs`](apps-script/Smore.gs).
@@ -32,46 +32,71 @@ than `JSON.parse(e.postData.contents)`). Keep its validation and pending-row
 write. The new newsletter helpers are prefixed `smore` to avoid collisions.
 
 Run `setupSmoreFeed` from the function dropdown and authorize spreadsheet and
-external-fetch access. It creates these tabs/headers:
-
-`smore_feed_raw!A1` and `smore_feed_public!A1`:
+external-fetch access. It creates missing tabs. Required headers (row 1) for
+`smore_feed_raw` and `smore_feed_public`:
 
 ```text
 issue_url	issue_title	published_at	summary	cover_image_url	article_body_text
 ```
 
-`settings!A1`:
+**Headers and migration.** Columns are matched **by name**, so order does not
+matter and extra columns are kept. For example, the older layout
+`id	issue_url	issue_title	published_at	summary	cover_image_url	is_live	last_synced_at`
+works as-is. If a required header is missing, setup/sync writes it into the empty
+cell(s) right of the last header; existing cells, rows, and columns are never
+moved or cleared. `doGet` does not add headers; it returns `ok: false` naming the
+missing header until `setupSmoreFeed` is run. Optional `last_synced_at` is filled
+on each successful refresh. Optional `is_live`: `FALSE` hides an issue; blank or
+`TRUE` shows it.
 
-```text
-key	value
-```
-
-If `settings` already has different headers, back it up and migrate its values
-to this key/value layout before running setup. Keep other settings rows.
-Setup adds this row if missing; edit its value to your public profile or a single
-newsletter URL:
+`settings` uses column A for keys and column B for values (a `key	value`
+header is written only into an empty tab). Setup adds this row unless a
+`smore_source_url` (or legacy `source_url`) row already exists:
 
 ```text
 smore_source_url	https://www.smore.com/u/maizemiddleschool
 ```
 
+**Accepted source/issue URL formats.** Hosts must be `www.smore.com`,
+`smore.com`, or `app.smore.com`.
+
+| Use | Format | Example |
+| --- | --- | --- |
+| Profile (discovers its issues) | `/u/<profile>` | `https://www.smore.com/u/maizemiddleschool` |
+| Single issue | `/n/<id>` or `/n/<id>-<slug>` | `https://app.smore.com/n/cp9a2` |
+| Single issue (older style) | `/<id>-<slug>` or `/<id>` | `https://www.smore.com/abc12-fall-news` |
+
+Issue URLs are normalized to `https://www.smore.com/<path>` with query
+strings, fragments, and trailing slashes removed. This normalized URL is the
+dedupe key. If `www` does not serve an `/n/` issue, it is fetched from
+`app.smore.com`. Rejected: `cdn.smore.com` (images/files), `out.smore.com`
+(tracking redirects), profile/utility pages (for example `/pricing`, `/login`,
+`/educators`), asset paths with file extensions, and non-Smore hosts.
+When the source is a single issue, links **inside** it are never treated as issues.
+
 ### 2. Import and check the content
 
-1. Run `syncSmoreFeed`. It discovers **issue URLs only**, fetches each issue, and
-   updates existing rows by canonical URL (tracking parameters/fragments removed).
-   Links *inside* a newsletter stay in its body; they do not become separate issues.
-2. Open **Executions** and inspect the sync log, then compare a
-   `smore_feed_public` row with the original newsletter. Check headings, lists,
-   dates, links, and the **end** of the article—not just the summary.
+1. Run `syncSmoreFeed` (function dropdown → **Run**). It discovers **issue URLs
+   only**, fetches each issue, and updates the matching row by normalized URL,
+   appending a row for new issues. Links *inside* a newsletter stay in its body;
+   they do not become separate issues.
+2. Open **Executions** and inspect the sync log (`refreshed` lists issue URLs;
+   all must be `https://www.smore.com/...` issue pages). Compare a
+   `smore_feed_public` row with the original newsletter. Check its non-empty
+   `article_body_text`, headings, lists, dates, links, and the **end** of the
+   article, not just the summary.
 3. To import older issues not linked by the profile, paste their actual issue URLs
-   into column A of `smore_feed_raw`, one URL per row, and sync again. Do not paste
+   into the `issue_url` column of `smore_feed_raw`, one URL per row, and sync again. Do not paste
    resource links or the profile URL into these rows.
 
 **Source limitations:** live Smore markup could not be fetched in the development
 environment. The importer supports JSON-LD `articleBody`, or server-rendered
-`article`/`main`/recognized newsletter content containers. It strips page controls,
-scripts, styles, and HTML, retaining plain-text paragraphs, lists, and HTTP(S)
-link destinations. Client-rendered, private, blocked, or changed layouts may fail
+`article`/`main`/recognized newsletter content containers, falling back to the
+page `<body>`. It strips page controls (nav, header, footer, buttons, forms,
+icon ligatures such as `zoom_out_map`), scripts, styles, and HTML, retaining
+plain-text paragraphs, lists, and link destinations for text links. Image-only
+links and `cdn`/`out.smore.com` URLs are left out. Bodies under 200 characters
+are treated as a parse failure. Client-rendered, private, blocked, or changed layouts may fail
 or need parser adjustments; verify against your actual issue before enabling a
 trigger. A successful fetch is not proof that every announcement was extracted.
 
@@ -84,7 +109,31 @@ Leave `published_at` blank if unknown; otherwise use an ISO date such as
 (prefix with `'`). Bodies above 45,000 characters require manual splitting into
 paragraph-sized chunks in a future storage extension; the importer rejects them
 instead of silently truncating. A later successful sync replaces manual edits
-for the same issue. Old link-only public rows must be migrated, not retained.
+for the same issue.
+
+### Troubleshooting: bad links in Flight Wire
+
+Symptoms: `/exec` items have `issue_url` values like `https://cdn.smore.com/...jpeg`
+or `https://out.smore.com/render/...`, titles like `zoom_out_map`, or no
+`article_body_text`.
+
+1. **An old script is still deployed.** If `/exec` lacks `article_body_text`,
+   the live deployment runs the old sync/`doGet`, which scraped every link on
+   the source page. Remove the old sync functions (`extractSmoreItems_`,
+   `ensurePublicHeader_`, `ensureRawHeader_`, etc.) and old `doGet`, paste
+   `apps-script/Smore.gs`, keep `doPost`, and redeploy a **New version** (step 3).
+   Delete old sync triggers.
+2. **Leftover legacy rows.** Rows whose `issue_url` is not an accepted issue
+   URL, or that lack a title or `article_body_text`, are never returned by
+   `doGet` and are ignored by sync. They are not deleted automatically; once the
+   new rows look right, you may delete them by hand.
+3. **Wrong source.** Use a profile or issue URL from the table above, not an
+   image, redirect, or app editor link.
+4. **Empty body.** The issue may be private, client-rendered, or changed layout;
+   see Executions. Previous content is kept; you can paste plain text manually.
+
+The site also ignores feed rows whose URL is not on `smore.com`,
+`www.smore.com`, or `app.smore.com`.
 
 ### 3. Deploy (or redeploy) the web app
 
