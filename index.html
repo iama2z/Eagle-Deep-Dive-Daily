@@ -550,7 +550,7 @@
         <div class="flex items-center justify-between flex-wrap gap-2">
           <div>
             <h1 class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">The Flight Wire (Smore Bulletin Archive)</h1>
-            <p class="text-sm text-ink-600">Weekly administrative newsletters scraped via GitHub Actions so you can search past announcements anytime.</p>
+            <p class="text-sm text-ink-600">Read administrative newsletters here and search their full text for past announcements.</p>
           </div>
           <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 flex items-center gap-1.5">
             <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Automated Scraper Active
@@ -1024,7 +1024,7 @@
         </div>
 
         <!-- TRY THIS TOMORROW HIGHLIGHT -->
-        <div class="p-5 rounded-2xl bg-red-50 border border-red-300 space-y-1.5">
+        <div id="readerTryTomorrowBox" class="p-5 rounded-2xl bg-red-50 border border-red-300 space-y-1.5">
           <div class="text-xs font-extrabold uppercase tracking-wider text-red-900 flex items-center gap-1.5">
             <i data-lucide="zap" class="w-4 h-4 text-red-600"></i>
             <span>Try This Tomorrow in Class</span>
@@ -1036,7 +1036,9 @@
         <div id="readerParagraphs" class="space-y-4 text-sm text-ink-800 leading-relaxed"></div>
 
         <!-- VERBATIM CLASSROOM SCRIPT / PROMPT -->
-        <div class="p-5 rounded-2xl bg-white border border-cream-300 space-y-2 shadow-2xs">
+        <a id="readerOriginalSmore" target="_blank" rel="noopener noreferrer" class="hidden text-sm font-bold text-red-600 hover:underline">Open original Smore ↗</a>
+
+        <div id="readerScriptBox" class="p-5 rounded-2xl bg-white border border-cream-300 space-y-2 shadow-2xs">
           <div class="flex items-center justify-between">
             <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
               <i data-lucide="message-square" class="w-4 h-4 text-emerald-600"></i>
@@ -1603,8 +1605,8 @@
             },
             {
               category: "Zero Maintenance",
-              title: "Automated Monday 6 AM Sync",
-              tip: "Our GitHub Action scrapes the public Smore link automatically every week—no manual copy-pasting required from staff."
+              title: "Scheduled Newsletter Sync",
+              tip: "The Apps Script sync imports public Smore issues automatically when its scheduled trigger is enabled."
             }
           ]
         },
@@ -1842,9 +1844,23 @@
         });
       });
 
+      smoreIssues.forEach(issue => {
+        items.push({
+          type: 'Flight Wire',
+          id: issue.issue_url,
+          title: issue.issue_title,
+          category: 'Smore Newsletter',
+          desc: issue.summary,
+          body: issue.article_body_text,
+          tags: 'smore bulletin announcement admin',
+          action: () => openSmoreReader(issue.issue_url)
+        });
+      });
+
       fuse = new Fuse(items, {
-        keys: ['title', 'category', 'desc', 'tags'],
-        threshold: 0.36
+        keys: ['title', 'category', 'desc', 'tags', 'body'],
+        threshold: 0.36,
+        ignoreLocation: true
       });
     }
 
@@ -2071,6 +2087,10 @@
       const art = APP_DATA.articles.find(a => a.id === articleId);
       if (!art) return;
 
+      document.getElementById('readerTryTomorrowBox').classList.remove('hidden');
+      document.getElementById('readerScriptBox').classList.remove('hidden');
+      document.getElementById('readerOriginalSmore').classList.add('hidden');
+      document.getElementById('readerHeroImg').classList.remove('hidden');
       document.getElementById('readerHeroImg').src = art.image;
       document.getElementById('readerCategoryBadge').textContent = art.category;
       document.getElementById('readerAuthor').textContent = art.author;
@@ -2155,6 +2175,59 @@
 
     // --- LIVE SMORE BULLETIN FEED (GOOGLE APPS SCRIPT) ---
     const SMORE_FEED_API_URL = 'https://script.google.com/macros/s/AKfycbytRb0-UXs1XOt1XgETiVMJTBogJ3nCa3EZ-B3ZBQeAEBfkFBwZa9fMloGy-FvGOeNH/exec';
+    let smoreIssues = [];
+
+    function normalizeSmoreIssue(item) {
+      if (!item || typeof item !== 'object') return null;
+      const issueUrl = sanitizeHttpUrl(item.issue_url || item.url);
+      const title = String(item.issue_title || item.title || '').trim();
+      if (!issueUrl || !title) return null;
+      const url = new URL(issueUrl);
+      url.hash = '';
+      url.search = '';
+      url.pathname = url.pathname.replace(/\/+$/, '') || '/';
+      return {
+        issue_url: url.href,
+        issue_title: title,
+        published_at: item.published_at || item.date || '',
+        summary: String(item.summary || '').trim(),
+        cover_image_url: sanitizeHttpUrl(item.cover_image_url),
+        article_body_text: String(item.article_body_text || '').replace(/\r\n?/g, '\n').trim()
+      };
+    }
+
+    function openSmoreReader(issueUrl) {
+      const issue = smoreIssues.find(item => item.issue_url === issueUrl);
+      if (!issue) return;
+      const image = document.getElementById('readerHeroImg');
+      image.classList.toggle('hidden', !issue.cover_image_url);
+      if (issue.cover_image_url) image.src = issue.cover_image_url;
+      else image.removeAttribute('src');
+      document.getElementById('readerCategoryBadge').textContent = 'Flight Wire';
+      document.getElementById('readerAuthor').textContent = 'Smore Newsletter';
+      document.getElementById('readerReadTime').textContent = issue.article_body_text
+        ? `${Math.max(1, Math.ceil(issue.article_body_text.split(/\s+/).length / 200))} min read` : '';
+      document.getElementById('readerDate').textContent = formatDateLabel(issue.published_at);
+      document.getElementById('readerTitle').textContent = issue.issue_title;
+      document.getElementById('readerSubtitle').textContent = issue.summary;
+      document.getElementById('readerTryTomorrowBox').classList.add('hidden');
+      document.getElementById('readerScriptBox').classList.add('hidden');
+      document.getElementById('readerVideoDemoBox').classList.add('hidden');
+      currentReaderScript = '';
+      const paragraphs = document.getElementById('readerParagraphs');
+      paragraphs.replaceChildren();
+      const body = issue.article_body_text || 'Full newsletter content is not available yet. Open the original Smore below.';
+      body.split(/\n\s*\n/).forEach(text => {
+        const p = document.createElement('p');
+        p.className = 'whitespace-pre-line break-words';
+        p.textContent = text;
+        paragraphs.appendChild(p);
+      });
+      const original = document.getElementById('readerOriginalSmore');
+      original.href = issue.issue_url;
+      original.classList.remove('hidden');
+      document.getElementById('articleReaderModal').classList.remove('hidden');
+    }
 
     function escapeHtml(value) {
       return String(value ?? '')
@@ -2201,12 +2274,14 @@
           ${dateLabel ? `<span class="font-mono text-[11px] px-2.5 py-0.5 rounded-full bg-cream-200 text-ink-800 whitespace-nowrap">${escapeHtml(dateLabel)}</span>` : ''}
         </div>
         ${summary ? `<p class="text-ink-600 leading-relaxed">${escapeHtml(summary)}</p>` : ''}
-        <div class="pt-3 border-t border-cream-200 flex justify-end">
+        <div class="pt-3 border-t border-cream-200 flex items-center justify-between gap-3">
+          <button type="button" class="font-bold text-red-600 hover:underline">Read newsletter</button>
           <a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="font-bold text-red-600 hover:underline flex items-center gap-1">
             <span>Open Original Smore</span> <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
           </a>
         </div>
       `;
+      div.querySelector('button').addEventListener('click', () => openSmoreReader(item.issue_url));
       return div;
     }
 
@@ -2226,10 +2301,11 @@
         const data = await res.json();
         if (!data || !data.ok || !Array.isArray(data.items)) throw new Error('Unexpected feed format');
 
-        const cards = data.items
-          .filter(item => item && typeof item === 'object')
-          .map(renderBulletinCard)
-          .filter(Boolean);
+        smoreIssues = [...new Map(data.items.map(normalizeSmoreIssue).filter(Boolean)
+          .map(issue => [issue.issue_url, issue])).values()];
+        initFuse();
+        document.getElementById('globalSearchInput')?.dispatchEvent(new Event('input'));
+        const cards = smoreIssues.map(renderBulletinCard).filter(Boolean);
 
         if (!cards.length) {
           setBulletinFeedMessage(container, 'No bulletins have been published yet. Check back soon.');
@@ -2473,7 +2549,7 @@
           subtitle.textContent = 'Searching articles, Tech & AI tools, quick wins & directory';
           list.innerHTML = '';
           if (res.length === 0) {
-            list.innerHTML = `<div class="p-4 text-center text-xs text-ink-600">No instant matches for "${q}". Click <strong>⚡ Instant</strong> to switch to <strong>✨ AI Coach</strong>!</div>`;
+            list.innerHTML = `<div class="p-4 text-center text-xs text-ink-600">No instant matches for "${escapeHtml(q)}". Click <strong>⚡ Instant</strong> to switch to <strong>✨ AI Coach</strong>!</div>`;
             return;
           }
           res.slice(0, 6).forEach(r => {
@@ -2481,11 +2557,11 @@
             d.className = 'p-3 rounded-xl hover:bg-cream-100 cursor-pointer transition border border-transparent hover:border-cream-300';
             d.innerHTML = `
               <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-red-700 mb-0.5">
-                <span>${r.item.type}</span>
-                <span>${r.item.category}</span>
+                <span>${escapeHtml(r.item.type)}</span>
+                <span>${escapeHtml(r.item.category)}</span>
               </div>
-              <div class="font-bold text-xs text-ink-900">${r.item.title}</div>
-              <div class="text-[11px] text-ink-600 line-clamp-1">${r.item.desc}</div>
+              <div class="font-bold text-xs text-ink-900">${escapeHtml(r.item.title)}</div>
+              <div class="text-[11px] text-ink-600 line-clamp-1">${escapeHtml(r.item.desc)}</div>
             `;
             d.addEventListener('click', () => {
               sDrop.classList.add('hidden');
