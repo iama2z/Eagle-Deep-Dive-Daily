@@ -1,0 +1,2582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eagle Deep Dive Daily | Maize Middle School Classroom Craft, Engagement, Support &amp; Tech</title>
+  <!-- Google Fonts: Fraunces (Editorial Serif) & Plus Jakarta Sans (Clean Modern Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;0,9..144,800;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <!-- Fuse.js for Client-Side Instant Search -->
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['Fraunces', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            cream: {
+              50: '#FFFFFF',
+              100: '#F8FAFC',
+              200: '#F1F5F9',
+              300: '#E2E8F0',
+            },
+            ink: {
+              900: '#09090B',
+              800: '#18181B',
+              600: '#3F3F46',
+              400: '#71717A',
+            },
+            eagle: {
+              50: '#FEF2F2',
+              100: '#FEE2E2',
+              500: '#EF4444',
+              600: '#DC2626',
+              700: '#B91C1C',
+              800: '#991B1B',
+              900: '#7F1D1D',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #F8FAFC;
+      color: #09090B;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-editorial {
+      font-family: 'Fraunces', Georgia, serif;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #F8FAFC; }
+    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #DC2626; }
+    .article-card {
+      transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease;
+    }
+    .article-card:hover {
+      transform: translateY(-3px);
+      border-color: #FCA5A5;
+      box-shadow: 0 18px 32px -12px rgba(220, 38, 38, 0.12);
+    }
+    .nav-pill-active {
+      background-color: #DC2626 !important;
+      color: #FFFFFF !important;
+    }
+    /* Smooth fade-in and fade-out placeholder inside the white search box */
+    .revolving-placeholder {
+      transition: opacity 0.65s ease-in-out, transform 0.65s ease-in-out;
+    }
+    .revolving-fade-out {
+      opacity: 0;
+      transform: translateY(3px);
+    }
+    .revolving-fade-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .quick-wins-transition {
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-red-600 selection:text-white">
+
+  <!-- EDITORIAL MASTHEAD & NAVIGATION -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b-2 border-ink-900 shadow-xs transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- TOP BAR: BRAND, SEARCH & PRIMARY ACTIONS -->
+      <div class="flex items-center justify-between h-20 gap-4">
+        
+        <!-- PUBLICATION MASTHEAD WITH CLICKABLE TOP-LEFT ICON NAVIGATION MENU -->
+        <div class="relative flex items-center gap-3.5 shrink-0">
+          <button
+            id="topLeftMenuBtn"
+            type="button"
+            aria-label="Open Site Navigation Menu"
+            title="Open Site Navigation Menu"
+            class="relative w-11 h-11 rounded-2xl bg-red-600 hover:bg-red-700 text-white flex items-center justify-center shadow-sm hover:ring-2 hover:ring-ink-900 transition cursor-pointer group"
+          >
+            <!-- Stylized Maize Eagle Emblem SVG -->
+            <svg class="w-6 h-6 text-white fill-current" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M21.5 4.5c-2.6.2-5.1 1.4-6.9 3.3-.8-.3-1.7-.4-2.6-.2-1.8.3-3.3 1.5-4.1 3.1L3 9.5l2.2 3.3L3.5 15l3.8-.4c-.4 1.3-.3 2.8.3 4.1l1.9-2.1c1.2.4 2.6.4 3.8-.1 2.1-.9 3.5-2.9 3.7-5.2 2.2-1.6 3.8-4 4.5-6.8zM13.8 11c-.4.4-1 .4-1.4 0-.4-.4-.4-1 0-1.4.4-.4 1-.4 1.4 0 .4.4.4 1 0 1.4z"/>
+            </svg>
+            <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-ink-900 text-white flex items-center justify-center shadow-xs border-2 border-white group-hover:scale-110 transition-transform">
+              <i data-lucide="menu" class="w-3 h-3"></i>
+            </span>
+          </button>
+
+          <div class="cursor-pointer" id="mastheadHomeBtn" title="Return to Main Feed">
+            <div class="flex items-center gap-2">
+              <span class="font-editorial font-extrabold text-xl sm:text-2xl tracking-tight text-ink-900 hover:text-red-600 transition-colors">Eagle Deep Dive Daily</span>
+              <span class="hidden xl:inline-block text-[11px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-red-600 text-white">MMS Eagles</span>
+            </div>
+            <p class="text-xs text-ink-600 hidden sm:block">Maize Middle School • Classroom Craft, Student Engagement, Teacher Support &amp; Tech</p>
+          </div>
+
+          <!-- TOP-LEFT SITE NAVIGATION DROPDOWN MENU -->
+          <div id="topLeftMenuDropdown" class="hidden absolute left-0 top-full mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-cream-300 p-2.5 z-50">
+            <div class="px-3 py-2 border-b border-cream-200 flex items-center justify-between">
+              <span class="text-[10px] font-extrabold uppercase tracking-widest text-ink-400">Site Navigation Menu</span>
+              <span class="text-[10px] font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded-full">Eagles Hub</span>
+            </div>
+
+            <div class="py-1.5 space-y-0.5">
+              <button class="topleft-editorial-item w-full text-left px-3 py-2 rounded-xl hover:bg-cream-100 flex items-center gap-3 transition" data-category="all">
+                <div class="w-7 h-7 rounded-lg bg-ink-900 text-red-400 flex items-center justify-center shrink-0">
+                  <i data-lucide="home" class="w-3.5 h-3.5"></i>
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-ink-900">Home: Main Editorial Feed</div>
+                  <div class="text-[11px] text-ink-600">All featured stories, playbooks &amp; quick wins</div>
+                </div>
+              </button>
+            </div>
+
+            <div class="px-3 pt-2 pb-1 border-t border-cream-200">
+              <span class="text-[10px] font-extrabold uppercase tracking-widest text-ink-400">Building Wings &amp; Special Sections</span>
+            </div>
+
+            <div class="py-1 space-y-0.5">
+              <button class="menu-nav-item w-full text-left px-3 py-2.5 rounded-xl hover:bg-cream-100 flex items-start gap-3 transition" data-view="view-directory">
+                <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center shrink-0 mt-0.5">
+                  <i data-lucide="folder-heart" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-ink-900">Heart of MMS Directory</div>
+                  <div class="text-[11px] text-ink-600">Clean, searchable building links &amp; forms</div>
+                </div>
+              </button>
+
+              <button class="menu-nav-item w-full text-left px-3 py-2.5 rounded-xl hover:bg-cream-100 flex items-start gap-3 transition" data-view="view-bulletin">
+                <div class="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <i data-lucide="newspaper" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-ink-900">Flight Wire (Smore Board)</div>
+                  <div class="text-[11px] text-ink-600">Weekly admin Smore newsletters indexed for search</div>
+                </div>
+              </button>
+
+              <button class="menu-nav-item w-full text-left px-3 py-2.5 rounded-xl hover:bg-cream-100 flex items-start gap-3 transition" data-view="view-academy">
+                <div class="w-8 h-8 rounded-lg bg-red-50 text-red-700 flex items-center justify-center shrink-0 mt-0.5">
+                  <i data-lucide="cpu" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-ink-900">EdTech, AI &amp; Video Lab</div>
+                  <div class="text-[11px] text-ink-600">NotebookLM video demo, OrbitNote &amp; video tools</div>
+                </div>
+              </button>
+
+              <button class="menu-nav-item w-full text-left px-3 py-2.5 rounded-xl hover:bg-cream-100 flex items-start gap-3 transition" data-view="view-studio">
+                <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5">
+                  <i data-lucide="users" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-ink-900">The Peer Lesson Studio</div>
+                  <div class="text-[11px] text-ink-600">Warm &amp; Cool feedback lab for lesson drafts</div>
+                </div>
+              </button>
+            </div>
+
+            <div class="px-3 pt-2 pb-1 border-t border-cream-200">
+              <span class="text-[10px] font-extrabold uppercase tracking-widest text-ink-400">Editorial Topics</span>
+            </div>
+
+            <div class="py-1 grid grid-cols-2 gap-1 px-1">
+              <button class="topleft-editorial-item text-left px-2.5 py-1.5 rounded-lg hover:bg-cream-100 text-[11px] font-semibold text-ink-800 flex items-center gap-1.5" data-category="Student Engagement">
+                <span class="w-2 h-2 rounded-full bg-red-500 shrink-0"></span>
+                <span class="truncate">Engagement</span>
+              </button>
+              <button class="topleft-editorial-item text-left px-2.5 py-1.5 rounded-lg hover:bg-cream-100 text-[11px] font-semibold text-ink-800 flex items-center gap-1.5" data-category="Classroom Management">
+                <span class="w-2 h-2 rounded-full bg-ink-900 shrink-0"></span>
+                <span class="truncate">Management</span>
+              </button>
+              <button class="topleft-editorial-item text-left px-2.5 py-1.5 rounded-lg hover:bg-cream-100 text-[11px] font-semibold text-ink-800 flex items-center gap-1.5" data-category="Teacher Support">
+                <span class="w-2 h-2 rounded-full bg-red-400 shrink-0"></span>
+                <span class="truncate">Teacher Support</span>
+              </button>
+              <button class="topleft-editorial-item text-left px-2.5 py-1.5 rounded-lg hover:bg-cream-100 text-[11px] font-semibold text-ink-800 flex items-center gap-1.5" data-category="Tech & AI">
+                <span class="w-2 h-2 rounded-full bg-red-600 shrink-0"></span>
+                <span class="truncate">Tech &amp; AI</span>
+              </button>
+            </div>
+
+            <div class="pt-1.5 mt-1 border-t border-cream-200 px-2 py-1.5 flex items-center justify-between gap-2">
+              <button id="openShareTipModalBtn" class="text-[11px] font-bold text-red-600 hover:text-red-700 flex items-center gap-1.5 px-2 py-1 rounded-lg hover:bg-red-50 transition">
+                <i data-lucide="pen-tool" class="w-3.5 h-3.5"></i>
+                <span>Share a Tip</span>
+              </button>
+              <button id="openSettingsModalBtn" class="text-[11px] font-semibold text-ink-600 hover:text-ink-900 flex items-center gap-1.5 px-2 py-1 rounded-lg hover:bg-cream-100 transition">
+                <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+                <span>AI Proxy</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- INTEGRATED WHITE SEARCH BOX WITH FADING PLACEHOLDER SUGGESTIONS -->
+        <div class="flex-1 max-w-lg mx-2 relative">
+          <div class="relative flex items-center">
+            <i data-lucide="search" class="w-4 h-4 text-ink-600 absolute left-3.5 z-10 pointer-events-none"></i>
+            <input 
+              id="globalSearchInput" 
+              type="text" 
+              placeholder="" 
+              autocomplete="off"
+              aria-label="Search classroom tips, tech & AI tools, strategies, or building resources"
+              class="w-full bg-white text-sm text-ink-900 pl-10 pr-28 py-2.5 rounded-full border border-cream-300 shadow-2xs focus:outline-none focus:ring-2 focus:ring-red-600/30 focus:border-red-600 transition-all"
+            />
+            <!-- FADING PLACEHOLDER OVERLAY INSIDE THE WHITE TEXT BOX (SHOWN WHENEVER INPUT IS EMPTY) -->
+            <div id="revolvingSuggestionOverlay" class="absolute left-10 right-28 pointer-events-none flex items-center overflow-hidden">
+              <span id="revolvingSuggestionText" class="revolving-placeholder revolving-fade-in text-xs sm:text-sm text-ink-400 truncate select-none">
+                Try: "NotebookLM for missing students"...
+              </span>
+            </div>
+            <button id="searchModeToggleBtn" class="absolute right-1.5 z-10 text-[11px] font-bold px-2.5 py-1 rounded-full bg-cream-200 hover:bg-cream-300 text-ink-800 transition flex items-center gap-1" title="Switch between Instant Filter and AI Assistant">
+              <span id="searchModeLabel">⚡ Instant</span>
+            </button>
+          </div>
+
+          <!-- INSTANT SEARCH RESULTS DROPDOWN (APPEARS ONLY WHEN TYPING) -->
+          <div id="searchResultsDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-cream-300 max-h-[75vh] overflow-y-auto p-4 z-50">
+            <div class="flex items-center justify-between pb-2.5 mb-3 border-b border-cream-200">
+              <div class="flex items-center gap-2">
+                <span id="resultsCountBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-100 text-red-900">0 matches</span>
+                <span id="resultsModeSubtitle" class="text-xs text-ink-600">Articles, Tech &amp; AI tools, quick wins &amp; directory</span>
+              </div>
+              <button id="closeSearchResultsBtn" class="text-ink-400 hover:text-ink-900 p-1">
+                <i data-lucide="x" class="w-4 h-4"></i>
+              </button>
+            </div>
+            <div id="searchResultsList" class="space-y-2.5"></div>
+          </div>
+        </div>
+
+
+
+      </div>
+
+      <!-- EDITORIAL TOPIC BAR -->
+      <nav class="flex items-center justify-between py-2.5 border-t border-cream-200 overflow-x-auto text-xs">
+        <div class="flex items-center gap-1.5" id="editorialCategoryNav">
+          <button class="topic-pill nav-pill-active font-bold px-3.5 py-1.5 rounded-full transition whitespace-nowrap" data-category="all">
+            All Featured &amp; Latest
+          </button>
+          <button class="topic-pill font-semibold text-ink-600 hover:text-ink-900 hover:bg-cream-200 px-3.5 py-1.5 rounded-full transition whitespace-nowrap flex items-center gap-1.5" data-category="Student Engagement">
+            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+            <span>Student Engagement</span>
+          </button>
+          <button class="topic-pill font-semibold text-ink-600 hover:text-ink-900 hover:bg-cream-200 px-3.5 py-1.5 rounded-full transition whitespace-nowrap flex items-center gap-1.5" data-category="Classroom Management">
+            <span class="w-2 h-2 rounded-full bg-ink-900"></span>
+            <span>Classroom Management</span>
+          </button>
+          <button class="topic-pill font-semibold text-ink-600 hover:text-ink-900 hover:bg-cream-200 px-3.5 py-1.5 rounded-full transition whitespace-nowrap flex items-center gap-1.5" data-category="Teacher Support">
+            <span class="w-2 h-2 rounded-full bg-red-400"></span>
+            <span>Teacher Support &amp; Wellbeing</span>
+          </button>
+          <button class="topic-pill font-semibold text-ink-600 hover:text-ink-900 hover:bg-cream-200 px-3.5 py-1.5 rounded-full transition whitespace-nowrap flex items-center gap-1.5" data-category="Tech & AI">
+            <span class="w-2 h-2 rounded-full bg-red-600"></span>
+            <span>Tech &amp; AI Tips</span>
+          </button>
+          <button class="topic-pill font-semibold text-ink-600 hover:text-ink-900 hover:bg-cream-200 px-3.5 py-1.5 rounded-full transition whitespace-nowrap flex items-center gap-1.5" data-category="saved">
+            <i data-lucide="bookmark" class="w-3.5 h-3.5 text-red-600"></i>
+            <span>Saved Reading List (<span id="savedCountLabel">0</span>)</span>
+          </button>
+        </div>
+
+        <div class="hidden lg:flex items-center gap-2 text-[11px] text-ink-600 font-medium pl-4 shrink-0">
+          <span class="italic">Built by teachers, for teachers</span>
+        </div>
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- ========================================== -->
+    <!-- DYNAMIC CONTEXT-AWARE QUICK WINS BANNER    -->
+    <!-- ========================================== -->
+    <!-- Dynamically positioned into the active menu section's slot -->
+    <section id="quickWinsBanner" class="quick-wins-transition bg-ink-900 text-white rounded-3xl p-6 sm:p-7 shadow-md mb-8 border-t-4 border-red-600">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-5 mb-5 border-b border-ink-800">
+        <div class="flex items-center gap-3">
+          <span id="quickWinsIconBox" class="w-9 h-9 rounded-xl bg-red-600 text-white flex items-center justify-center font-bold shrink-0 shadow-xs">
+            <i data-lucide="flame" class="w-4 h-4"></i>
+          </span>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h2 id="quickWinsHeading" class="font-editorial font-bold text-lg text-white">Quick Wins: Try This Next Hour</h2>
+              <span id="quickWinsContextPill" class="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-red-600/25 text-red-300 border border-red-500/40">
+                All-Building Favorites
+              </span>
+            </div>
+            <p id="quickWinsSubtitle" class="text-xs text-ink-400 mt-0.5">Zero-prep tactical adjustments across engagement, management, teacher support &amp; classroom tech</p>
+          </div>
+        </div>
+        <span class="text-[11px] font-semibold uppercase tracking-widest text-red-400 shrink-0">Tailored to Current Section</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5" id="quickTipsStrip">
+        <!-- Populated dynamically based on active menu section -->
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- PRIMARY VIEW: EDITORIAL MAGAZINE HOME      -->
+    <!-- ========================================== -->
+    <div id="view-editorial" class="view-section space-y-10">
+
+      <!-- HERO FEATURE STORY (SHOWN WHEN 'ALL' IS SELECTED) -->
+      <section id="heroFeatureSection" class="bg-white rounded-3xl border border-cream-300 overflow-hidden shadow-sm">
+        <div class="grid grid-cols-1 lg:grid-cols-12">
+          
+          <!-- HERO IMAGE -->
+          <div class="lg:col-span-7 relative min-h-[280px] sm:min-h-[360px] bg-ink-900 overflow-hidden">
+            <img 
+              src="user_uploaded_files/ttl=63d/tool_generated/opt_watermarked_img_10640110943084536436.jpg" 
+              alt="Engaged middle school classroom collaboration" 
+              class="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700"
+            />
+            <div class="absolute top-4 left-4 flex items-center gap-2">
+              <span class="px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-ink-900/85 text-red-300 backdrop-blur-md">
+                Cover Story • Student Engagement
+              </span>
+            </div>
+          </div>
+
+          <!-- HERO EDITORIAL COPY -->
+          <div class="lg:col-span-5 p-6 sm:p-8 lg:p-10 flex flex-col justify-between bg-gradient-to-b from-white to-cream-50">
+            <div class="space-y-4">
+              <div class="flex items-center gap-2 text-xs text-ink-600 font-semibold">
+                <span>Science &amp; STEM Team</span>
+                <span>•</span>
+                <span>4 min read</span>
+              </div>
+
+              <h1 class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900 leading-tight">
+                The ‘Low-Floor, High-Ceiling’ Hook: Getting Every 8th Grader Talking in the First 4 Minutes
+              </h1>
+
+              <p class="text-sm text-ink-600 leading-relaxed">
+                How replacing traditional glossary bellringers with visual phenomena controversies and 90-second table debates transforms passive classes into active investigators.
+              </p>
+
+              <!-- TRY THIS TOMORROW CALLOUT -->
+              <div class="p-4 rounded-2xl bg-red-50/90 border border-red-200 space-y-1">
+                <div class="text-[10px] font-extrabold uppercase tracking-widest text-red-700 flex items-center gap-1.5">
+                  <i data-lucide="zap" class="w-3.5 h-3.5 text-red-600"></i>
+                  <span>The 30-Second Takeaway</span>
+                </div>
+                <p class="text-xs text-ink-800 leading-relaxed font-medium">
+                  Project a counter-intuitive visual mystery with zero academic jargon first. Give tables 60 seconds to lock in a hunch before introducing formal vocabulary.
+                </p>
+              </div>
+            </div>
+
+            <div class="pt-6 mt-6 border-t border-cream-200 flex items-center justify-between gap-4">
+              <button id="readHeroArticleBtn" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-ink-900 hover:bg-ink-800 text-white text-xs font-bold transition shadow-sm">
+                <span>Read Full Story &amp; Script</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 text-red-400"></i>
+              </button>
+
+              <button class="bookmark-btn p-2.5 rounded-full border border-cream-300 hover:bg-cream-100 text-ink-600 transition" data-id="art-1" title="Save to reading list">
+                <i data-lucide="bookmark" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SLOT FOR DYNAMIC QUICK WINS IN EDITORIAL VIEW -->
+      <div id="slot-editorial"></div>
+
+
+
+      <!-- MAIN EDITORIAL GRID + SIDEBAR -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+        <!-- LEFT 8 COLUMNS: ARTICLE FEED -->
+        <div class="lg:col-span-8 space-y-6">
+          <div class="flex items-center justify-between border-b border-cream-300 pb-3">
+            <h2 class="font-editorial font-bold text-xl text-ink-900" id="feedSectionHeading">Latest Articles &amp; Classroom Playbooks</h2>
+            <span class="text-xs text-ink-600 font-medium" id="feedArticleCount">Showing 9 stories</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="articlesGridContainer">
+            <!-- Dynamically rendered article cards -->
+          </div>
+        </div>
+
+        <!-- RIGHT 4 COLUMNS: EDITORIAL SIDEBAR -->
+        <aside class="lg:col-span-4 space-y-6">
+
+          <!-- SIDEBAR WIDGET 1: ASK THE AI INSTRUCTIONAL COACH -->
+          <div class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-4">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-red-100 text-red-700 flex items-center justify-center">
+                <i data-lucide="sparkles" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h3 class="font-editorial font-bold text-base text-ink-900">Instant Strategy Brainstorm</h3>
+                <p class="text-[11px] text-ink-600">Powered by Gemini Flash • Grounded in MMS Craft</p>
+              </div>
+            </div>
+
+            <p class="text-xs text-ink-600 leading-relaxed">
+              Need a quick 5-minute sponge activity, a NotebookLM / OrbitNote workflow, or a de-escalation phrase?
+            </p>
+
+            <div class="space-y-2">
+              <textarea id="sidebarCoachInput" rows="2" placeholder="e.g., How do I use NotebookLM to catch up a missing student, or give me a 3-minute hook..." class="w-full p-3 text-xs bg-cream-50 border border-cream-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-600/30"></textarea>
+              <button id="sidebarCoachSubmitBtn" class="w-full py-2.5 px-4 rounded-xl bg-ink-900 hover:bg-ink-800 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="wand-2" class="w-3.5 h-3.5 text-red-400"></i>
+                <span>Generate Classroom Idea</span>
+              </button>
+            </div>
+
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <button class="quick-coach-chip text-[11px] bg-red-50 hover:bg-red-100 text-ink-900 font-semibold px-2.5 py-1 rounded-full transition" data-prompt="How can I use NotebookLM and Google Classroom to generate catch-up slides or audio for missing students?">
+                + Missing Student AI
+              </button>
+              <button class="quick-coach-chip text-[11px] bg-red-50 hover:bg-red-100 text-ink-900 font-semibold px-2.5 py-1 rounded-full transition" data-prompt="Give me a quick OrbitNote PDF annotation routine for middle schoolers.">
+                + OrbitNote Tip
+              </button>
+              <button class="quick-coach-chip text-[11px] bg-cream-100 hover:bg-cream-200 text-ink-800 px-2.5 py-1 rounded-full transition" data-prompt="How do I structure a 90-second student-made explainer video project?">
+                + Student Video
+              </button>
+              <button class="quick-coach-chip text-[11px] bg-cream-100 hover:bg-cream-200 text-ink-800 px-2.5 py-1 rounded-full transition" data-prompt="How do I reset a chatty 6th hour class after lunch without yelling?">
+                + Post-Lunch Reset
+              </button>
+            </div>
+
+            <div id="sidebarCoachOutput" class="hidden p-3.5 rounded-2xl bg-red-50/70 border border-red-200 text-xs text-ink-800 leading-relaxed space-y-1.5">
+              <!-- Output appears here -->
+            </div>
+          </div>
+
+
+
+          <!-- SIDEBAR WIDGET 3: OVERHEARD IN THE HALLWAY (STAFF LOUNGE HUMOR) -->
+          <div class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="coffee" class="w-4 h-4 text-red-600"></i>
+                <h3 class="font-editorial font-bold text-base text-ink-900">Overheard at MMS</h3>
+              </div>
+              <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-50 text-rose-700">Staff Lounge</span>
+            </div>
+
+            <div id="loungeQuotesContainer" class="space-y-3">
+              <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200 space-y-1.5">
+                <p class="text-xs italic text-ink-800 font-serif leading-relaxed">
+                  “Mr. H, if the Earth is spinning at 1,000 miles an hour, why don’t my shoes wear out faster when I stand still?”
+                </p>
+                <div class="text-[11px] text-ink-400 font-semibold text-right">— 8th Grade Science Debrief</div>
+              </div>
+
+              <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200 space-y-1.5">
+                <p class="text-xs italic text-ink-800 font-serif leading-relaxed">
+                  “I didn’t lose my homework, it’s just currently in an unverified location in my locker.”
+                </p>
+                <div class="text-[11px] text-ink-400 font-semibold text-right">— 7th Hour Hallway</div>
+              </div>
+            </div>
+
+            <button id="sidebarAddQuoteBtn" class="w-full py-2 rounded-xl border border-cream-300 hover:bg-cream-100 text-xs font-bold text-ink-800 transition">
+              + Post a Classroom Quote or Win
+            </button>
+          </div>
+
+
+
+        </aside>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TUCKED-AWAY VIEW 1: HEART OF MMS DIRECTORY -->
+    <!-- ========================================== -->
+    <div id="view-directory" class="view-section hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-cream-300">
+        <div>
+          <button class="back-to-feed-btn inline-flex items-center gap-1.5 text-xs font-bold text-red-600 hover:text-red-900 mb-2">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            <span>Back to Editorial Feed</span>
+          </button>
+          <h1 class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">Heart of MMS: Clean Building Directory</h1>
+          <p class="text-sm text-ink-600">Streamlined, color-coded access to internal USD 266 forms, maps, and operational links.</p>
+        </div>
+
+        <div class="flex items-center gap-1.5 overflow-x-auto" id="hqCategoryFilter">
+          <button class="cat-pill active text-xs font-bold px-3 py-1.5 rounded-full bg-ink-900 text-white" data-cat="all">All Links</button>
+          <button class="cat-pill text-xs font-bold px-3 py-1.5 rounded-full bg-red-100 text-red-900 hover:bg-red-200" data-cat="Emergency & Logistics">Emergency</button>
+          <button class="cat-pill text-xs font-bold px-3 py-1.5 rounded-full bg-blue-100 text-blue-900 hover:bg-blue-200" data-cat="Daily Operations">Daily Ops</button>
+          <button class="cat-pill text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-900 hover:bg-emerald-200" data-cat="Student Services & MTSS">MTSS &amp; Support</button>
+          <button class="cat-pill text-xs font-bold px-3 py-1.5 rounded-full bg-purple-100 text-purple-900 hover:bg-purple-200" data-cat="Directories & Handbooks">Handbooks</button>
+        </div>
+      </div>
+
+      <!-- [COPILOT_HOOK: RESOURCES_DIRECTORY_GRID] -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="hqResourceGrid"></div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TUCKED-AWAY VIEW 2: FLIGHT WIRE (SMORE ARCHIVE) -->
+    <!-- ========================================== -->
+    <div id="view-bulletin" class="view-section hidden space-y-6">
+      <div class="pb-5 border-b border-cream-300">
+        <button class="back-to-feed-btn inline-flex items-center gap-1.5 text-xs font-bold text-red-600 hover:text-red-900 mb-2">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+          <span>Back to Editorial Feed</span>
+        </button>
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <div>
+            <h1 class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">The Flight Wire (Smore Bulletin Archive)</h1>
+            <p class="text-sm text-ink-600">Weekly administrative newsletters scraped via GitHub Actions so you can search past announcements anytime.</p>
+          </div>
+          <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 flex items-center gap-1.5">
+            <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Automated Scraper Active
+          </span>
+        </div>
+      </div>
+
+      <div id="bulletinFeedContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TUCKED-AWAY VIEW 3: PEER LESSON STUDIO -->
+    <!-- ========================================== -->
+    <div id="view-studio" class="view-section hidden space-y-6">
+      <div class="pb-5 border-b border-cream-300">
+        <button class="back-to-feed-btn inline-flex items-center gap-1.5 text-xs font-bold text-red-600 hover:text-red-900 mb-2">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+          <span>Back to Editorial Feed</span>
+        </button>
+        <h1 class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">The Peer Lesson Studio</h1>
+        <p class="text-sm text-ink-600">Share a draft lab, CER prompt, or activity for low-stakes Warm &amp; Cool feedback from colleagues.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-4">
+          <h2 class="font-editorial font-bold text-lg text-ink-900">Post a Lesson Draft</h2>
+          <form id="lessonTuneForm" class="space-y-3 text-xs">
+            <div>
+              <label class="block font-bold text-ink-800 mb-1">Lesson / Activity Title</label>
+              <input id="tuneTitle" type="text" placeholder="e.g., 8th Grade Thermal Energy Lab" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" required />
+            </div>
+            <div>
+              <label class="block font-bold text-ink-800 mb-1">Department &amp; Grade</label>
+              <input id="tuneSubject" type="text" placeholder="e.g., 8th Science" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" required />
+            </div>
+            <div>
+              <label class="block font-bold text-ink-800 mb-1">Feedback Focus Dilemma</label>
+              <select id="tuneDilemma" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 bg-white">
+                <option value="Student Engagement Hook">Opening Hook &amp; Student Buy-In</option>
+                <option value="Pacing & Transitions">Pacing &amp; Transition Smoothness</option>
+                <option value="Reading & Vocabulary Load">Reading &amp; Vocabulary Barriers</option>
+                <option value="Direction Clarity">Direction Clarity &amp; Cognitive Load</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-bold text-ink-800 mb-1">Google Doc / Slides Link</label>
+              <input id="tuneLink" type="url" placeholder="https://docs.google.com/..." class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" required />
+            </div>
+            <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-ink-900 hover:bg-ink-800 text-white font-bold transition">
+              Share with Colleagues
+            </button>
+          </form>
+        </div>
+
+        <div class="lg:col-span-2 space-y-4" id="tuningSubmissionsContainer"></div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TUCKED-AWAY VIEW 4: EDTECH, AI & VIDEO LAB -->
+    <!-- ========================================== -->
+    <div id="view-academy" class="view-section hidden space-y-10">
+      <div class="pb-5 border-b border-cream-300 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <button class="back-to-feed-btn inline-flex items-center gap-1.5 text-xs font-bold text-red-600 hover:text-red-900 mb-2">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            <span>Back to Editorial Feed</span>
+          </button>
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <h1 class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">EdTech, AI &amp; Classroom Video Lab</h1>
+            <span class="px-3 py-0.5 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-red-100 text-ink-900">
+              Field Toolkit
+            </span>
+          </div>
+          <p class="text-sm text-ink-600 mt-1">NotebookLM in Google Classroom, missing-student slide/video catch-up, content video creation, OrbitNote &amp; essential software.</p>
+        </div>
+      </div>
+
+      <!-- PART 1: FEATURED STAFF VIDEO WALKTHROUGH (ANDREW'S NOTEBOOKLM DEMO) -->
+      <section class="bg-white rounded-3xl border border-cream-300 overflow-hidden shadow-sm">
+        <div class="grid grid-cols-1 lg:grid-cols-12">
+          <!-- INTERACTIVE VIDEO PLAYER PLACEHOLDER SLOT -->
+          <!-- [COPILOT_HOOK: ANDREW_NOTEBOOKLM_VIDEO_EMBED] -->
+          <!-- Replace the preview container below with your <iframe src="https://www.youtube.com/embed/..." /> or Google Drive video embed when ready -->
+          <div class="lg:col-span-7 bg-ink-900 p-6 sm:p-8 flex flex-col justify-between relative min-h-[300px] text-white">
+            <div class="flex items-center justify-between gap-2 z-10">
+              <span class="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-red-600 text-white flex items-center gap-1.5">
+                <i data-lucide="video" class="w-3.5 h-3.5"></i>
+                <span>Staff Walkthrough Video • Andrew Hogan</span>
+              </span>
+              <span class="text-xs font-mono text-ink-400">Embed Slot Ready</span>
+            </div>
+
+            <div class="my-6 p-6 rounded-2xl bg-ink-800/90 border border-ink-600/50 space-y-3 z-10" id="videoChapterPreviewBox">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-red-600 text-white flex items-center justify-center shrink-0 shadow-md">
+                  <i data-lucide="play" class="w-6 h-6 fill-ink-900"></i>
+                </div>
+                <div>
+                  <span id="activeVideoChapterBadge" class="text-[10px] font-extrabold uppercase tracking-widest text-red-400">Chapter 1 • 0:00 — Google Classroom Setup</span>
+                  <h3 id="activeVideoChapterTitle" class="font-editorial font-bold text-lg text-white">Demonstrating NotebookLM in Google Classroom &amp; Missing-Student Catch-Up</h3>
+                </div>
+              </div>
+              <p id="activeVideoChapterDesc" class="text-xs text-cream-200 leading-relaxed">
+                Click any chapter timestamp below to preview the workflow steps covered in the walkthrough video—or replace the <code class="text-red-300">[COPILOT_HOOK: ANDREW_NOTEBOOKLM_VIDEO_EMBED]</code> block with your recorded video link.
+              </p>
+            </div>
+
+            <!-- INTERACTIVE CHAPTER PILLS -->
+            <div class="space-y-1.5 z-10">
+              <span class="text-[10px] font-extrabold uppercase tracking-widest text-ink-400 block">Click a Walkthrough Chapter to Preview:</span>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <button class="video-chapter-btn text-left p-2.5 rounded-xl bg-red-600/30 border border-red-500 text-xs transition" data-badge="Chapter 1 • 0:00" data-title="NotebookLM + Google Classroom Setup" data-desc="How to build a master unit notebook from your Google Drive slides/docs and post student-ready study guides and FAQs directly into Google Classroom.">
+                  <div class="font-bold text-red-300 text-[11px]">0:00 • Part 1</div>
+                  <div class="font-semibold text-white truncate">Google Classroom Hub</div>
+                </button>
+                <button class="video-chapter-btn text-left p-2.5 rounded-xl bg-ink-800 hover:bg-ink-700 border border-ink-600 text-xs transition" data-badge="Chapter 2 • 1:25" data-title="Fast Curriculum & Unit Planning" data-desc="Uploading Kansas standards and unit PDFs to map daily bellringers, spot Tier 2/3 vocabulary bottlenecks, and level articles for different reading tiers.">
+                  <div class="font-bold text-red-300 text-[11px]">1:25 • Part 2</div>
+                  <div class="font-semibold text-white truncate">Curriculum Planning</div>
+                </button>
+                <button class="video-chapter-btn text-left p-2.5 rounded-xl bg-ink-800 hover:bg-ink-700 border border-ink-600 text-xs transition" data-badge="Chapter 3 • 2:45" data-title="Slides & Audio/Video for Missing Students" data-desc="Generating a 5-slide 'What You Missed' summary outline and conversational AI Audio/Video Overview so absent students can catch up in 5 minutes.">
+                  <div class="font-bold text-red-300 text-[11px]">2:45 • Part 3</div>
+                  <div class="font-semibold text-white truncate">Missing Student Slides/Video</div>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT 5 COLUMNS: COPY-PASTEABLE NOTEBOOKLM RECIPES -->
+          <div class="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between space-y-5 bg-gradient-to-b from-white to-cream-50 text-xs">
+            <div class="space-y-2">
+              <span class="text-[10px] font-extrabold uppercase tracking-widest text-red-700">Companion Prompt Recipes</span>
+              <h2 class="font-editorial font-bold text-xl text-ink-900">4 Copy-Paste NotebookLM Workflows</h2>
+              <p class="text-ink-600 leading-relaxed">
+                Upload your unit slides, lab sheets, or standards PDF into <a href="https://notebooklm.google.com/" target="_blank" class="font-bold text-red-700 underline">NotebookLM</a>, then copy any prompt below:
+              </p>
+            </div>
+
+            <div class="space-y-2.5">
+              <div class="p-3.5 rounded-2xl bg-red-50/60 border border-red-200 space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-ink-900">1. Missing-Student Catch-Up Slide &amp; Video Script</span>
+                  <button class="copy-prompt-btn text-[11px] font-bold px-2.5 py-1 rounded-lg bg-ink-900 text-white hover:bg-ink-800 flex items-center gap-1" data-prompt="Using only the uploaded lesson slides and lab handout from today, create a 'What You Missed' catch-up package for an absent 8th grader: 1) A 5-slide outline they can read in 2 minutes, 2) A 90-second video/audio narration script summarizing the main phenomenon, and 3) Two quick check questions they can submit in Google Classroom for makeup credit.">
+                    <i data-lucide="copy" class="w-3 h-3 text-red-400"></i><span>Copy</span>
+                  </button>
+                </div>
+                <p class="text-[11px] text-ink-600">Generates a 5-slide summary, 90-sec narration script, and Google Classroom makeup check.</p>
+              </div>
+
+              <div class="p-3.5 rounded-2xl bg-cream-100 border border-cream-300 space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-ink-900">2. Google Classroom Study Guide &amp; FAQ Builder</span>
+                  <button class="copy-prompt-btn text-[11px] font-bold px-2.5 py-1 rounded-lg bg-ink-900 text-white hover:bg-ink-800 flex items-center gap-1" data-prompt="Create a student-friendly Google Classroom Study Guide from our uploaded unit notes. Include: 1) Top 5 Big Ideas in plain middle-school language, 2) A glossary of 6 Tier 3 vocabulary terms with everyday analogies, and 3) 4 common misconceptions students should watch out for on Friday's quiz.">
+                    <i data-lucide="copy" class="w-3 h-3 text-red-400"></i><span>Copy</span>
+                  </button>
+                </div>
+                <p class="text-[11px] text-ink-600">Builds a clean unit review doc ready to post directly to your Google Classroom stream.</p>
+              </div>
+
+              <div class="p-3.5 rounded-2xl bg-cream-100 border border-cream-300 space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-ink-900">3. Tiered Reading Passages (Lexile 700 / 950 / 1150)</span>
+                  <button class="copy-prompt-btn text-[11px] font-bold px-2.5 py-1 rounded-lg bg-ink-900 text-white hover:bg-ink-800 flex items-center gap-1" data-prompt="Using only the uploaded unit standards and background article, write 3 versions of an engaging 250-word reading passage explaining this phenomenon at Lexile 700, 950, and 1150, followed by 3 identical discussion questions so all students can join the same table debate.">
+                    <i data-lucide="copy" class="w-3 h-3 text-red-400"></i><span>Copy</span>
+                  </button>
+                </div>
+                <p class="text-[11px] text-ink-600">Differentiates complex science or social studies texts while keeping the same discussion questions.</p>
+              </div>
+
+              <div class="p-3.5 rounded-2xl bg-cream-100 border border-cream-300 space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-ink-900">4. Audio Overview Listening Station Sheet</span>
+                  <button class="copy-prompt-btn text-[11px] font-bold px-2.5 py-1 rounded-lg bg-ink-900 text-white hover:bg-ink-800 flex items-center gap-1" data-prompt="Create a 1-page student station guide with 4 key vocabulary look-fors, 2 diagram sketching boxes, and 3 pause-and-predict questions to accompany the NotebookLM Audio Overview for this unit.">
+                    <i data-lucide="copy" class="w-3 h-3 text-red-400"></i><span>Copy</span>
+                  </button>
+                </div>
+                <p class="text-[11px] text-ink-600">Pairs with NotebookLM's 2-host podcast generator for active listening stations.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PART 2: DUAL-TRACK VIDEO PLAYBOOK (TEACHER VIDEOS VS. STUDENT VIDEOS) -->
+      <section class="space-y-4">
+        <div class="border-b border-cream-300 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h2 class="font-editorial font-bold text-xl text-ink-900">Classroom Video Playbook: Teacher-Made &amp; Student-Created Videos</h2>
+            <p class="text-xs text-ink-600">Practical ideas from our staff meeting on making content-focused videos for students—and having students create their own.</p>
+          </div>
+          <span class="text-[11px] font-bold px-3 py-1 rounded-full bg-red-100 text-red-900">Under 3 Minutes Rule</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 text-xs">
+          <!-- TRACK A: TEACHER-CREATED CONTENT VIDEOS -->
+          <div class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-4 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-red-100 text-ink-900">Track A • Teacher-Created Videos</span>
+                <span class="text-ink-400 font-semibold">Screencastify / Canva / Loom</span>
+              </div>
+              <h3 class="font-editorial font-bold text-lg text-ink-900">Making Short, Content-Focused Videos for Your Students</h3>
+              <p class="text-ink-600 leading-relaxed">
+                Students engage far more with a 2-minute video featuring <strong>your voice and your slides</strong> than a 15-minute stranger on YouTube. Use quick, unedited one-take recordings to clone yourself:
+              </p>
+              <ul class="space-y-2 text-ink-800">
+                <li class="flex items-start gap-2">
+                  <span class="font-bold text-red-600">1.</span>
+                  <span><strong>The ‘Lab Setup &amp; Safety’ Loop:</strong> Record a 90-second walkthrough of equipment setup and post it in Google Classroom so groups can re-watch at their lab tables instead of raising hands.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="font-bold text-red-600">2.</span>
+                  <span><strong>The Worked-Example Replay:</strong> Record yourself solving one tough math problem or annotating one CER paragraph in OrbitNote so struggling students or parents can replay it at home.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="font-bold text-red-600">3.</span>
+                  <span><strong>Missing-Student Slide Narration:</strong> Export your NotebookLM 5-slide catch-up outline into Canva or Google Slides and record a 2-minute voiceover for absent kids.</span>
+                </li>
+              </ul>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-cream-100 border border-cream-200 text-[11px] text-ink-800">
+              <strong class="text-ink-900">Pro Tip:</strong> Never re-record over a tiny verbal stumble—authentic, conversational one-take videos feel like real teaching and take 3 minutes total to produce.
+            </div>
+          </div>
+
+          <!-- TRACK B: STUDENT-CREATED EXPLAINER VIDEOS -->
+          <div class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-4 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-900">Track B • Student-Created Videos</span>
+                <span class="text-ink-400 font-semibold">90-Second ‘One-Take’ Protocol</span>
+              </div>
+              <h3 class="font-editorial font-bold text-lg text-ink-900">Having Students Make Videos to Prove Mastery</h3>
+              <p class="text-ink-600 leading-relaxed">
+                When middle schoolers have to explain a phenomenon on camera in 60–90 seconds, they process vocabulary and cause-and-effect at a much deeper level. Keep it structured with the <strong>3-Box Paper Storyboard</strong> before they touch a camera:
+              </p>
+              <div class="grid grid-cols-3 gap-2.5 pt-1">
+                <div class="p-3 rounded-2xl bg-cream-50 border border-cream-300">
+                  <div class="font-extrabold text-[10px] uppercase text-emerald-800">Box 1 (0–15s)</div>
+                  <div class="font-bold text-ink-900 mt-0.5">The Hook &amp; Claim</div>
+                  <p class="text-[11px] text-ink-600 mt-1">State the mystery question and your team's claim in one clear sentence.</p>
+                </div>
+                <div class="p-3 rounded-2xl bg-cream-50 border border-cream-300">
+                  <div class="font-extrabold text-[10px] uppercase text-emerald-800">Box 2 (15–60s)</div>
+                  <div class="font-bold text-ink-900 mt-0.5">Visual Diagram Proof</div>
+                  <p class="text-[11px] text-ink-600 mt-1">Point to your drawn model or lab graph and explain <em>why</em> using 3 unit vocab words.</p>
+                </div>
+                <div class="p-3 rounded-2xl bg-cream-50 border border-cream-300">
+                  <div class="font-extrabold text-[10px] uppercase text-emerald-800">Box 3 (60–90s)</div>
+                  <div class="font-bold text-ink-900 mt-0.5">Bust the Myth</div>
+                  <p class="text-[11px] text-ink-600 mt-1">Explain the #1 common trap people fall for and why the evidence disproves it.</p>
+                </div>
+              </div>
+            </div>
+            <button class="copy-prompt-btn w-full py-2.5 px-4 rounded-xl bg-ink-900 hover:bg-ink-800 text-white font-bold flex items-center justify-center gap-2 transition" data-prompt="Student 90-Second Video Rubric & Directions: 1) Complete your 3-Box Paper Storyboard first and get a teacher stamp. 2) Record a 60-90 second One-Take Video (Paper Slide or Chromebook Screencast). 3) Must include: Visual diagram on screen, all 3 target vocabulary words used in context, and 1 busted misconception.">
+              <i data-lucide="copy" class="w-3.5 h-3.5 text-red-400"></i>
+              <span>Copy Student Video Directions &amp; 3-Box Rubric</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PART 3: ESSENTIAL CLASSROOM TECH & SOFTWARE DIRECTORY (ORBITNOTE & MORE) -->
+      <section class="space-y-4">
+        <div class="border-b border-cream-300 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h2 class="font-editorial font-bold text-xl text-ink-900">Essential Classroom Tech Toolkit (OrbitNote &amp; Software)</h2>
+            <p class="text-xs text-ink-600">High-utility software tools that work smoothly on school Chromebooks.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-xs">
+          <!-- TOOL 1: ORBITNOTE -->
+          <div class="bg-white rounded-3xl border-2 border-red-200 p-6 shadow-sm flex flex-col justify-between space-y-4">
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-red-100 text-ink-900">PDF &amp; Accessibility Star</span>
+                <a href="https://orbitnote.texthelp.com/" target="_blank" class="text-red-700 font-bold hover:underline flex items-center gap-1">
+                  <span>OrbitNote</span> <i data-lucide="external-link" class="w-3 h-3"></i>
+                </a>
+              </div>
+              <h3 class="font-editorial font-bold text-lg text-ink-900">OrbitNote (by Texthelp)</h3>
+              <p class="text-ink-600 leading-relaxed">
+                Transforms static PDFs in Google Classroom into interactive, accessible workspaces with Read&amp;Write tools built in.
+              </p>
+              <div class="space-y-2 pt-1">
+                <div class="p-2.5 rounded-xl bg-cream-100 border border-cream-200">
+                  <strong class="text-ink-900 block">🍎 Teacher Workflow:</strong>
+                  Assign PDFs directly via Google Classroom; leave voice comments for fast grading; use freehand drawing to model math/science diagrams live.
+                </div>
+                <div class="p-2.5 rounded-xl bg-red-50/60 border border-red-200">
+                  <strong class="text-ink-900 block">🎒 Student Workflow:</strong>
+                  Use Text-to-Speech read-aloud with dual-color word tracking, Picture Dictionary for Tier 3 terms, 4-color highlighters + "Collect Highlights" into a study doc, and Voice Notes.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOOL 2: NOTEBOOKLM -->
+          <div class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm flex flex-col justify-between space-y-4">
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-red-100 text-red-900">AI Curriculum Co-Pilot</span>
+                <a href="https://notebooklm.google.com/" target="_blank" class="text-red-600 font-bold hover:underline flex items-center gap-1">
+                  <span>NotebookLM</span> <i data-lucide="external-link" class="w-3 h-3"></i>
+                </a>
+              </div>
+              <h3 class="font-editorial font-bold text-lg text-ink-900">Google NotebookLM</h3>
+              <p class="text-ink-600 leading-relaxed">
+                Source-grounded AI notebook that only uses the Google Docs, Slides, PDFs, and links you upload—zero outside hallucinations.
+              </p>
+              <div class="space-y-2 pt-1">
+                <div class="p-2.5 rounded-xl bg-cream-100 border border-cream-200">
+                  <strong class="text-ink-900 block">🍎 Teacher Workflow:</strong>
+                  Generate unit pacing guides, leveled reading passages, DOK assessment audits, and 5-slide catch-up outlines for missing students.
+                </div>
+                <div class="p-2.5 rounded-xl bg-red-50/60 border border-red-200">
+                  <strong class="text-ink-900 block">🎒 Student Workflow:</strong>
+                  Listen to the 2-host Audio Overview podcast at stations or after an absence, and review teacher-verified unit FAQs and study guides in Google Classroom.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOOL 3: CANVA FOR EDUCATION / SLIDE & VIDEO STUDIO -->
+          <div class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm flex flex-col justify-between space-y-4">
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-900">Visuals &amp; Video Studio</span>
+                <a href="https://www.canva.com/education/" target="_blank" class="text-emerald-700 font-bold hover:underline flex items-center gap-1">
+                  <span>Canva Edu</span> <i data-lucide="external-link" class="w-3 h-3"></i>
+                </a>
+              </div>
+              <h3 class="font-editorial font-bold text-lg text-ink-900">Canva for Education &amp; Slides</h3>
+              <p class="text-ink-600 leading-relaxed">
+                All-in-one visual deck builder and browser-based video recorder (100% free for K-12 schools).
+              </p>
+              <div class="space-y-2 pt-1">
+                <div class="p-2.5 rounded-xl bg-cream-100 border border-cream-200">
+                  <strong class="text-ink-900 block">🍎 Teacher Workflow:</strong>
+                  Paste NotebookLM slide outlines into visual templates and use "Present &amp; Record" to make a 2-minute video link for Google Classroom.
+                </div>
+                <div class="p-2.5 rounded-xl bg-red-50/60 border border-red-200">
+                  <strong class="text-ink-900 block">🎒 Student Workflow:</strong>
+                  Collaborate in pairs on infographics, Frayer visual posters, or 90-second voice-over explainer videos without complex editing software.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOOL 4: EDPUZZLE & SCREENCASTIFY -->
+          <div class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm flex flex-col justify-between space-y-4">
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-blue-100 text-blue-900">Interactive Video</span>
+                <a href="https://edpuzzle.com/" target="_blank" class="text-blue-700 font-bold hover:underline flex items-center gap-1">
+                  <span>Edpuzzle</span> <i data-lucide="external-link" class="w-3 h-3"></i>
+                </a>
+              </div>
+              <h3 class="font-editorial font-bold text-lg text-ink-900">Edpuzzle &amp; Screencastify</h3>
+              <p class="text-ink-600 leading-relaxed">
+                Turn passive video watching into active check-for-understanding pauses synced directly with Google Classroom grades.
+              </p>
+              <div class="space-y-2 pt-1">
+                <div class="p-2.5 rounded-xl bg-cream-100 border border-cream-200">
+                  <strong class="text-ink-900 block">🍎 Teacher Workflow:</strong>
+                  Trim any content clip to 3 minutes, embed 3 pause-and-predict questions, and turn on "Prevent Skipping" for station accountability.
+                </div>
+                <div class="p-2.5 rounded-xl bg-red-50/60 border border-red-200">
+                  <strong class="text-ink-900 block">🎒 Student Workflow:</strong>
+                  Re-watch the exact 20-second segment before a question if they get stuck, building self-paced comprehension.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOOL 5: BRISK TEACHING & DIFFIT -->
+          <div class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm flex flex-col justify-between space-y-4">
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-rose-100 text-rose-900">Chrome Extension</span>
+                <a href="https://www.briskteaching.com/" target="_blank" class="text-rose-700 font-bold hover:underline flex items-center gap-1">
+                  <span>Brisk / Diffit</span> <i data-lucide="external-link" class="w-3 h-3"></i>
+                </a>
+              </div>
+              <h3 class="font-editorial font-bold text-lg text-ink-900">Brisk Teaching &amp; Diffit</h3>
+              <p class="text-ink-600 leading-relaxed">
+                Instant reading-level adaptation and Google Docs feedback helpers that live right inside your Chrome browser.
+              </p>
+              <div class="space-y-2 pt-1">
+                <div class="p-2.5 rounded-xl bg-cream-100 border border-cream-200">
+                  <strong class="text-ink-900 block">🍎 Teacher Workflow:</strong>
+                  Convert any web article into a 6th, 7th, or 8th-grade Google Doc or Google Slides deck in 10 seconds, then push it to OrbitNote.
+                </div>
+                <div class="p-2.5 rounded-xl bg-red-50/60 border border-red-200">
+                  <strong class="text-ink-900 block">🎒 Student Workflow:</strong>
+                  Access core grade-level concepts with scaffolded sentence stems and built-in vocabulary banks.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOOL 6: COPILOT CUSTOM TOOL SLOT -->
+          <!-- [COPILOT_HOOK: ADDITIONAL_TEACHER_SOFTWARE_CARD] -->
+          <div class="rounded-3xl border-2 border-dashed border-cream-300 p-6 bg-cream-100/50 flex flex-col justify-between space-y-3">
+            <div class="space-y-2">
+              <span class="text-[10px] font-mono bg-white px-2.5 py-0.5 rounded border border-cream-300 text-ink-600">Copilot Ready Slot</span>
+              <h3 class="font-editorial font-bold text-lg text-ink-900">Add Department Software</h3>
+              <p class="text-ink-600 leading-relaxed">
+                Use GitHub Copilot or the "Share a Tip" button at the top of the page to add PhET Simulations, Desmos, Gizmos, or department-specific apps here.
+              </p>
+            </div>
+            <button id="addTechTipFromAcademyBtn" class="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-cream-200 text-ink-900 border border-cream-300 font-bold transition">
+              + Share a Tech or Software Tip
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- FULL ARTICLE READER MODAL -->
+  <!-- ========================================== -->
+  <div id="articleReaderModal" class="fixed inset-0 bg-ink-900/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-cream-50 rounded-3xl shadow-2xl border border-cream-300 max-w-3xl w-full my-8 overflow-hidden">
+      
+      <!-- MODAL IMAGE HEADER -->
+      <div class="relative h-56 sm:h-64 bg-ink-900">
+        <img id="readerHeroImg" src="user_uploaded_files/ttl=63d/tool_generated/opt_watermarked_img_10640110943084536436.jpg" alt="Article header" class="w-full h-full object-cover opacity-90" />
+        <button id="closeArticleReaderBtn" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-ink-900/80 hover:bg-ink-900 text-white flex items-center justify-center transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+        <div class="absolute bottom-4 left-6">
+          <span id="readerCategoryBadge" class="px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-red-600 text-white">
+            Student Engagement
+          </span>
+        </div>
+      </div>
+
+      <!-- ARTICLE BODY -->
+      <div class="p-6 sm:p-10 space-y-6">
+        <div>
+          <div class="flex items-center gap-2 text-xs text-ink-600 font-semibold mb-2">
+            <span id="readerAuthor">Science Team</span>
+            <span>•</span>
+            <span id="readerReadTime">4 min read</span>
+            <span>•</span>
+            <span id="readerDate">Oct 21, 2026</span>
+          </div>
+          <h2 id="readerTitle" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900 leading-tight"></h2>
+          <p id="readerSubtitle" class="text-sm sm:text-base text-ink-600 mt-2 leading-relaxed"></p>
+        </div>
+
+        <!-- OPTIONAL VIDEO WALKTHROUGH CALLOUT (SHOWN ON ANDREW'S NOTEBOOKLM ARTICLE) -->
+        <div id="readerVideoDemoBox" class="hidden p-5 rounded-2xl bg-ink-900 text-white border border-red-500/40 space-y-3">
+          <div class="flex items-center justify-between gap-2 flex-wrap">
+            <span class="text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-red-600/30 text-red-300">
+              🎬 Companion Video Walkthrough • Andrew Hogan
+            </span>
+            <button id="jumpToVideoLabFromReaderBtn" class="text-xs font-bold text-red-300 hover:underline flex items-center gap-1">
+              <span>Open Full Video &amp; Prompt Lab</span>
+              <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+          <p class="text-xs text-cream-200 leading-relaxed">
+            <strong>Video Demo Chapters:</strong> (0:00) Using NotebookLM inside Google Classroom • (1:25) Unit &amp; Curriculum Planning • (2:45) Generating Catch-Up Slides &amp; Audio/Video Overviews for Missing Students.
+          </p>
+        </div>
+
+        <!-- TRY THIS TOMORROW HIGHLIGHT -->
+        <div class="p-5 rounded-2xl bg-red-50 border border-red-300 space-y-1.5">
+          <div class="text-xs font-extrabold uppercase tracking-wider text-red-900 flex items-center gap-1.5">
+            <i data-lucide="zap" class="w-4 h-4 text-red-600"></i>
+            <span>Try This Tomorrow in Class</span>
+          </div>
+          <p id="readerTryTomorrow" class="text-xs sm:text-sm text-ink-900 font-medium leading-relaxed"></p>
+        </div>
+
+        <!-- PARAGRAPHS -->
+        <div id="readerParagraphs" class="space-y-4 text-sm text-ink-800 leading-relaxed"></div>
+
+        <!-- VERBATIM CLASSROOM SCRIPT / PROMPT -->
+        <div class="p-5 rounded-2xl bg-white border border-cream-300 space-y-2 shadow-2xs">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
+              <i data-lucide="message-square" class="w-4 h-4 text-emerald-600"></i>
+              <span>Ready-to-Use Classroom Script / Prompt</span>
+            </span>
+            <button id="copyReaderScriptBtn" class="text-xs font-bold text-red-600 hover:underline flex items-center gap-1">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Script
+            </button>
+          </div>
+          <blockquote id="readerScript" class="font-editorial italic text-sm text-ink-900 border-l-3 border-emerald-500 pl-3 py-1"></blockquote>
+        </div>
+
+        <div class="pt-4 border-t border-cream-300 flex items-center justify-between">
+          <span class="text-xs text-ink-600">Found this helpful? Share it with your PLC or pin it to your reading list.</span>
+          <button id="closeArticleReaderBottomBtn" class="px-5 py-2 rounded-full bg-ink-900 text-white text-xs font-bold hover:bg-ink-800 transition">
+            Done Reading
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: SHARE A CLASSROOM TIP OR QUOTE -->
+  <!-- ========================================== -->
+  <div id="shareTipModal" class="fixed inset-0 bg-ink-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl border border-cream-300 max-w-lg w-full p-6 sm:p-8 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-cream-200">
+        <div>
+          <h3 class="font-editorial font-bold text-xl text-ink-900">Share a Classroom Tip or Win</h3>
+          <p class="text-xs text-ink-600">Contribute a strategy, Tech/AI workflow, engagement hook, or student quote</p>
+        </div>
+        <button id="closeShareTipModalBtn" class="text-ink-400 hover:text-ink-900 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="shareTipForm" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block font-bold text-ink-800 mb-1">Contribution Type</label>
+          <select id="tipType" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 bg-white">
+            <option value="article">Classroom Strategy / Tech Tip / Article</option>
+            <option value="quote">Overheard in the Hallway (Student Quote)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-ink-800 mb-1">Category</label>
+          <select id="tipCategory" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 bg-white">
+            <option value="Student Engagement">Student Engagement</option>
+            <option value="Classroom Management">Classroom Management</option>
+            <option value="Teacher Support">Teacher Support &amp; Wellbeing</option>
+            <option value="Tech & AI">Tech &amp; AI Tips</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-ink-800 mb-1">Headline or Tool Name</label>
+          <input id="tipTitle" type="text" placeholder="e.g., Using OrbitNote Voice Comments for Lab Feedback" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" required />
+        </div>
+
+        <div>
+          <label class="block font-bold text-ink-800 mb-1">The Tip, Takeaway, or Quote</label>
+          <textarea id="tipContent" rows="3" placeholder="Describe how you use it in class and why it works..." class="w-full p-3.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" required></textarea>
+        </div>
+
+        <div>
+          <label class="block font-bold text-ink-800 mb-1">Your Name / Department</label>
+          <input id="tipAuthor" type="text" placeholder="e.g., 8th Grade Science" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" required />
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" id="cancelShareTipBtn" class="px-4 py-2 rounded-full border border-cream-300 text-ink-600 font-bold">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-full bg-ink-900 hover:bg-ink-800 text-white font-bold">Publish to Feed</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: ASK AI COACH (GEMINI FLASH) -->
+  <!-- ========================================== -->
+  <div id="geminiModal" class="fixed inset-0 bg-ink-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl border border-cream-300 max-w-xl w-full p-6 sm:p-8 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-cream-200">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-red-600 text-white flex items-center justify-center font-bold">
+            <i data-lucide="sparkles" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-editorial font-bold text-lg text-ink-900">MMS Instructional &amp; EdTech Coach</h3>
+            <p class="text-[11px] text-ink-600">Powered by Gemini Flash • Strategies, Tech/AI workflows &amp; building answers</p>
+          </div>
+        </div>
+        <button id="closeGeminiModalBtn" class="text-ink-400 hover:text-ink-900 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-2">
+        <label class="text-xs font-bold text-ink-800">What classroom challenge, tech tool, or building question can I help with?</label>
+        <textarea id="geminiQueryInput" rows="3" placeholder="e.g., How do I use NotebookLM for missing students, how do students annotate in OrbitNote, or give me 3 bellringers for forces & motion..." class="w-full p-3.5 text-xs bg-cream-50 border border-cream-300 rounded-2xl focus:ring-2 focus:ring-red-600/30 focus:outline-none"></textarea>
+      </div>
+
+      <div class="flex items-center justify-between gap-3">
+        <span class="text-[11px] text-ink-400 flex items-center gap-1">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i>
+          <span>Cloudflare Worker Proxy Ready</span>
+        </span>
+        <button id="geminiSubmitBtn" class="px-5 py-2.5 rounded-full bg-ink-900 hover:bg-ink-800 text-white font-bold text-xs flex items-center gap-1.5 transition">
+          <i data-lucide="send" class="w-3.5 h-3.5 text-red-400"></i>
+          <span>Get Strategy</span>
+        </button>
+      </div>
+
+      <div id="geminiResponseContainer" class="hidden p-4 rounded-2xl bg-cream-100 border border-cream-300 text-xs space-y-2">
+        <div class="flex items-center justify-between font-bold text-ink-900">
+          <span class="flex items-center gap-1.5 text-red-600">
+            <i data-lucide="bot" class="w-4 h-4"></i> Coach Response
+          </span>
+          <span id="geminiLatencyBadge" class="text-[10px] font-normal text-ink-400"></span>
+        </div>
+        <div id="geminiResponseText" class="text-ink-800 leading-relaxed whitespace-pre-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: SETTINGS & PROXY CONFIGURATION -->
+  <!-- ========================================== -->
+  <div id="settingsModal" class="fixed inset-0 bg-ink-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl border border-cream-300 max-w-md w-full p-6 space-y-4 text-xs">
+      <div class="flex items-center justify-between pb-3 border-b border-cream-200">
+        <h3 class="font-editorial font-bold text-lg text-ink-900">Eagle Deep Dive Daily Settings</h3>
+        <button id="closeSettingsModalBtn" class="text-ink-400 hover:text-ink-900 p-1">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block font-bold text-ink-800 mb-1">Cloudflare Worker Proxy URL (Gemini Flash)</label>
+          <input id="workerUrlInput" type="url" placeholder="https://mms-gemini-proxy.your-subdomain.workers.dev" class="w-full p-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" />
+          <p class="text-[11px] text-ink-600 mt-1">Leave blank to use the built-in instructional coach simulator.</p>
+        </div>
+
+        <div class="pt-3 border-t border-cream-200 flex items-center justify-between">
+          <button id="clearStorageBtn" class="text-rose-600 hover:underline font-bold">Reset Saved Bookmarks</button>
+          <button id="saveSettingsBtn" class="px-4 py-2 rounded-full bg-ink-900 text-white font-bold">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-cream-300 py-8 mt-16 text-xs text-ink-600">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2.5">
+        <span class="font-editorial font-bold text-ink-900 text-sm">Eagle Deep Dive Daily</span>
+        <span>•</span>
+        <span>Classroom Craft, Student Engagement, Teacher Support &amp; Tech/AI</span>
+      </div>
+      <div class="flex items-center gap-4 text-ink-400">
+        <span>Maize Middle School (USD 266)</span>
+        <span>•</span>
+        <span>GitHub Pages Zero-Build Edition</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- APPLICATION LOGIC -->
+  <script>
+    const IMG_ENGAGEMENT = "user_uploaded_files/ttl=63d/tool_generated/opt_watermarked_img_10640110943084536436.jpg";
+    const IMG_MANAGEMENT = "user_uploaded_files/ttl=63d/tool_generated/opt_watermarked_img_8563596362175423207.jpg";
+    const IMG_SUPPORT = "user_uploaded_files/ttl=63d/tool_generated/opt_watermarked_img_573880434360361359.jpg";
+    const IMG_TECH_AI = "user_uploaded_files/ttl=63d/tool_generated/opt_watermarked_img_2185100976365494820.jpg";
+
+    // Revolving Search Suggestions that fade in and fade out inside the white search box
+    const REVOLVING_SUGGESTIONS = [
+      'Try: "NotebookLM for missing students"...',
+      'Try: "OrbitNote PDF in Google Classroom"...',
+      'Ask AI: "90-sec student video storyboard"...',
+      'Try: "bellringer hooks for 8th grade"...',
+      'Ask AI: "5-minute post-lunch class reset"...',
+      'Try: "de-escalating student shutdowns"...',
+      'Try: "sub coverage & Frontline login"...',
+      'Try: "Tier 2 MTSS referral form"...'
+    ];
+
+    const APP_DATA = {
+      articles: [
+        {
+          id: "art-1",
+          title: "The ‘Low-Floor, High-Ceiling’ Hook: Getting Every 8th Grader Talking in the First 4 Minutes",
+          subtitle: "How replacing traditional glossary bellringers with visual phenomena controversies and 90-second table debates transforms passive classes into active investigators.",
+          category: "Student Engagement",
+          author: "Science & STEM Team",
+          readTime: "4 min read",
+          date: "Oct 21, 2026",
+          featured: true,
+          image: IMG_ENGAGEMENT,
+          takeaway: "Students shut down when a warm-up feels like a pop quiz. Opening with a counter-intuitive visual mystery where everyone can hazard a guess gets 100% of voices active before formal vocabulary hits the board.",
+          tryTomorrow: "Put up a split image or a 'Which One Doesn't Belong?' prompt with zero academic jargon. Give tables 60 seconds to agree on a defense, then call a table spokesperson to share what their group debated.",
+          body: [
+            "The first four minutes of class set the metabolic rate for the entire period. When students walk in and see 'Define photosynthesis in your notebook,' half the room stalls because they are afraid of being wrong, and the other half copies a glossary line without thinking.",
+            "Instead, shift to a 'Low-Floor, High-Ceiling' phenomenon hook. A low floor means any student—regardless of reading level or yesterday's attendance—can make an immediate observation. A high ceiling means the prompt naturally pushes advanced thinkers toward deeper conceptual connections.",
+            "For example, in 8th grade science, project two contrasting photos: a massive oak tree and a tiny packet of soil. Ask: 'Where did the 4,000 pounds of wood actually come from—the dirt, the water, or the thin air?' Don't grade it. Give tables 90 seconds to argue and lock in a table vote."
+          ],
+          script: "Take 30 seconds of silent look-time at the screen. You don't need any textbook words yet—just notice what seems weird or surprising. Now, turn to your shoulder partner: Person A, you have 45 seconds to convince Person B of your hunch.",
+          tags: ["bellringers", "engagement", "discussion", "science", "inquiry", "warm-ups"]
+        },
+        {
+          id: "art-7",
+          title: "NotebookLM in Google Classroom: Curriculum Planning & Catch-Up Slides/Videos for Missing Students",
+          subtitle: "How to use NotebookLM to map units, organize Google Classroom resources, and generate rapid slide decks and audio/video overviews so absent students never fall behind.",
+          category: "Tech & AI",
+          author: "Andrew Hogan & EdTech Lab",
+          readTime: "4 min read + Video Demo",
+          date: "Oct 21, 2026",
+          featured: false,
+          hasVideoDemo: true,
+          image: IMG_TECH_AI,
+          takeaway: "Catching up absent students shouldn't eat up 20 minutes of your plan hour. By keeping a unit NotebookLM loaded with your slides, lab docs, and standards, you can generate a 5-slide catch-up outline and a 3-minute audio/video overview to post straight into Google Classroom.",
+          tryTomorrow: "Create one 'Unit Master Notebook' in NotebookLM and upload this week's slides and guided notes. Generate a 'Missing Student Catch-Up Guide' and post it under a pinned 'Absent? Start Here' topic in Google Classroom.",
+          body: [
+            "Unlike open-ended AI chatbots that pull from the random internet, Google's NotebookLM is strictly grounded in the documents, Google Slides, PDFs, and YouTube links you upload. That makes it a game-changer for three everyday middle school workflows: Google Classroom resource hubs, curriculum planning, and supporting absent students.",
+            "1. Curriculum Planning & Google Classroom Alignment: Drop your Kansas state standards PDF, pacing guide, and past unit labs into a single notebook. Ask NotebookLM to spot vocabulary gaps, sequence daily bellringers, or draft differentiated reading passages that you can export directly to Google Docs and assign in Google Classroom.",
+            "2. Slide & Video/Audio Generation for Missing Students: When a student misses a pivotal lab or demonstration, use NotebookLM to generate a concise 5-slide 'What You Missed' summary outline (ready to paste into Google Slides or Canva) alongside an AI Audio/Video Overview that walks the student through the core phenomenon in conversational language.",
+            "3. Student-Facing Study Guides: Post the exported study guide, FAQ, and audio/video overview into your Google Classroom stream before a unit test so students have a 24/7 study guide built strictly from your classroom notes."
+          ],
+          script: "NotebookLM Prompt for Absent Students: 'Using only Tuesday's lab slides and guided notes, create a 1-page Missing Student Catch-Up Sheet with: 1) The Big Question we investigated, 2) A 5-slide summary outline of key findings, 3) Three vocabulary terms in plain 8th-grade language, and 4) Two check-for-understanding questions they can answer to earn lab makeup credit.'",
+          tags: ["tech", "ai", "notebooklm", "google classroom", "missing students", "absent", "slides", "video", "curriculum planning"]
+        },
+        {
+          id: "art-2",
+          title: "The 90-Second Transition Reset: Reclaiming Focus Without Raising Your Voice",
+          subtitle: "Practical, non-confrontational routines that bridge chaotic hallway passing periods into calm, productive workshop time.",
+          category: "Classroom Management",
+          author: "Classroom Craft Collective",
+          readTime: "3 min read",
+          date: "Oct 19, 2026",
+          featured: false,
+          image: IMG_MANAGEMENT,
+          takeaway: "Competing with middle school volume drains teacher energy by 5th hour. Anchoring transitions to predictable visual cues and physical proximity resets the room faster than verbal warnings.",
+          tryTomorrow: "Stand at the threshold during passing period to greet students by name, and point silently to a single 'Do Immediately' visual box on the board. Start class from the back or side of the room rather than behind the podium.",
+          body: [
+            "Middle schoolers carry hallway adrenaline three minutes into every period. When we try to talk over that energy from the front of the room, we accidentally train students that the first two requests don't count.",
+            "The most effective reset uses spatial anchoring and visual offloading. Keep a consistent spot on the screen that shows three things only: What stays on your desk, what goes away, and your 2-minute starting task.",
+            "When transitioning out of group lab work back to whole-class debrief, avoid open-ended countdowns. Give a specific physical anchor: 'In 15 seconds, be Seated, Markers capped, Eyes on the graph.'"
+          ],
+          script: "Pause where you are. Cap the marker until it clicks. Look at the blue box on the screen—in 60 seconds, your table needs one sticky note on the front board.",
+          tags: ["classroom management", "transitions", "routines", "proximity", "de-escalation"]
+        },
+        {
+          id: "art-8",
+          title: "Content Videos Dual-Track: Making Quick Teacher Videos & Having Students Record Explainers",
+          subtitle: "How 3-minute teacher screencasts clone your support during labs—and how student-created 90-second videos build deeper mastery than worksheets.",
+          category: "Tech & AI",
+          author: "MMS Media & Instructional Team",
+          readTime: "4 min read",
+          date: "Oct 18, 2026",
+          featured: false,
+          image: IMG_TECH_AI,
+          takeaway: "Middle schoolers tune out generic 15-minute YouTube lectures, but they lock in when they hear their own teacher's voice in a 3-minute screencast—and comprehension skyrockets when students script and film their own 90-second concept explainers.",
+          tryTomorrow: "Track A (Teacher Video): Record a single-take 2-minute screencast walking through your next lab diagram so students can re-watch at their own pace. Track B (Student Video): Give pairs a '3-Box Paper Storyboard' that they must get stamped before recording a 60-second explanation.",
+          body: [
+            "Video in the middle school classroom works best when it is short, authentic, and low-production. Whether you are recording a micro-lesson for your students or handing the camera to them, the secret is keeping the runtime under 3 minutes.",
+            "Track 1 — Teacher-Created Content Videos: Instead of repeating the same multi-step directions 18 times during a lab or math workshop, record a 2-minute screen capture (using Screencastify, Loom, or Canva's built-in recorder) over your Google Slides. Embed it in Google Classroom or Edpuzzle. Struggling learners can pause and rewind without embarrassment, and absent students get your exact explanation.",
+            "Track 2 — Student-Created Explainer Videos: When students have to teach a concept on camera in 90 seconds, they can't hide behind vague copy-pasted sentences. Have pairs create a 'Paper Slide Video' or Chromebook screen recording where they point to a diagram, explain the cause-and-effect relationship using 3 target vocabulary words, and bust one common myth.",
+            "The Golden Rule for Student Videos: Never let students open the camera app first. Require a 5-minute '3-Box Storyboard' on paper (Box 1: The Hook Question, Box 2: The Visual Diagram/Evidence, Box 3: The Real-World Connection). Once you initial their storyboard, they get 10 minutes to record in one take."
+          ],
+          script: "Student Video Challenge Script: 'Your pair has 10 minutes to record a 60-to-90 second One-Take Explainer. You must show your annotated diagram on screen, use all three unit vocabulary words accurately, and explain why the common misconception is wrong. No fancy editing—clarity beats special effects!'",
+          tags: ["tech", "ai", "video", "student videos", "screencast", "edpuzzle", "canva", "engagement"]
+        },
+        {
+          id: "art-3",
+          title: "The Friday 3:15 Triage: Leaving Work at Work With Monday Already Staged",
+          subtitle: "A 15-minute end-of-week ritual designed to protect your weekend bandwidth while eliminating Sunday-night lesson anxiety.",
+          category: "Teacher Support",
+          author: "Staff Wellbeing & Sustainability",
+          readTime: "3 min read",
+          date: "Oct 17, 2026",
+          featured: false,
+          image: IMG_SUPPORT,
+          takeaway: "Taking ungraded stacks home in a tote bag rarely leads to productive grading—it just creates weekend guilt. A ruthless 15-minute Friday afternoon triage closes open loops before you walk to your car.",
+          tryTomorrow: "Set a 15-minute timer after the final bell on Friday: 5 minutes to clear your physical desk surface, 5 minutes to stage Monday's 1st-hour slide/copies, and 5 minutes to reply to two urgent emails.",
+          body: [
+            "Teacher burnout rarely comes from the 45 minutes we spend teaching a period; it comes from the cognitive friction of carrying 140 open loops home over the weekend.",
+            "Instead of leaving Friday afternoon in a blur or staying until 5:30 PM, run the '5-5-5 Reset.' First, do a 3-pile sort on any paper collected that day: Recycle (practice that served its purpose), Quick Scan (check-plus/check/reteach), and Key Assessment.",
+            "Second, stage Monday morning's very first bellringer on your desktop and place Monday's copies on the front corner of your desk. Walking in Monday morning to a prepped 1st hour is the best gift you can give your future self."
+          ],
+          script: "Friday 3:15 Checklist: 1) Monday Slide 1 open on desktop, 2) Whiteboard date updated, 3) Emergency sub folder visible on desk corner, 4) Take-home bag empty.",
+          tags: ["teacher support", "wellbeing", "burnout", "grading", "boundaries", "friday reset"]
+        },
+        {
+          id: "art-9",
+          title: "OrbitNote & Essential Classroom Software: Interactive PDFs, Read-Alouds & Time-Saving Tech",
+          subtitle: "Unlocking static PDFs in Google Classroom with OrbitNote's text-to-speech, color-coded vocabulary highlights, and voice notes—plus our top teacher software picks.",
+          category: "Tech & AI",
+          author: "Assistive & Classroom Tech Team",
+          readTime: "5 min read",
+          date: "Oct 15, 2026",
+          featured: false,
+          image: IMG_TECH_AI,
+          takeaway: "Static PDFs frustrate struggling readers and stall Chromebook workflows. Assigning PDFs through OrbitNote in Google Classroom gives every student text-to-speech read-alouds, visual dictionaries, diagram markup, and voice-recorded answers.",
+          tryTomorrow: "Push tomorrow's reading or lab PDF through the OrbitNote Google Classroom integration. Ask students to use the Yellow highlighter for the main claim, Green for evidence, and click 'Collect Highlights' to auto-generate a study sheet.",
+          body: [
+            "We all have great curriculum resources locked inside PDFs—lab procedures, historical primary sources, math reference sheets, and science articles. But on a student Chromebook, a plain PDF is tough to read and even harder to annotate.",
+            "1. Why OrbitNote Shines in Google Classroom: When students open an assigned PDF with OrbitNote, they immediately get Read&Write accessibility tools built right in: natural-sounding Text-to-Speech with dual-color word tracking, a Picture Dictionary for unfamiliar Tier 2/3 words, and a Screen Mask (reading ruler) that helps students with visual fatigue stay on the right line.",
+            "2. High-Leverage Student Annotation Moves in OrbitNote: Beyond typing directly onto worksheets, students can use freehand drawing to label science diagrams or graph trends, use the 4-color highlighters to code Claim-Evidence-Reasoning (and click 'Collect Highlights' to pull all their highlights into a clean Google Doc), or leave a 20-second Voice Comment explaining their thinking if typing is a barrier.",
+            "3. Pairing OrbitNote with Other High-Utility Teacher Software: Combine OrbitNote for accessible PDFs with NotebookLM (for unit synthesis & catch-up slides), Canva for Education (for visual slide decks & student video templates), and Edpuzzle (for embedding quick comprehension questions inside teacher-made videos)."
+          ],
+          script: "OrbitNote Classroom Routine: 'Open today's article in OrbitNote from Google Classroom. Plug in headphones if you'd like to use the Play button to listen along. Highlight the author's claim in Yellow, two pieces of data in Green, and drop one pushpin text comment next to the graph.'",
+          tags: ["tech", "ai", "orbitnote", "orbit note", "pdf", "accessibility", "google classroom", "software", "read aloud"]
+        },
+        {
+          id: "art-4",
+          title: "Killing the Dictionary Copy-Paste: Morphological Root Walls & Visual Frayer Tweaks",
+          subtitle: "Lightweight, 5-minute disciplinary literacy routines that build real Tier 2 & Tier 3 vocabulary stamina across every subject.",
+          category: "Student Engagement",
+          author: "Disciplinary Literacy Team",
+          readTime: "5 min read",
+          date: "Oct 14, 2026",
+          featured: false,
+          image: IMG_ENGAGEMENT,
+          takeaway: "When students copy glossary definitions, retention drops near zero within 48 hours. Teaching word roots and requiring sketched 'non-examples' forces genuine conceptual processing.",
+          tryTomorrow: "Swap out two quadrants of the classic Frayer model: replace 'Definition' with 'Sketch It (Zero Words Allowed)' and 'Non-Examples' with 'The Common Trap (What people confuse this with).'",
+          body: [
+            "Across science, social studies, math, and ELA, academic vocabulary is the single biggest bottleneck for comprehension. Yet traditional vocabulary lists treat every word as an isolated island to memorize.",
+            "When we teach high-leverage roots (like photo-, therm-, chron-, morph-, equi-), we hand students a master key that unlocks dozens of unfamiliar terms on state assessments and lab instructions.",
+            "Combine root dissection with the 'Modified Frayer Sketch': give students 3 minutes to draw what a concept looks like in action and write the #1 misconception a 6th grader might have about it."
+          ],
+          script: "Don't tell me what 'equilibrium' means from Google. Draw a 10-second stick-figure sketch of what equilibrium looks like in a hallway, and write one thing that looks like equilibrium but isn't.",
+          tags: ["literacy", "vocabulary", "frayer", "roots", "wigs", "engagement"]
+        },
+        {
+          id: "art-5",
+          title: "De-Escalating the ‘I’m Not Doing This’ Shutdown in Under 60 Seconds",
+          subtitle: "How to side-step power struggles with reluctant middle schoolers using micro-choices, private crouch-ins, and low-stakes entry ramps.",
+          category: "Classroom Management",
+          author: "MTSS & Student Support",
+          readTime: "4 min read",
+          date: "Oct 11, 2026",
+          featured: false,
+          image: IMG_MANAGEMENT,
+          takeaway: "Publicly confronting task refusal in middle school almost always triggers a face-saving power struggle. A quiet 10-second crouch-in offering a micro-choice preserves dignity and restarts momentum.",
+          tryTomorrow: "When a student pushes a paper away, drop down beside the desk privately, validate the friction in 5 words, offer a 'Start with #2 or #4?' choice, and immediately walk away to give them space to comply without an audience.",
+          body: [
+            "In 7th and 8th grade, social status is everything. When a student refuses to start a lab write-up or math set, it's frequently masking reading fatigue or fear of looking incapable in front of peers.",
+            "The key rule of thumb: Praise in public, redirect in whisper, and always walk away after giving a micro-choice. Lingering over a student's desk waiting for immediate compliance creates a stage where they feel forced to hold their ground.",
+            "Offer a two-option ramp: 'Do you want to jot bullet points for question 1, or sketch the diagram for question 2 first? I'll swing back in three minutes to see which one you picked.'"
+          ],
+          script: "Hey, I know this graph looks dense right now. Do you want to tackle just the X-axis label first, or partner with Sam for the first two rows? Your call—I'll check back in two minutes.",
+          tags: ["de-escalation", "behavior", "management", "reluctant learners", "mtss"]
+        },
+        {
+          id: "art-6",
+          title: "The 90-Second Feedback Loop: Grading Less While Giving Better Direction",
+          subtitle: "Why whole-class 'Spotlight & Fix' slides beat spending four hours writing the same margin comment on 130 student papers.",
+          category: "Teacher Support",
+          author: "Instructional Coaching Hub",
+          readTime: "4 min read",
+          date: "Oct 08, 2026",
+          featured: false,
+          image: IMG_SUPPORT,
+          takeaway: "Students rarely read paragraphs of red ink returned a week later. Scanning work for the top two building-wide patterns and opening the next day with an anonymous 'Upgrade This Response' warmup saves hours.",
+          tryTomorrow: "Instead of writing comments on every CER paragraph tonight, tally the top 3 errors on a sticky note. Tomorrow, project two anonymous student sentences and let pairs spend 3 minutes upgrading them.",
+          body: [
+            "We've all spent a Sunday afternoon writing 'Need to connect your evidence back to your claim!' on 85 consecutive lab reports—only to watch students glance at the score and shove the paper into their binder.",
+            "Whole-Class Feedback flips the ratio: spend 12 minutes flipping through the stack with a single notepad. Jot down 3 student names whose work nailed the target, and 2 common traps that tripped up the class.",
+            "Open the next class by celebrating the exemplar moves and projecting a composite 'Almost There' response. Have students do the cognitive work of fixing the gap live in class."
+          ],
+          script: "I read through everyone's lab claims yesterday. Here are two anonymized sentences from our class that have great evidence, but they're missing the 'because' bridge. With your partner, rewrite Sentence A on your mini-whiteboard.",
+          tags: ["grading", "feedback", "time savers", "teacher support", "cer"]
+        }
+      ],
+      quickTipsBySection: {
+        "all": {
+          heading: "Quick Wins: Try This Next Hour",
+          subtitle: "Zero-prep tactical adjustments across engagement, management, teacher support & classroom tech",
+          badge: "All-Building Favorites",
+          icon: "flame",
+          accentClass: "bg-red-600 text-white",
+          items: [
+            {
+              category: "Student Engagement",
+              title: "The ‘Wrong Answer Only’ Brainstorm",
+              tip: "Lower participation anxiety by asking tables for the most plausible incorrect answer to a complex question first—then have them explain why it's a tempting trap."
+            },
+            {
+              category: "Tech & AI (NotebookLM)",
+              title: "Instant ‘Missed Class’ Catch-Up Link",
+              tip: "Drop today's slides into your unit NotebookLM to auto-generate a 5-point summary and audio overview—paste it into Google Classroom for absent students in 60 seconds."
+            },
+            {
+              category: "Classroom Management",
+              title: "The Threshold Greeting & Point",
+              tip: "Greet students at the door by name, then gesture directly toward the board's 'First 2 Minutes' box. It cuts transition chatter in half before the bell rings."
+            }
+          ]
+        },
+        "Student Engagement": {
+          heading: "Engagement Quick Wins: Spark Curiosity in 30 Seconds",
+          subtitle: "Low-floor, high-energy participation moves to get every student voice active",
+          badge: "Student Engagement Focus",
+          icon: "zap",
+          accentClass: "bg-red-600 text-white",
+          items: [
+            {
+              category: "Bellringer Twist",
+              title: "The ‘Wrong Answer Only’ Brainstorm",
+              tip: "Ask tables to invent the most believable wrong answer to today's question. Analyzing a misconception hooks reluctant speakers without fear of being wrong."
+            },
+            {
+              category: "Total Participation",
+              title: "The 60-Second Stand & Vote Spectrum",
+              tip: "Have students stand and point toward Wall A or Wall B to vote on a phenomenon prediction before any direct instruction begins—instant kinetic buy-in."
+            },
+            {
+              category: "Vocabulary Hook",
+              title: "Sketch It With Zero Words",
+              tip: "Give students 45 seconds on mini-whiteboards to draw a stick-figure scene of a Tier 3 term in action before showing the formal textbook definition."
+            }
+          ]
+        },
+        "Classroom Management": {
+          heading: "Management Quick Wins: Calm Resets & Smooth Transitions",
+          subtitle: "Non-confrontational routines that preserve your voice and classroom momentum",
+          badge: "Classroom Craft Focus",
+          icon: "shield-check",
+          accentClass: "bg-red-600 text-white",
+          items: [
+            {
+              category: "Passing Period",
+              title: "The Threshold Greeting & Point",
+              tip: "Greet students at the door by name, then gesture silently toward the board's 'Do Immediately' box so expectations start at the doorframe."
+            },
+            {
+              category: "De-Escalation",
+              title: "The 10-Second Crouch & Walk-Away",
+              tip: "Drop to eye level beside a reluctant student's desk, offer a 'Start with #1 or #3?' choice in a whisper, and walk away immediately so they save face."
+            },
+            {
+              category: "Lab & Group Reset",
+              title: "The ‘Marker Click’ Physical Anchor",
+              tip: "Replace countdown yelling with a concrete physical cue: 'Pause where you are, cap your marker until it clicks, and eyes on the blue graph.'"
+            }
+          ]
+        },
+        "Teacher Support": {
+          heading: "Wellbeing Quick Wins: Protect Your Bandwidth Today",
+          subtitle: "High-leverage workflow boundaries that cut grading overload and decision fatigue",
+          badge: "Teacher Sustainability",
+          icon: "heart-handshake",
+          accentClass: "bg-red-600 text-white",
+          items: [
+            {
+              category: "Grading Triage",
+              title: "The 3-Pile Exit Ticket Sort",
+              tip: "Skip logging every formative slip into Skyward. Sort papers into 'Got It', 'Almost', and 'Reteach' in 90 seconds to guide tomorrow's warm-up."
+            },
+            {
+              category: "Focus Armor",
+              title: "The Closed-Tab Passing Period Rule",
+              tip: "Keep Outlook closed during instructional periods. Reading a stressful email during a 4-minute passing period hijacks your working memory for the next class."
+            },
+            {
+              category: "Friday Ritual",
+              title: "Stage Monday's 1st Hour Before 3:30",
+              tip: "Spend 5 minutes Friday afternoon opening Monday's bellringer slide and laying out 1st-hour copies so you walk out with zero Sunday-night dread."
+            }
+          ]
+        },
+        "Tech & AI": {
+          heading: "Tech & AI Quick Wins: Practical Classroom Tools",
+          subtitle: "Zero-fluff workflows for NotebookLM, OrbitNote PDF markup, and classroom video creation",
+          badge: "Tech & AI Focus",
+          icon: "cpu",
+          accentClass: "bg-red-600 text-white",
+          items: [
+            {
+              category: "NotebookLM + Google Classroom",
+              title: "Absent-Student Slide & Audio Catch-Up",
+              tip: "Upload your unit slides and lab sheet into NotebookLM to generate a 5-slide catch-up outline and audio overview—drop both into Google Classroom for missing students."
+            },
+            {
+              category: "OrbitNote Workflow",
+              title: "2-Color Highlight & ‘Collect’ Routine",
+              tip: "Assign PDFs via OrbitNote in Google Classroom: have students highlight Claims in Yellow and Evidence in Green, then click 'Collect Highlights' into a clean study doc."
+            },
+            {
+              category: "Classroom Videos",
+              title: "The 3-Box Storyboard Before Recording",
+              tip: "Before students record a 90-second concept video, require a 3-box paper sketch (Hook -> Visual Proof -> Vocab Tie-In) so they nail it in one take."
+            }
+          ]
+        },
+        "saved": {
+          heading: "Reading List Quick Wins: Put Your Saved Playbooks to Work",
+          subtitle: "Simple ways to test bookmarked strategies with your PLC or next-hour class",
+          badge: "Your Personal Vault",
+          icon: "bookmark-check",
+          accentClass: "bg-red-600 text-white",
+          items: [
+            {
+              category: "Low-Stakes Trial",
+              title: "Run a ‘Single-Hour Experiment’",
+              tip: "Pick just one saved article below and test its 'Try This Tomorrow' move with your most comfortable class period first before rolling it out all day."
+            },
+            {
+              category: "PLC Collaboration",
+              title: "Bring 1 Verbatim Script to PLC",
+              tip: "Use the 1-click 'Copy Script' button inside any saved playbook to share a ready-to-use discussion prompt with your grade-level team."
+            },
+            {
+              category: "Sub-Plan Armor",
+              title: "Bookmark 2 Evergreen Routines",
+              tip: "Keep at least two low-prep vocabulary or transition playbooks pinned here so you can drop them straight into emergency sub plans."
+            }
+          ]
+        },
+        "view-directory": {
+          heading: "Directory Quick Wins: Fastest Building Shortcuts",
+          subtitle: "Time-saving tips for navigating USD 266 forms, referrals, and daily operations",
+          badge: "Heart of MMS Shortcuts",
+          icon: "folder-heart",
+          accentClass: "bg-red-600 text-white",
+          items: [
+            {
+              category: "Morning Triage",
+              title: "6:30 AM Sub & Coverage Protocol",
+              tip: "Log absences in Frontline first, then click the Sub Coverage card below if you need an emergency internal classroom roster or split-class note."
+            },
+            {
+              category: "Student Support",
+              title: "Tier 2 MTSS Pre-Referral Tip",
+              tip: "Before submitting the MTSS intake form, jot down two dates where you tried a classroom accommodation—it speeds up SIT team review by a full week."
+            },
+            {
+              category: "Safety & Readiness",
+              title: "Red Crisis Folder Check",
+              tip: "Keep your printed evacuation roster clipped inside your classroom clipboard by the door, and use the Crisis card below for updated severe weather zones."
+            }
+          ]
+        },
+        "view-bulletin": {
+          heading: "Flight Wire Quick Wins: Never Dig Through Gmail Again",
+          subtitle: "How to get the most out of the automated Smore administrative newsletter archive",
+          badge: "Admin Wire Tips",
+          icon: "newspaper",
+          accentClass: "bg-red-600 text-white",
+          items: [
+            {
+              category: "Instant Retrieval",
+              title: "Search Past Weeks From the Top Bar",
+              tip: "Type keywords like 'pep rally', 'testing window', or 'conferences' in the top search bar to search across every archived Smore newsletter at once."
+            },
+            {
+              category: "Weekly Planning",
+              title: "2-Minute Monday Morning Scan",
+              tip: "Scan the 4 bulleted key points on the latest Flight Wire card during Monday plan hour to spot schedule shifts before the week speeds up."
+            },
+            {
+              category: "Zero Maintenance",
+              title: "Automated Monday 6 AM Sync",
+              tip: "Our GitHub Action scrapes the public Smore link automatically every week—no manual copy-pasting required from staff."
+            }
+          ]
+        },
+        "view-studio": {
+          heading: "Lesson Studio Quick Wins: High-Trust Peer Feedback",
+          subtitle: "Norms for fast, supportive Warm & Cool lesson tuning with MMS colleagues",
+          badge: "Peer Studio Norms",
+          icon: "users",
+          accentClass: "bg-red-600 text-white",
+          items: [
+            {
+              category: "Low-Friction Sharing",
+              title: "Share Drafts at 70% Done",
+              tip: "Don't wait until a lab or rubric is polished—post a rough Google Doc link and pick one specific 'Focus Dilemma' so peers know where to look."
+            },
+            {
+              category: "Warm Feedback",
+              title: "Name the Exact High-Leverage Move",
+              tip: "Instead of 'Looks great!', point to the exact hook, visual, or sentence frame that will help middle schoolers succeed."
+            },
+            {
+              category: "Cool Feedback",
+              title: "Use the ‘I Wonder If…’ Frame",
+              tip: "Keep suggestions actionable and collegial: 'I wonder if bolding the 3 action verbs in Step 2 would help 6th-hour readers start faster?'"
+            }
+          ]
+        },
+        "view-academy": {
+          heading: "EdTech, AI & Video Lab Quick Wins: Save 45 Minutes This Prep Hour",
+          subtitle: "Best practices for NotebookLM in Google Classroom, OrbitNote PDFs, and classroom video creation",
+          badge: "Tech, AI & Video Lab",
+          icon: "graduation-cap",
+          accentClass: "bg-red-600 text-white",
+          items: [
+            {
+              category: "NotebookLM + Google Classroom",
+              title: "Upload Your Unit PDF & Slides First",
+              tip: "NotebookLM only uses the sources you upload—drop in your unit slides and Kansas standards so absent-student catch-up guides stay 100% aligned."
+            },
+            {
+              category: "OrbitNote Accessibility",
+              title: "Turn Static PDFs into Read-Aloud Canvases",
+              tip: "Assign PDFs via OrbitNote in Google Classroom so students can listen with word-tracking, use the picture dictionary, and reply with voice notes."
+            },
+            {
+              category: "Classroom Videos",
+              title: "Keep Classroom Videos Under 180 Seconds",
+              tip: "Whether you're recording a teacher screencast or having students film a concept explainer, a tight 90-to-180 second cap keeps engagement near 100%."
+            }
+          ]
+        }
+      },
+      resources: [
+        {
+          id: "res-1",
+          title: "Sub Coverage & Absence Request",
+          category: "Daily Operations",
+          color: "blue",
+          description: "Frontline Aesop login, district sub request guidelines, and emergency roster submission.",
+          url: "https://drive.google.com/open?id=sample_sub_request",
+          tags: ["sub", "sick", "absence", "coverage", "frontline", "leave"]
+        },
+        {
+          id: "res-2",
+          title: "Crisis Response & Evacuation Maps",
+          category: "Emergency & Logistics",
+          color: "red",
+          description: "Standard Response Protocol (SRP), severe weather safe rooms, and fire drill routes.",
+          url: "https://drive.google.com/open?id=sample_crisis_plan",
+          tags: ["emergency", "fire", "tornado", "lockdown", "srp", "maps"]
+        },
+        {
+          id: "res-3",
+          title: "Student MTSS & Tier 2 Referral",
+          category: "Student Services & MTSS",
+          color: "green",
+          description: "Academic and behavioral intervention intake forms, SIT team notes, and progress monitoring.",
+          url: "https://drive.google.com/open?id=sample_mtss_referral",
+          tags: ["mtss", "tier 2", "tier 3", "sit", "referral", "intervention"]
+        },
+        {
+          id: "res-4",
+          title: "MMS Staff Directory & Room Map",
+          category: "Directories & Handbooks",
+          color: "purple",
+          description: "Building extensions, teacher classroom numbers, grade-level leads, and duty rosters.",
+          url: "https://drive.google.com/open?id=sample_directory",
+          tags: ["phone", "extension", "room", "roster", "directory", "biggs", "hogan"]
+        },
+        {
+          id: "res-5",
+          title: "Discipline Referral (Major / Minor)",
+          category: "Emergency & Logistics",
+          color: "red",
+          description: "Skyward discipline tracking protocol, administrative triage, and parent contact logs.",
+          url: "https://drive.google.com/open?id=sample_discipline",
+          tags: ["discipline", "referral", "skyward", "incident", "admin"]
+        },
+        {
+          id: "res-6",
+          title: "Facility Maintenance & Work Orders",
+          category: "Daily Operations",
+          color: "blue",
+          description: "Custodial requests, HVAC adjustments, key card access, and classroom repairs.",
+          url: "https://drive.google.com/open?id=sample_custodial",
+          tags: ["custodial", "maintenance", "repair", "hvac", "work order"]
+        },
+        {
+          id: "res-7",
+          title: "Nurse Pass & Medical Protocols",
+          category: "Student Services & MTSS",
+          color: "green",
+          description: "Clinic guidelines, medication distribution times, and emergency allergy action plans.",
+          url: "https://drive.google.com/open?id=sample_nurse_clinic",
+          tags: ["nurse", "clinic", "medication", "allergy"]
+        },
+        {
+          id: "res-8",
+          title: "Certified Staff Handbook (USD 266)",
+          category: "Directories & Handbooks",
+          color: "purple",
+          description: "Contract hours, personal leave policies, evaluation rubrics, and professional expectations.",
+          url: "https://drive.google.com/open?id=sample_handbook",
+          tags: ["handbook", "contract", "policy", "dress code"]
+        }
+      ],
+      bulletin: [
+        {
+          id: "smore-oct-20",
+          title: "MMS Weekly Flight Wire: Oct 20 - 24",
+          date: "2026-10-20",
+          sourceUrl: "https://www.smore.com/u/maizemiddleschool",
+          keyPoints: [
+            "Fall benchmark testing window closes this Friday at 3:00 PM.",
+            "Pep rally assembly schedule is in effect on Thursday afternoon.",
+            "Staff social in the library annex on Friday morning with coffee provided.",
+            "Parent-teacher conference sign-up links have been sent via Skyward."
+          ]
+        },
+        {
+          id: "smore-oct-13",
+          title: "MMS Flight Wire: Disciplinary Literacy & EdTech Spotlight",
+          date: "2026-10-13",
+          sourceUrl: "https://www.smore.com/u/maizemiddleschool",
+          keyPoints: [
+            "Building WIG update: 82% of classes utilizing weekly morphological root walls.",
+            "New Tech & AI section live: NotebookLM catch-up workflows, OrbitNote PDF markup, and student video rubrics.",
+            "Custodial sweep: Please ensure all lab and prep cabinets are locked prior to 4 PM."
+          ]
+        }
+      ]
+    };
+
+    let savedBookmarks = [];
+    let activeCategory = 'all';
+    let activeView = 'view-editorial';
+    let searchMode = 'instant';
+    let fuse = null;
+    let currentReaderScript = '';
+    let suggestionIndex = 0;
+    let suggestionInterval = null;
+
+    function getStored(key, fallback) {
+      try {
+        const val = localStorage.getItem(key);
+        return val ? JSON.parse(val) : fallback;
+      } catch (e) {
+        return fallback;
+      }
+    }
+
+    function setStored(key, val) {
+      try {
+        localStorage.setItem(key, JSON.stringify(val));
+      } catch (e) {}
+    }
+
+    // --- FUSE.JS INITIALIZATION (INDEXES ARTICLES, CONTEXTUAL QUICK WINS, TECH TOOLS, DIRECTORY & BULLETINS) ---
+    function initFuse() {
+      const items = [];
+      APP_DATA.articles.forEach(a => {
+        items.push({
+          type: 'Article Playbook',
+          id: a.id,
+          title: a.title,
+          category: a.category,
+          desc: a.takeaway + ' ' + a.subtitle,
+          tags: a.tags.join(' '),
+          action: () => openArticleReader(a.id)
+        });
+      });
+
+      Object.keys(APP_DATA.quickTipsBySection).forEach(secKey => {
+        const sec = APP_DATA.quickTipsBySection[secKey];
+        sec.items.forEach(qt => {
+          items.push({
+            type: 'Quick Win Tip',
+            id: 'qt-' + qt.title,
+            title: qt.title,
+            category: sec.badge,
+            desc: qt.tip,
+            tags: qt.category + ' quick win tip',
+            action: () => {
+              if (secKey.startsWith('view-')) {
+                switchView(secKey);
+              } else {
+                switchView('view-editorial', secKey);
+              }
+            }
+          });
+        });
+      });
+
+      APP_DATA.resources.forEach(r => {
+        items.push({
+          type: 'Directory Link',
+          id: r.id,
+          title: r.title,
+          category: r.category,
+          desc: r.description,
+          tags: r.tags.join(' '),
+          action: () => switchView('view-directory')
+        });
+      });
+
+      APP_DATA.bulletin.forEach(b => {
+        items.push({
+          type: 'Flight Wire',
+          id: b.id,
+          title: b.title,
+          category: b.date,
+          desc: b.keyPoints.join(' '),
+          tags: 'smore bulletin announcement admin',
+          action: () => switchView('view-bulletin')
+        });
+      });
+
+      fuse = new Fuse(items, {
+        keys: ['title', 'category', 'desc', 'tags'],
+        threshold: 0.36
+      });
+    }
+
+    // --- DYNAMIC CONTEXT-AWARE QUICK WINS RENDERER ---
+    function renderQuickTips(sectionKey = 'all') {
+      const banner = document.getElementById('quickWinsBanner');
+      const container = document.getElementById('quickTipsStrip');
+      const headingEl = document.getElementById('quickWinsHeading');
+      const subtitleEl = document.getElementById('quickWinsSubtitle');
+      const pillEl = document.getElementById('quickWinsContextPill');
+      const iconBoxEl = document.getElementById('quickWinsIconBox');
+      if (!banner || !container) return;
+
+      if (sectionKey.startsWith('view-')) {
+        banner.classList.add('hidden');
+        return;
+      }
+      banner.classList.remove('hidden');
+      const slotEl = document.getElementById('slot-editorial');
+      if (slotEl && banner.parentElement !== slotEl) {
+        slotEl.appendChild(banner);
+      }
+
+      const config = APP_DATA.quickTipsBySection[sectionKey] || APP_DATA.quickTipsBySection['all'];
+
+      headingEl.textContent = config.heading;
+      subtitleEl.textContent = config.subtitle;
+      pillEl.textContent = config.badge;
+      iconBoxEl.className = `w-9 h-9 rounded-xl ${config.accentClass} flex items-center justify-center font-bold shrink-0 shadow-xs`;
+      iconBoxEl.innerHTML = `<i data-lucide="${config.icon}" class="w-4 h-4"></i>`;
+
+      container.innerHTML = '';
+      config.items.forEach(qt => {
+        const div = document.createElement('div');
+        div.className = 'p-4 rounded-2xl bg-ink-800/90 border border-ink-600/30 flex flex-col justify-between space-y-3 hover:border-red-500/50 transition';
+        div.innerHTML = `
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[10px] font-extrabold uppercase tracking-wider text-red-400">${qt.category}</span>
+              <button class="copy-quick-tip-btn text-[10px] font-semibold text-ink-400 hover:text-white flex items-center gap-1 transition" data-tip="${qt.title}: ${qt.tip.replace(/"/g, '&quot;')}" title="Copy quick win">
+                <i data-lucide="copy" class="w-3 h-3"></i>
+                <span>Copy</span>
+              </button>
+            </div>
+            <h3 class="font-editorial font-bold text-sm text-white">${qt.title}</h3>
+            <p class="text-xs text-cream-200 leading-relaxed">${qt.tip}</p>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+
+      container.querySelectorAll('.copy-quick-tip-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          navigator.clipboard.writeText(btn.dataset.tip);
+          const orig = btn.innerHTML;
+          btn.innerHTML = '<i data-lucide="check" class="w-3 h-3 text-red-400"></i><span class="text-red-400">Copied</span>';
+          lucide.createIcons();
+          setTimeout(() => {
+            btn.innerHTML = orig;
+            lucide.createIcons();
+          }, 1500);
+        });
+      });
+
+      lucide.createIcons();
+    }
+
+    // --- FADING PLACEHOLDER SUGGESTIONS INSIDE THE WHITE SEARCH BOX ---
+    function initRevolvingSearchSuggestions() {
+      const sInput = document.getElementById('globalSearchInput');
+      const overlay = document.getElementById('revolvingSuggestionOverlay');
+      const textEl = document.getElementById('revolvingSuggestionText');
+      if (!sInput || !overlay || !textEl) return;
+
+      // Ensure native placeholder is empty so only the fading text element is visible
+      sInput.placeholder = '';
+      textEl.textContent = REVOLVING_SUGGESTIONS[0];
+
+      function updateOverlayVisibility() {
+        if (sInput.value.length > 0) {
+          overlay.classList.add('hidden');
+        } else {
+          overlay.classList.remove('hidden');
+        }
+      }
+
+      // Cycle: fade out -> wait 650ms while invisible -> swap text -> fade in -> hold
+      suggestionInterval = setInterval(() => {
+        if (sInput.value.length > 0) return;
+        textEl.classList.remove('revolving-fade-in');
+        textEl.classList.add('revolving-fade-out');
+
+        setTimeout(() => {
+          suggestionIndex = (suggestionIndex + 1) % REVOLVING_SUGGESTIONS.length;
+          textEl.textContent = REVOLVING_SUGGESTIONS[suggestionIndex];
+          textEl.classList.remove('revolving-fade-out');
+          textEl.classList.add('revolving-fade-in');
+        }, 650);
+      }, 3600);
+
+      sInput.addEventListener('input', updateOverlayVisibility);
+      sInput.addEventListener('focus', updateOverlayVisibility);
+      sInput.addEventListener('blur', updateOverlayVisibility);
+    }
+
+    // --- RENDER EDITORIAL FEED ---
+    function renderArticlesGrid(category = 'all') {
+      const grid = document.getElementById('articlesGridContainer');
+      const hero = document.getElementById('heroFeatureSection');
+      const techBanner = document.getElementById('techAiSpotlightBanner');
+      const heading = document.getElementById('feedSectionHeading');
+      const countEl = document.getElementById('feedArticleCount');
+      if (!grid) return;
+
+      renderQuickTips(category);
+
+      if (category === 'all') {
+        hero?.classList.remove('hidden');
+        techBanner?.classList.add('hidden');
+        heading.textContent = 'Latest Articles & Classroom Playbooks';
+      } else if (category === 'Tech & AI') {
+        hero?.classList.add('hidden');
+        techBanner?.classList.remove('hidden');
+        heading.textContent = 'Tech & AI Playbooks';
+      } else {
+        hero?.classList.add('hidden');
+        techBanner?.classList.add('hidden');
+        heading.textContent = category === 'saved' ? 'Your Saved Reading List' : `${category} Playbooks`;
+      }
+
+      let filtered = APP_DATA.articles;
+      if (category === 'saved') {
+        filtered = APP_DATA.articles.filter(a => savedBookmarks.includes(a.id));
+      } else if (category !== 'all') {
+        filtered = APP_DATA.articles.filter(a => a.category === category);
+      }
+
+      countEl.textContent = `${filtered.length} ${filtered.length === 1 ? 'story' : 'stories'}`;
+      grid.innerHTML = '';
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-white rounded-3xl border border-cream-300 p-10 text-center space-y-2">
+            <i data-lucide="bookmark" class="w-8 h-8 mx-auto text-ink-400"></i>
+            <p class="font-editorial font-bold text-base text-ink-900">No stories in this view yet</p>
+            <p class="text-xs text-ink-600">Click the bookmark icon on any article to save it here for PLC meetings or prep hour.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      filtered.forEach(art => {
+        const isSaved = savedBookmarks.includes(art.id);
+        let badgeStyle = 'bg-red-600 text-white';
+        if (art.category === 'Classroom Management') badgeStyle = 'bg-ink-900 text-white';
+        if (art.category === 'Teacher Support') badgeStyle = 'bg-white text-red-700 border border-red-300';
+        if (art.category === 'Tech & AI') badgeStyle = 'bg-red-100 text-red-900 border border-red-300';
+
+        const videoPill = art.hasVideoDemo ? `
+          <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-ink-900/90 text-red-300 shadow-2xs flex items-center gap-1">
+            <i data-lucide="video" class="w-3 h-3"></i> Video Demo
+          </span>
+        ` : '';
+
+        const card = document.createElement('article');
+        card.className = 'article-card bg-white rounded-3xl border border-cream-300 overflow-hidden flex flex-col justify-between cursor-pointer';
+        card.innerHTML = `
+          <div>
+            <div class="relative h-44 bg-ink-900 overflow-hidden" data-open-id="${art.id}">
+              <img src="${art.image}" alt="${art.title}" class="w-full h-full object-cover" />
+              <div class="absolute top-3 left-3 flex items-center gap-1.5 flex-wrap">
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${badgeStyle} shadow-2xs">
+                  ${art.category}
+                </span>
+                ${videoPill}
+              </div>
+            </div>
+
+            <div class="p-6 space-y-3" data-open-id="${art.id}">
+              <div class="flex items-center justify-between text-[11px] text-ink-600 font-semibold">
+                <span>${art.author}</span>
+                <span>${art.readTime}</span>
+              </div>
+
+              <h3 class="font-editorial font-bold text-lg text-ink-900 leading-snug hover:text-red-600 transition-colors">
+                ${art.title}
+              </h3>
+
+              <p class="text-xs text-ink-600 leading-relaxed line-clamp-2">
+                ${art.subtitle}
+              </p>
+
+              <div class="p-3 rounded-2xl bg-cream-100 border border-cream-200 text-xs text-ink-800 leading-relaxed">
+                <span class="font-bold text-red-700 uppercase tracking-wider text-[10px] block mb-0.5">Key Takeaway:</span>
+                ${art.takeaway}
+              </div>
+            </div>
+          </div>
+
+          <div class="px-6 py-4 border-t border-cream-200 flex items-center justify-between bg-cream-50/50">
+            <button class="read-more-btn text-xs font-bold text-ink-900 hover:text-red-600 flex items-center gap-1" data-open-id="${art.id}">
+              <span>Read Full Playbook</span>
+              <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+            </button>
+            <button class="bookmark-btn p-1.5 rounded-full hover:bg-cream-200 text-ink-600 transition" data-id="${art.id}" title="Bookmark article">
+              <i data-lucide="bookmark" class="w-4 h-4 ${isSaved ? 'fill-red-600 text-red-600' : ''}"></i>
+            </button>
+          </div>
+        `;
+
+        card.querySelectorAll('[data-open-id]').forEach(el => {
+          el.addEventListener('click', () => openArticleReader(art.id));
+        });
+
+        grid.appendChild(card);
+      });
+
+      lucide.createIcons();
+    }
+
+    function openArticleReader(articleId) {
+      const art = APP_DATA.articles.find(a => a.id === articleId);
+      if (!art) return;
+
+      document.getElementById('readerHeroImg').src = art.image;
+      document.getElementById('readerCategoryBadge').textContent = art.category;
+      document.getElementById('readerAuthor').textContent = art.author;
+      document.getElementById('readerReadTime').textContent = art.readTime;
+      document.getElementById('readerDate').textContent = art.date;
+      document.getElementById('readerTitle').textContent = art.title;
+      document.getElementById('readerSubtitle').textContent = art.subtitle;
+      document.getElementById('readerTryTomorrow').textContent = art.tryTomorrow;
+      document.getElementById('readerScript').textContent = `"${art.script}"`;
+      currentReaderScript = art.script;
+
+      const videoBox = document.getElementById('readerVideoDemoBox');
+      if (art.hasVideoDemo) {
+        videoBox?.classList.remove('hidden');
+      } else {
+        videoBox?.classList.add('hidden');
+      }
+
+      const pContainer = document.getElementById('readerParagraphs');
+      pContainer.innerHTML = art.body.map(p => `<p>${p}</p>`).join('');
+
+      document.getElementById('articleReaderModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // --- TUCKED-AWAY VIEWS RENDERING ---
+    function renderDirectory(cat = 'all') {
+      const grid = document.getElementById('hqResourceGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      const items = cat === 'all' ? APP_DATA.resources : APP_DATA.resources.filter(r => r.category === cat);
+      items.forEach(r => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-2xl border border-cream-300 p-5 shadow-2xs flex flex-col justify-between space-y-3';
+        card.innerHTML = `
+          <div class="space-y-2">
+            <span class="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-cream-200 text-ink-800">
+              ${r.category}
+            </span>
+            <h3 class="font-editorial font-bold text-base text-ink-900">${r.title}</h3>
+            <p class="text-xs text-ink-600 leading-relaxed">${r.description}</p>
+          </div>
+          <div class="pt-3 border-t border-cream-200 flex items-center justify-between text-xs">
+            <span class="text-[10px] text-ink-400">USD 266 Google Login</span>
+            <a href="${r.url}" target="_blank" class="font-bold text-red-600 hover:underline flex items-center gap-1">
+              <span>Open Resource</span> <i data-lucide="external-link" class="w-3 h-3"></i>
+            </a>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function renderBulletins() {
+      const container = document.getElementById('bulletinFeedContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      APP_DATA.bulletin.forEach(b => {
+        const div = document.createElement('div');
+        div.className = 'bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-3 text-xs';
+        div.innerHTML = `
+          <div class="flex items-center justify-between">
+            <h3 class="font-editorial font-bold text-lg text-ink-900">${b.title}</h3>
+            <span class="font-mono text-[11px] px-2.5 py-0.5 rounded-full bg-cream-200 text-ink-800">${b.date}</span>
+          </div>
+          <ul class="space-y-1.5 text-ink-600 pl-1">
+            ${b.keyPoints.map(k => `<li class="flex items-start gap-2"><span class="text-red-600 font-bold">•</span><span>${k}</span></li>`).join('')}
+          </ul>
+          <div class="pt-3 border-t border-cream-200 flex justify-end">
+            <a href="${b.sourceUrl}" target="_blank" class="font-bold text-red-600 hover:underline flex items-center gap-1">
+              <span>Open Original Smore</span> <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+      lucide.createIcons();
+    }
+
+    // --- VIEW NAVIGATION (HIDES QUICK WINS IN EXTRA SECTIONS) ---
+    function switchView(viewId, optionalCategory = null) {
+      activeView = viewId;
+      document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
+      document.getElementById(viewId)?.classList.remove('hidden');
+      document.getElementById('moreMenuDropdown')?.classList.add('hidden');
+      document.getElementById('topLeftMenuDropdown')?.classList.add('hidden');
+
+      const quickWinsBanner = document.getElementById('quickWinsBanner');
+
+      if (viewId === 'view-editorial') {
+        quickWinsBanner?.classList.remove('hidden');
+        const catToUse = optionalCategory || activeCategory || 'all';
+        activeCategory = catToUse;
+        document.querySelectorAll('.topic-pill').forEach(b => {
+          b.classList.toggle('nav-pill-active', b.dataset.category === catToUse);
+        });
+        renderArticlesGrid(catToUse);
+      } else {
+        quickWinsBanner?.classList.add('hidden');
+        document.querySelectorAll('.topic-pill').forEach(b => b.classList.remove('nav-pill-active'));
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // --- AI COACH SIMULATOR & CLOUDFLARE WORKER CALL ---
+    async function askCoach(promptText, targetEl) {
+      targetEl.classList.remove('hidden');
+      targetEl.innerHTML = '<span class="italic text-ink-400 animate-pulse">Drafting classroom-tested strategy...</span>';
+
+      const workerUrl = getStored('mms_worker_url', '');
+      if (workerUrl && workerUrl.startsWith('http')) {
+        try {
+          const res = await fetch(workerUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: promptText })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            targetEl.textContent = data.answer || 'No response received.';
+            return;
+          }
+        } catch (e) {
+          console.warn('Worker unreachable, using built-in pedagogical simulator.');
+        }
+      }
+
+      setTimeout(() => {
+        const q = promptText.toLowerCase();
+        let reply = '';
+        if (q.includes('notebooklm') || q.includes('missing') || q.includes('absent')) {
+          reply = "NotebookLM Missing-Student Workflow: 1) Upload this week's Google Slides and lab PDF into your unit NotebookLM. 2) Prompt it to generate a '5-Slide Catch-Up Summary' + click 'Audio Overview'. 3) Post both links under an 'Absent? Start Here' topic in Google Classroom so absent students can catch up in 5 minutes without needing a 1-on-1 lecture.";
+        } else if (q.includes('orbitnote') || q.includes('orbit note') || q.includes('pdf')) {
+          reply = "OrbitNote Routine for Google Classroom: Attach your reading or lab PDF via OrbitNote so students get built-in Text-to-Speech read-alouds and picture dictionaries. Have students highlight the main Claim in Yellow and Evidence in Green, then click the 'Collect Highlights' button to automatically compile their notes into a clean Google Doc.";
+        } else if (q.includes('video') || q.includes('storyboard')) {
+          reply = "90-Second Student Video Protocol: Require pairs to complete a '3-Box Paper Storyboard' first (Box 1: Hook Question & Claim, Box 2: Annotated Diagram Proof, Box 3: Bust a Common Myth). Once you stamp their paper storyboard, give them 10 minutes to record a single-take screencast or paper-slide video.";
+        } else if (q.includes('sponge') || q.includes('5-min') || q.includes('five')) {
+          reply = "Try 'Two Truths and a Fib: Unit Edition.' Put 3 statements about today's topic on the board (2 true, 1 sneaky misconception). Give pairs 90 seconds to whisper-debate and hold up 1, 2, or 3 fingers on your count. Zero copies needed and instant engagement.";
+        } else if (q.includes('reset') || q.includes('chatty') || q.includes('6th hour') || q.includes('lunch')) {
+          reply = "Post-Lunch Reset Trick: Dim one bank of lights before students enter and project a 'Silent Visual Oddity' (an optical illusion or zoomed-in microscope photo). Stand at the door and whisper: 'See if you can figure out what's on the screen before the bell rings.' Whispering at the door naturally lowers hallway vocal volume.";
+        } else if (q.includes('vocab') || q.includes('frayer')) {
+          reply = "Try the 'Forbidden Words' routine: Give partners the target vocabulary term and 3 taboo words they aren't allowed to say, and challenge them to get their partner to guess the concept in 45 seconds using real-world examples.";
+        } else {
+          reply = `For "${promptText}": Start with a 60-second visual comparison or table prediction so every student has a low-stakes entry point before direct instruction begins. Follow up with a 2-minute partner turn-and-talk or an OrbitNote/NotebookLM scaffold to lock in the concept.`;
+        }
+        targetEl.innerHTML = `<strong class="block text-red-900 mb-1">Coach Suggestion:</strong>${reply}`;
+      }, 350);
+    }
+
+    // --- EVENT LISTENERS ---
+    document.addEventListener('DOMContentLoaded', () => {
+      savedBookmarks = getStored('mms_saved_bookmarks', ['art-1', 'art-7']);
+      document.getElementById('savedCountLabel').textContent = savedBookmarks.length;
+
+      initFuse();
+      initRevolvingSearchSuggestions();
+      renderArticlesGrid('all');
+      renderDirectory('all');
+      renderBulletins();
+
+      // Interactive Video Chapter Buttons in EdTech Lab
+      document.querySelectorAll('.video-chapter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.video-chapter-btn').forEach(b => {
+            b.className = 'video-chapter-btn text-left p-2.5 rounded-xl bg-ink-800 hover:bg-ink-700 border border-ink-600 text-xs transition';
+          });
+          btn.className = 'video-chapter-btn text-left p-2.5 rounded-xl bg-red-600/30 border border-red-500 text-xs transition';
+          document.getElementById('activeVideoChapterBadge').textContent = btn.dataset.badge;
+          document.getElementById('activeVideoChapterTitle').textContent = btn.dataset.title;
+          document.getElementById('activeVideoChapterDesc').textContent = btn.dataset.desc;
+        });
+      });
+
+      // Tech & AI Banner & Sidebar Shortcuts
+      document.getElementById('openEdTechLabFromBannerBtn')?.addEventListener('click', () => switchView('view-academy'));
+      document.getElementById('openNotebookLmArticleBtn')?.addEventListener('click', () => openArticleReader('art-7'));
+      document.getElementById('sidebarNotebookLmCard')?.addEventListener('click', () => switchView('view-academy'));
+      document.getElementById('sidebarOrbitNoteCard')?.addEventListener('click', () => openArticleReader('art-9'));
+      document.getElementById('jumpToVideoLabFromReaderBtn')?.addEventListener('click', () => {
+        document.getElementById('articleReaderModal').classList.add('hidden');
+        switchView('view-academy');
+      });
+      document.getElementById('addTechTipFromAcademyBtn')?.addEventListener('click', () => {
+        document.getElementById('tipCategory').value = 'Tech & AI';
+        document.getElementById('shareTipModal').classList.remove('hidden');
+      });
+
+      // Sample Studio Card
+      const studioContainer = document.getElementById('tuningSubmissionsContainer');
+      if (studioContainer) {
+        studioContainer.innerHTML = `
+          <div class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-3 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="font-editorial font-bold text-base text-ink-900">8th Grade Plate Tectonics CER Lab Prompt</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-bold text-[10px]">8th Science</span>
+            </div>
+            <p class="text-ink-600"><strong>Focus Dilemma:</strong> Opening Hook &amp; Student Buy-In</p>
+            <div class="p-3.5 rounded-2xl bg-cream-100 space-y-1">
+              <p><strong>Warm Feedback:</strong> "Opening with the sonar map mystery hooked even reluctant readers immediately."</p>
+              <p><strong>Cool Feedback:</strong> "I wonder if trimming the background paragraph to 3 bullet points would get them into the data faster."</p>
+            </div>
+          </div>
+        `;
+      }
+
+      // Masthead home click
+      document.getElementById('mastheadHomeBtn')?.addEventListener('click', () => {
+        switchView('view-editorial', 'all');
+      });
+
+      // Hero read button
+      document.getElementById('readHeroArticleBtn')?.addEventListener('click', () => openArticleReader('art-1'));
+
+      // Close Article Reader
+      document.getElementById('closeArticleReaderBtn')?.addEventListener('click', () => {
+        document.getElementById('articleReaderModal').classList.add('hidden');
+      });
+      document.getElementById('closeArticleReaderBottomBtn')?.addEventListener('click', () => {
+        document.getElementById('articleReaderModal').classList.add('hidden');
+      });
+
+      // Copy Script inside Reader
+      document.getElementById('copyReaderScriptBtn')?.addEventListener('click', (e) => {
+        navigator.clipboard.writeText(currentReaderScript);
+        const btn = e.currentTarget;
+        btn.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i> Copied!';
+        lucide.createIcons();
+        setTimeout(() => {
+          btn.innerHTML = '<i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Script';
+          lucide.createIcons();
+        }, 1800);
+      });
+
+      // Topic Bar Filter (Automatically updates Quick Wins banner & Article Grid)
+      document.querySelectorAll('.topic-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          switchView('view-editorial', btn.dataset.category);
+        });
+      });
+
+      // Bookmark delegate
+      document.body.addEventListener('click', (e) => {
+        const bBtn = e.target.closest('.bookmark-btn');
+        if (!bBtn) return;
+        e.stopPropagation();
+        const id = bBtn.dataset.id;
+        if (savedBookmarks.includes(id)) {
+          savedBookmarks = savedBookmarks.filter(x => x !== id);
+        } else {
+          savedBookmarks.push(id);
+        }
+        setStored('mms_saved_bookmarks', savedBookmarks);
+        document.getElementById('savedCountLabel').textContent = savedBookmarks.length;
+        renderArticlesGrid(activeCategory);
+      });
+
+      // Top-Left Icon Navigation Menu
+      const topLeftBtn = document.getElementById('topLeftMenuBtn');
+      const topLeftDrop = document.getElementById('topLeftMenuDropdown');
+
+      topLeftBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        topLeftDrop?.classList.toggle('hidden');
+      });
+
+      document.querySelectorAll('.menu-nav-item').forEach(item => {
+        item.addEventListener('click', () => switchView(item.dataset.view));
+      });
+
+      document.querySelectorAll('.topleft-editorial-item').forEach(item => {
+        item.addEventListener('click', () => switchView('view-editorial', item.dataset.category));
+      });
+
+      document.querySelectorAll('.back-to-feed-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchView('view-editorial', activeCategory));
+      });
+
+      // Directory Category Filter
+      document.querySelectorAll('.cat-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('bg-ink-900', 'text-white'));
+          btn.classList.add('bg-ink-900', 'text-white');
+          renderDirectory(btn.dataset.cat);
+        });
+      });
+
+      // Search Input (Dropdown only opens when user types a query)
+      const sInput = document.getElementById('globalSearchInput');
+      const sDrop = document.getElementById('searchResultsDropdown');
+      sInput?.addEventListener('input', (e) => {
+        const q = e.target.value.trim();
+        if (!q) {
+          sDrop.classList.add('hidden');
+          return;
+        }
+        sDrop.classList.remove('hidden');
+        const list = document.getElementById('searchResultsList');
+        const badge = document.getElementById('resultsCountBadge');
+        const subtitle = document.getElementById('resultsModeSubtitle');
+
+        if (searchMode === 'instant') {
+          const res = fuse.search(q);
+          badge.textContent = `${res.length} matches`;
+          subtitle.textContent = 'Searching articles, Tech & AI tools, quick wins & directory';
+          list.innerHTML = '';
+          if (res.length === 0) {
+            list.innerHTML = `<div class="p-4 text-center text-xs text-ink-600">No instant matches for "${q}". Click <strong>⚡ Instant</strong> to switch to <strong>✨ AI Coach</strong>!</div>`;
+            return;
+          }
+          res.slice(0, 6).forEach(r => {
+            const d = document.createElement('div');
+            d.className = 'p-3 rounded-xl hover:bg-cream-100 cursor-pointer transition border border-transparent hover:border-cream-300';
+            d.innerHTML = `
+              <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-red-700 mb-0.5">
+                <span>${r.item.type}</span>
+                <span>${r.item.category}</span>
+              </div>
+              <div class="font-bold text-xs text-ink-900">${r.item.title}</div>
+              <div class="text-[11px] text-ink-600 line-clamp-1">${r.item.desc}</div>
+            `;
+            d.addEventListener('click', () => {
+              sDrop.classList.add('hidden');
+              r.item.action();
+            });
+            list.appendChild(d);
+          });
+        } else {
+          badge.textContent = 'AI Coach';
+          subtitle.textContent = 'Natural language strategy brainstorm';
+          list.innerHTML = `
+            <div class="p-3.5 rounded-xl bg-red-50 border border-red-200 text-xs space-y-2.5">
+              <p class="font-bold text-ink-900">Ask AI Instructional Coach: "${q}"</p>
+              <button id="askCoachFromSearchBtn" class="px-4 py-1.5 rounded-full bg-ink-900 hover:bg-ink-800 text-white font-bold transition">Get Strategy Now</button>
+            </div>
+          `;
+          document.getElementById('askCoachFromSearchBtn')?.addEventListener('click', () => {
+            sDrop.classList.add('hidden');
+            document.getElementById('geminiModal').classList.remove('hidden');
+            document.getElementById('geminiQueryInput').value = q;
+            askCoach(q, document.getElementById('geminiResponseContainer'));
+          });
+        }
+      });
+
+      document.getElementById('searchModeToggleBtn')?.addEventListener('click', () => {
+        searchMode = searchMode === 'instant' ? 'ai' : 'instant';
+        document.getElementById('searchModeLabel').textContent = searchMode === 'instant' ? '⚡ Instant' : '✨ AI Coach';
+        if (sInput.value.trim().length > 0) {
+          sInput.dispatchEvent(new Event('input'));
+        }
+      });
+
+      document.getElementById('closeSearchResultsBtn')?.addEventListener('click', () => sDrop.classList.add('hidden'));
+
+      // Sidebar Coach
+      const sideOut = document.getElementById('sidebarCoachOutput');
+      document.getElementById('sidebarCoachSubmitBtn')?.addEventListener('click', () => {
+        const val = document.getElementById('sidebarCoachInput').value.trim();
+        if (val) askCoach(val, sideOut);
+      });
+      document.querySelectorAll('.quick-coach-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          document.getElementById('sidebarCoachInput').value = chip.dataset.prompt;
+          askCoach(chip.dataset.prompt, sideOut);
+        });
+      });
+
+      // Modals: Share Tip
+      const tipModal = document.getElementById('shareTipModal');
+      document.getElementById('openShareTipModalBtn')?.addEventListener('click', () => tipModal.classList.remove('hidden'));
+      document.getElementById('sidebarAddQuoteBtn')?.addEventListener('click', () => tipModal.classList.remove('hidden'));
+      document.getElementById('closeShareTipModalBtn')?.addEventListener('click', () => tipModal.classList.add('hidden'));
+      document.getElementById('cancelShareTipBtn')?.addEventListener('click', () => tipModal.classList.add('hidden'));
+
+      document.getElementById('shareTipForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const type = document.getElementById('tipType').value;
+        const cat = document.getElementById('tipCategory').value;
+        const title = document.getElementById('tipTitle').value;
+        const content = document.getElementById('tipContent').value;
+        const author = document.getElementById('tipAuthor').value;
+
+        if (type === 'quote') {
+          const qBox = document.getElementById('loungeQuotesContainer');
+          const d = document.createElement('div');
+          d.className = 'p-3.5 rounded-2xl bg-red-50/70 border border-red-200 space-y-1.5';
+          d.innerHTML = `
+            <p class="text-xs italic text-ink-800 font-serif leading-relaxed">“${content}”</p>
+            <div class="text-[11px] text-ink-600 font-semibold text-right">— ${author} (${title})</div>
+          `;
+          qBox.prepend(d);
+        } else {
+          const newId = 'art-' + (APP_DATA.articles.length + 1);
+          let imgChoice = IMG_ENGAGEMENT;
+          if (cat === 'Classroom Management') imgChoice = IMG_MANAGEMENT;
+          if (cat === 'Teacher Support') imgChoice = IMG_SUPPORT;
+          if (cat === 'Tech & AI') imgChoice = IMG_TECH_AI;
+
+          APP_DATA.articles.unshift({
+            id: newId,
+            title: title,
+            subtitle: content,
+            category: cat,
+            author: author,
+            readTime: '2 min read',
+            date: 'Just now',
+            featured: false,
+            image: imgChoice,
+            takeaway: content,
+            tryTomorrow: content,
+            body: [content],
+            script: content,
+            tags: [cat.toLowerCase(), 'staff tip']
+          });
+          initFuse();
+          renderArticlesGrid(activeCategory);
+        }
+        e.target.reset();
+        tipModal.classList.add('hidden');
+      });
+
+      // Modals: AI Coach
+      const gModal = document.getElementById('geminiModal');
+      document.getElementById('openAiCoachModalBtn')?.addEventListener('click', () => gModal.classList.remove('hidden'));
+      document.getElementById('closeGeminiModalBtn')?.addEventListener('click', () => gModal.classList.add('hidden'));
+      document.getElementById('geminiSubmitBtn')?.addEventListener('click', () => {
+        const q = document.getElementById('geminiQueryInput').value.trim();
+        if (q) askCoach(q, document.getElementById('geminiResponseContainer'));
+      });
+
+      // Modals: Settings
+      const setModal = document.getElementById('settingsModal');
+      document.getElementById('openSettingsModalBtn')?.addEventListener('click', () => {
+        topLeftDrop?.classList.add('hidden');
+        document.getElementById('workerUrlInput').value = getStored('mms_worker_url', '');
+        setModal.classList.remove('hidden');
+      });
+      document.getElementById('closeSettingsModalBtn')?.addEventListener('click', () => setModal.classList.add('hidden'));
+      document.getElementById('saveSettingsBtn')?.addEventListener('click', () => {
+        setStored('mms_worker_url', document.getElementById('workerUrlInput').value.trim());
+        setModal.classList.add('hidden');
+      });
+      document.getElementById('clearStorageBtn')?.addEventListener('click', () => {
+        localStorage.clear();
+        savedBookmarks = ['art-1', 'art-7'];
+        document.getElementById('savedCountLabel').textContent = '2';
+        renderArticlesGrid(activeCategory);
+        setModal.classList.add('hidden');
+      });
+
+      // Copy Prompt Buttons in Academy
+      document.querySelectorAll('.copy-prompt-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          navigator.clipboard.writeText(btn.dataset.prompt);
+          const orig = btn.innerHTML;
+          btn.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5 text-red-400"></i><span>Copied!</span>';
+          lucide.createIcons();
+          setTimeout(() => {
+            btn.innerHTML = orig;
+            lucide.createIcons();
+          }, 1800);
+        });
+      });
+
+      // Lesson Studio Form
+      document.getElementById('lessonTuneForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const t = document.getElementById('tuneTitle').value;
+        const s = document.getElementById('tuneSubject').value;
+        const d = document.getElementById('tuneDilemma').value;
+        const l = document.getElementById('tuneLink').value;
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-2 text-xs';
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="font-editorial font-bold text-base text-ink-900">${t}</span>
+            <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-bold text-[10px]">${s}</span>
+          </div>
+          <p class="text-ink-600"><strong>Focus Dilemma:</strong> ${d}</p>
+          <div class="pt-2 flex justify-end">
+            <a href="${l}" target="_blank" class="font-bold text-red-600 hover:underline flex items-center gap-1">
+              <span>Open Draft</span> <i data-lucide="external-link" class="w-3 h-3"></i>
+            </a>
+          </div>
+        `;
+        document.getElementById('tuningSubmissionsContainer')?.prepend(card);
+        lucide.createIcons();
+        e.target.reset();
+      });
+
+      // Click outside dropdowns
+      document.addEventListener('click', (e) => {
+        if (topLeftDrop && !topLeftDrop.contains(e.target) && !topLeftBtn?.contains(e.target)) {
+          topLeftDrop.classList.add('hidden');
+        }
+
+        const searchToggle = document.getElementById('searchModeToggleBtn');
+        if (sDrop && !sDrop.contains(e.target) && e.target !== sInput && !searchToggle?.contains(e.target)) {
+          sDrop.classList.add('hidden');
+        }
+      });
+
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
