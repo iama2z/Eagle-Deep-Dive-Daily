@@ -2151,6 +2151,98 @@
       lucide.createIcons();
     }
 
+    // --- LIVE SMORE BULLETIN FEED (GOOGLE APPS SCRIPT) ---
+    const SMORE_FEED_API_URL = 'https://script.google.com/macros/s/AKfycbytRb0-UXs1XOt1XgETiVMJTBogJ3nCa3EZ-B3ZBQeAEBfkFBwZa9fMloGy-FvGOeNH/exec';
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function sanitizeHttpUrl(value) {
+      const raw = String(value ?? '').trim();
+      if (!raw) return '';
+      try {
+        const url = new URL(raw);
+        return (url.protocol === 'http:' || url.protocol === 'https:') ? url.href : '';
+      } catch (e) {
+        return '';
+      }
+    }
+
+    function formatDateLabel(value) {
+      if (!value) return '';
+      const d = new Date(value);
+      if (isNaN(d.getTime())) return '';
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function renderBulletinCard(item) {
+      const url = sanitizeHttpUrl(item.issue_url || item.url);
+      const title = String(item.issue_title || item.title || '').trim();
+      if (!url || !title) return null;
+
+      const dateLabel = formatDateLabel(item.published_at || item.date);
+      const summary = String(item.summary || '').trim();
+      const coverUrl = sanitizeHttpUrl(item.cover_image_url);
+
+      const div = document.createElement('div');
+      div.className = 'bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-3 text-xs';
+      div.innerHTML = `
+        ${coverUrl ? `<img src="${escapeHtml(coverUrl)}" alt="" loading="lazy" class="w-full h-40 object-cover rounded-2xl border border-cream-200">` : ''}
+        <div class="flex items-center justify-between gap-3">
+          <h3 class="font-editorial font-bold text-lg text-ink-900">${escapeHtml(title)}</h3>
+          ${dateLabel ? `<span class="font-mono text-[11px] px-2.5 py-0.5 rounded-full bg-cream-200 text-ink-800 whitespace-nowrap">${escapeHtml(dateLabel)}</span>` : ''}
+        </div>
+        ${summary ? `<p class="text-ink-600 leading-relaxed">${escapeHtml(summary)}</p>` : ''}
+        <div class="pt-3 border-t border-cream-200 flex justify-end">
+          <a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="font-bold text-red-600 hover:underline flex items-center gap-1">
+            <span>Open Original Smore</span> <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
+      `;
+      return div;
+    }
+
+    function setBulletinFeedMessage(container, message, tone = 'muted') {
+      const toneClass = tone === 'error' ? 'text-red-600' : 'text-ink-400';
+      container.innerHTML = `<div class="md:col-span-2 bg-white rounded-3xl border border-cream-300 p-6 shadow-sm text-xs text-center ${toneClass}">${escapeHtml(message)}</div>`;
+    }
+
+    async function loadSmoreBulletinFeed() {
+      const container = document.getElementById('bulletinFeedContainer');
+      if (!container) return;
+      setBulletinFeedMessage(container, 'Loading the latest Flight Wire bulletins...');
+
+      try {
+        const res = await fetch(SMORE_FEED_API_URL, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (!data || !data.ok || !Array.isArray(data.items)) throw new Error('Unexpected feed format');
+
+        const cards = data.items
+          .filter(item => item && typeof item === 'object')
+          .map(renderBulletinCard)
+          .filter(Boolean);
+
+        if (!cards.length) {
+          setBulletinFeedMessage(container, 'No bulletins have been published yet. Check back soon.');
+          return;
+        }
+
+        container.innerHTML = '';
+        cards.forEach(card => container.appendChild(card));
+        if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+      } catch (err) {
+        console.warn('Smore bulletin feed unavailable:', err);
+        setBulletinFeedMessage(container, 'The Flight Wire bulletin feed is temporarily unavailable. Please try again later.', 'error');
+      }
+    }
+
     // --- VIEW NAVIGATION (HIDES QUICK WINS IN EXTRA SECTIONS) ---
     function switchView(viewId, optionalCategory = null) {
       activeView = viewId;
@@ -2231,7 +2323,7 @@
       initRevolvingSearchSuggestions();
       renderArticlesGrid('all');
       renderDirectory('all');
-      renderBulletins();
+      loadSmoreBulletinFeed();
 
       // Interactive Video Chapter Buttons in EdTech Lab
       document.querySelectorAll('.video-chapter-btn').forEach(btn => {
