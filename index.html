@@ -2231,6 +2231,8 @@
       const title = String(item.issue_title || item.title || '').trim();
       if (!issueUrl || !title) return null;
       const url = new URL(issueUrl);
+      // Only Smore issue pages; skip legacy rows pointing at cdn./out.smore.com assets or redirects.
+      if (!/^(?:www\.|app\.)?smore\.com$/i.test(url.hostname) || url.pathname.replace(/\/+$/, '') === '') return null;
       url.hash = '';
       url.search = '';
       url.pathname = url.pathname.replace(/\/+$/, '') || '/';
