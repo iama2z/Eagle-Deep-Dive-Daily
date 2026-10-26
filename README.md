@@ -100,8 +100,9 @@ https://script.google.com/macros/s/AKfycbyAxb9nhP6H34pWi5icBPtWLoNSenmHalzwbkQr8
 
 Use the currently active `/exec` web app URL, **not** the library URL or
 editor-only `/dev` URL. When the feed and submissions share this deployment,
-`SMORE_FEED_API_URL` and `SUBMISSION_API_URL` in `index.html` must both use the
-same active URL. If you create a different deployment, update both constants.
+`SMORE_FEED_API_URL` in `index.html` reuses `SUBMISSION_API_URL`. Published
+articles also use that URL with `?feed=articles`. If you create a different
+deployment, update `SUBMISSION_API_URL` only.
 
 ### 4. Add the automatic trigger
 
@@ -168,3 +169,68 @@ Browser JavaScript does not scrape Smore directly.
       message and verify a new row appears in the spreadsheet's `submissions`
       tab with `submission_type=lesson_draft` and `status=pending`.
 - [ ] Load Flight Wire and confirm the Smore feed displays its published issues.
+
+## Functional flow: private drafts → published articles
+
+1. **Submit:** The Peer Lesson Studio sends a draft to the existing `doPost`,
+   which must save it in `submissions` with `status=pending`. Success means
+   **saved for review**, not published; no draft card is added to the page.
+   Keep the spreadsheet private. The public GET routes never read `submissions`.
+2. **Review and publish manually:** No reviewer UI is included yet. In your
+   private spreadsheet, review the draft and copy only approved, public text
+   into `published_articles`. Do not copy submitter emails or private draft links.
+   Create the tab if needed, with these headers in row 1 (tab-separated):
+
+   ```text
+   article_id	title	category	summary	article_body_text	author	published_at	cover_image_url	is_live
+   ```
+
+   Headers are matched by name; order and extra private columns do not matter.
+   Only these nine named fields can be returned publicly. Required fields are
+   `article_id` (unique and stable), `title`, `category`, `article_body_text`
+   (full plain text), and `is_live`. Other fields may be blank. Use one of the
+   existing categories: `Student Engagement`, `Classroom Management`,
+   `Teacher Support`, or `Tech & AI`. Use an ISO date for `published_at` and an
+   HTTP(S) image URL if supplied. Enter text beginning with `=` as plain text
+   (prefix with `'`).
+3. **Public display:** Set `is_live` to `TRUE` (a checked checkbox also works).
+   On the next page load, the site fetches `/exec?feed=articles` and includes
+   valid live rows in article listings, the reader, bookmarks, and Instant search,
+   including full-body search. False/blank live flags and incomplete rows are
+   excluded. Set `is_live=FALSE` and refresh to unpublish. Existing editorial
+   articles and Flight Wire newsletters remain unchanged; submissions never
+   supply public content. An absent `published_articles` tab returns an empty
+   feed. There is no automatic draft-to-article copy or reviewer portal yet.
+
+**Before testing:** Install the updated `apps-script/Smore.gs`, preserving your
+existing `doPost` and its pending-row write, then redeploy a **New version of the
+existing deployment** as described above. Publish the updated `index.html` too.
+Spreadsheet edits after this setup do not require another deployment.
+
+### Manual test checklist — complete before the next phase
+
+- [ ] **A. Submit a draft:** In The Peer Lesson Studio, enter a distinctive title,
+      department/grade, feedback focus, and valid draft link. Click **Submit for
+      Review**. Verify a new `submissions` row has `submission_type=lesson_draft`
+      and `status=pending`; confirm the page says it was saved for review.
+- [ ] **B. Confirm privacy:** No immediate public-looking draft card is added.
+      Refresh and search for the draft title: it must not appear.
+- [ ] **C. Publish one test row:** In `published_articles`, enter
+      `article_id=test-review-1`, `title=Review workflow test`,
+      `category=Teacher Support`, `summary=Approved test article`,
+      `article_body_text=This approved article contains the phrase silver eagle experiment.`,
+      and `is_live=TRUE`. Leave optional fields blank if desired. Open the active
+      deployment URL with `?feed=articles` in an incognito window; verify only
+      live articles and the documented public fields are returned, not submissions
+      or extra private columns.
+- [ ] **D. Verify display and search:** Refresh the site. Find the article under
+      Latest Articles and Teacher Support; open **Read Full Playbook** and check
+      its complete body. In **Instant** search, find its title and then
+      `silver eagle experiment`; select the result and verify the same reader.
+      Bookmark it and verify it appears in Saved.
+- [ ] **E. Unpublish:** Set that row's `is_live=FALSE`, refresh the site, and
+      confirm it disappears from listings, Saved, and search. Also check a blank
+      live flag does not publish it. Already-open pages must be refreshed.
+- [ ] **Regression:** Open Flight Wire, read a newsletter, and search for a phrase
+      in its full body. Existing editorial articles and navigation still work.
+      A failed lesson submission should show an error and retain the form values.
