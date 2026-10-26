@@ -82,8 +82,11 @@ function syncSmoreFeed() {
 }
 
 // Replace the existing doGet; do not add a second doGet.
-function doGet() {
+function doGet(e) {
   try {
+    if (e && e.parameter && e.parameter.feed === 'articles') {
+      return smoreJson_({ ok: true, items: publishedArticles_() });
+    }
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('smore_feed_public');
     if (!sheet) throw new Error('Run setupSmoreFeed first');
     smoreCheckColumns_(sheet, SMORE_COLUMNS);
@@ -94,6 +97,27 @@ function doGet() {
   } catch (err) {
     return smoreJson_({ ok: false, error: String(err.message) });
   }
+}
+
+function publishedArticles_() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('published_articles');
+  if (!sheet) return [];
+  const [headers, ...rows] = sheet.getDataRange().getValues();
+  const columns = [
+    'article_id', 'title', 'category', 'summary', 'article_body_text',
+    'author', 'published_at', 'cover_image_url', 'is_live'
+  ];
+  const required = ['article_id', 'title', 'category', 'article_body_text', 'is_live'];
+  if (!headers || required.some(key => !headers.includes(key))) {
+    throw new Error('Missing required published_articles headers: ' + required.join(', '));
+  }
+  return rows.filter(row =>
+    String(row[headers.indexOf('is_live')]).trim().toLowerCase() === 'true'
+  ).map(row => Object.fromEntries(columns.map(key => {
+    const value = row[headers.indexOf(key)];
+    return [key, key === 'is_live' ? true :
+      value instanceof Date ? value.toISOString() : String(value == null ? '' : value).trim()];
+  }))).filter(item => required.every(key => item[key]));
 }
 
 function smoreJson_(data) {
