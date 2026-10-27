@@ -8,36 +8,45 @@ uses plain HTML and has no build tools or runtime dependencies.
 Open `index.html` in a web browser. Add the site's content and assets there as
 they are ready.
 
-## Smore newsletters: Google Sheet + Apps Script setup
+## Unified Google Sheet CMS + Smore Sync Setup
 
-Flight Wire's **Read newsletter** button opens an on-site article. Instant search
-includes its title, summary, and full body. The original Smore link remains available.
-Only import public newsletters you have permission to republish.
+The site is powered by a unified Google Apps Script (`apps-script/Smore.gs`) bound to your Google Sheet. It lets you edit **all site text, headings, articles, quick wins, directory links, staff lounge quotes, peer lesson studio cards, and EdTech tools** directly in your Google Sheet, while also syncing Smore newsletters and receiving form submissions (`Share a Tip`, `Post a Quote`, and `Peer Lesson Studio`) into `submissions` for review.
 
-### 1. Prepare the same spreadsheet
+### 1. Paste the Unified Apps Script (`apps-script/Smore.gs`)
 
-Keep your existing `submissions` tab and submission logic. Update its `doPost`
-request parsing for form-encoded submissions as described below. **Back up your
-spreadsheet first.** Existing `smore_feed_raw`/`smore_feed_public` tabs can be
-kept: the script never clears a tab (see *Headers and migration*). Each tab
-uses **one row per newsletter issue**.
+1. Open your Google Sheet and click **Extensions → Apps Script**.
+2. Replace the older script code with the full contents of [`apps-script/Smore.gs`](apps-script/Smore.gs).
+   *(Important: Google Apps Script only allows one `doGet` and one `doPost` in the project. `apps-script/Smore.gs` already includes the unified `doGet`, `doPost`, `syncSmoreFeed`, `setupSiteSheet`, and `publishApprovedSubmissions`.)*
+3. Click **Save**.
 
-In **Extensions → Apps Script**, add a script file named `Smore` and paste the
-contents of [`apps-script/Smore.gs`](apps-script/Smore.gs).
-Remove/replace the old newsletter sync functions and **old `doGet`**; there must
-be exactly one `doGet`. Keep your existing `doPost`, `cleanText_`, and submission
-helpers. Since browser submissions are form-encoded, `doPost` must read values
-from `e.parameter` (for example, use `const body = e.parameter || {}` rather
-than `JSON.parse(e.postData.contents)`). Keep its validation and pending-row
-write. The new newsletter helpers are prefixed `smore` to avoid collisions.
+### 2. Run `setupSiteSheet` Once to Auto-Create & Seed All Tabs
 
-Run `setupSmoreFeed` from the function dropdown and authorize spreadsheet and
-external-fetch access. It creates missing tabs. Required headers (row 1) for
-`smore_feed_raw` and `smore_feed_public`:
+1. In the Apps Script toolbar dropdown at the top, select **`setupSiteSheet`** (or **`setupSmoreFeed`**) and click **Run** (or reload your Google Sheet and use the new **Eagle Site CMS → 1. Setup / Seed Site Tabs & Defaults** menu).
+2. Authorize spreadsheet and external-fetch access when prompted.
+3. The script will non-destructively ensure all required tabs and headers exist (matching columns by name and never clearing your existing rows) and will pre-populate any empty content tabs with the current site defaults so you can edit or delete them right away:
 
-```text
-issue_url	issue_title	published_at	summary	cover_image_url	article_body_text
-```
+| Tab Name | Purpose | Required / Created Columns |
+| --- | --- | --- |
+| `settings` | Change any site heading, subtitle, badge, cover story ID, or video embed URL | `key`, `value`, `description` |
+| `published_articles` | All main feed articles & playbooks (set `is_live` to `TRUE` or `FALSE`) | `article_id`, `title`, `category`, `summary`, `article_body_text`, `author`, `published_at`, `cover_image_url`, `is_live`, `takeaway`, `try_tomorrow`, `script`, `read_time`, `featured`, `has_video_demo`, `tags` |
+| `quick_wins` | Context-aware Quick Wins banner cards per section (`all`, `Student Engagement`, `Classroom Management`, `Teacher Support`, `Tech & AI`, `saved`, `view-directory`, `view-bulletin`, `view-studio`, `view-academy`) | `tip_id`, `section`, `category_label`, `title`, `tip`, `is_live` |
+| `directory_links` | Heart of MMS Building Directory cards | `resource_id`, `title`, `category`, `description`, `url`, `tags`, `is_live` |
+| `lounge_quotes` | "Overheard at MMS" Staff Lounge quotes in the sidebar | `quote_id`, `quote`, `attribution`, `is_live` |
+| `peer_studio` | Published Peer Lesson Studio cards | `studio_id`, `title`, `subject`, `dilemma`, `warm_feedback`, `cool_feedback`, `doc_url`, `is_live` |
+| `tech_tools` | EdTech, AI & Classroom Video Lab software cards | `tool_id`, `badge`, `title`, `link_label`, `url`, `description`, `teacher_workflow`, `student_workflow`, `is_live` |
+| `smore_feed_raw` / `smore_feed_public` | Automated Smore Flight Wire newsletter archive | `issue_url`, `issue_title`, `published_at`, `summary`, `cover_image_url`, `article_body_text` |
+| `submissions` / `review_queue` | Incoming staff form submissions (`status = pending`) | `id`, `submitted_at`, `submitter_name`, `submitter_email`, `submission_type`, `title`, `content`, `links`, `status`, `category`, `reviewed_by`, `reviewed_at` |
+| `audit_log` | Automatic log of submissions, approvals, and Smore syncs | `timestamp`, `action`, `source_tab`, `item_id`, `title`, `details` |
+
+*(Note: If your sheet still has the tab spelled `puplished_articles`, the script automatically detects and works with both `published_articles` and `puplished_articles`.)*
+
+### 3. Approving Submissions with One Click
+
+When teachers submit a form on the site (**Share a Tip**, **Post a Classroom Quote**, or **Post a Lesson Draft** in Peer Lesson Studio):
+1. A new row is added to `submissions` with `status = pending`.
+2. To publish it to the live site, change its `status` cell in `submissions` (or `review_queue`) to **`approved`**.
+3. In your Google Sheet top menu bar, click **Eagle Site CMS → 2. Publish Approved Submissions**.
+4. The script automatically copies the item into the matching live tab (`published_articles`, `lounge_quotes`, or `peer_studio` with `is_live = TRUE`), updates the submission status to `published`, and records an entry in `audit_log`.
 
 **Headers and migration.** Columns are matched **by name**, so order does not
 matter and extra columns are kept. For example, the older layout
@@ -45,13 +54,13 @@ matter and extra columns are kept. For example, the older layout
 works as-is. If a required header is missing, setup/sync writes it into the empty
 cell(s) right of the last header; existing cells, rows, and columns are never
 moved or cleared. `doGet` does not add headers; it returns `ok: false` naming the
-missing header until `setupSmoreFeed` is run. Optional `last_synced_at` is filled
+missing header until `setupSmoreFeed` / `setupSiteSheet` is run. Optional `last_synced_at` is filled
 on each successful refresh. Optional `is_live`: `FALSE` hides an issue; blank or
 `TRUE` shows it.
 
-`settings` uses column A for keys and column B for values (a `key	value`
-header is written only into an empty tab). Setup adds this row unless a
-`smore_source_url` (or legacy `source_url`) row already exists:
+`settings` uses column A for keys and column B for values (a `key	value	description`
+header is written into an empty tab). Setup adds all default site text keys and
+this row unless a `smore_source_url` (or legacy `source_url`) row already exists:
 
 ```text
 smore_source_url	https://www.smore.com/u/maizemiddleschool
