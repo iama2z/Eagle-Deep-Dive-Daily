@@ -8,6 +8,27 @@ uses plain HTML and has no build tools or runtime dependencies.
 Open `index.html` in a web browser. Add the site's content and assets there as
 they are ready.
 
+### Sheet-first loading
+
+On refresh, skeleton placeholders cover the Sheet-controlled page regions until
+`?feed=site` has been applied. A status message announces loading; the page then
+reveals its final content and enables interactions. Each feed request, including
+reading its JSON body, has a 12-second timeout. Failed, invalid, or timed-out site
+requests reveal built-in content with a non-blocking notice and a console warning.
+Refresh to retry. Flight Wire shows local bulletins when available, otherwise an
+unavailable message. Older `items`-only feeds remain supported through a bounded
+articles request, with a notice explaining that some sections use built-in content.
+
+Quick manual checks (browser developer tools → Network):
+
+- [ ] Hard refresh with a healthy feed: Sheet text appears without a flash of defaults.
+- [ ] Throttle the connection: placeholders remain until content is applied.
+- [ ] Block the feed or keep it pending past 12 seconds: built-in content appears,
+      the notice explains the failure/timeout, and no loading message remains.
+- [ ] Try an invalid JSON response and an older `items`-only deployment.
+- [ ] Check search, topic/directory filters, bookmarks, article/newsletter modals,
+      submission forms, Quick Wins, quotes, studio cards, and tech tools.
+
 ## Unified Google Sheet CMS + Smore Sync Setup
 
 The site is powered by a unified Google Apps Script (`apps-script/Smore.gs`) bound to your Google Sheet. It lets you edit **all site text, headings, articles, quick wins, directory links, staff lounge quotes, peer lesson studio cards, and EdTech tools** directly in your Google Sheet, while also syncing Smore newsletters and receiving form submissions (`Share a Tip`, `Post a Quote`, and `Peer Lesson Studio`) into `submissions` for review.
