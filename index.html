@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>document.documentElement.classList.add('site-loading');</script>
   <title>Eagle Deep Dive Daily | Maize Middle School Classroom Craft, Engagement, Support &amp; Tech</title>
   <!-- Google Fonts: Fraunces (Editorial Serif) & Plus Jakarta Sans (Clean Modern Sans) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -89,12 +90,33 @@
     .quick-wins-transition {
       transition: opacity 0.22s ease, transform 0.22s ease;
     }
+    .site-loading .sheet-region {
+      position: relative;
+      visibility: hidden;
+    }
+    .site-loading .sheet-region::after {
+      content: '';
+      position: absolute;
+      inset: 1rem;
+      visibility: visible;
+      border-radius: 1rem;
+      background: repeating-linear-gradient(
+        to bottom, #E2E8F0 0, #E2E8F0 1.5rem, transparent 1.5rem, transparent 3rem
+      );
+    }
+    .site-loading main.sheet-region { min-height: 32rem; }
+    #siteLoadStatus {
+      margin: 1rem auto;
+      padding: 0 1rem;
+      font-size: 0.875rem;
+      color: #3F3F46;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-red-600 selection:text-white">
 
   <!-- EDITORIAL MASTHEAD & NAVIGATION -->
-  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b-2 border-ink-900 shadow-xs transition-all">
+  <header data-sheet-region class="sheet-region sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b-2 border-ink-900 shadow-xs transition-all">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <!-- TOP BAR: BRAND, SEARCH & PRIMARY ACTIONS -->
@@ -306,7 +328,8 @@
   </header>
 
   <!-- MAIN CONTENT AREA -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <p id="siteLoadStatus" role="status" aria-live="polite">Loading the latest site content…</p>
+  <main data-sheet-region class="sheet-region flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
     <!-- ========================================== -->
     <!-- DYNAMIC CONTEXT-AWARE QUICK WINS BANNER    -->
@@ -1043,7 +1066,7 @@
   </div>
 
   <!-- FOOTER -->
-  <footer class="bg-white border-t border-cream-300 py-8 mt-16 text-xs text-ink-600">
+  <footer data-sheet-region class="sheet-region bg-white border-t border-cream-300 py-8 mt-16 text-xs text-ink-600">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-2.5">
         <span id="footerTitleText" class="font-editorial font-bold text-ink-900 text-sm">Eagle Deep Dive Daily</span>
@@ -2367,9 +2390,7 @@
       try {
         const url = new URL(SUBMISSION_API_URL);
         url.searchParams.set('feed', 'articles');
-        const response = await fetch(url.href, { cache: 'no-store' });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
+        const data = await fetchJsonWithTimeout(url.href);
         if (!data?.ok || !Array.isArray(data.items)) throw new Error('Unexpected articles format');
         applyPublishedArticles(data.items);
       } catch (error) {
@@ -2521,9 +2542,7 @@
       setBulletinFeedMessage(container, 'Loading the latest Flight Wire bulletins...');
 
       try {
-        const res = await fetch(SMORE_FEED_API_URL, { cache: 'no-store' });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
+        const data = await fetchJsonWithTimeout(SMORE_FEED_API_URL);
         if (!data || !data.ok || !Array.isArray(data.items)) throw new Error('Unexpected feed format');
         applySmoreItems(data.items);
       } catch (err) {
@@ -2536,23 +2555,54 @@
       }
     }
 
+    async function fetchJsonWithTimeout(url, timeoutMs = 12000) {
+      const controller = new AbortController();
+      let timer;
+      try {
+        return await Promise.race([
+          (async () => {
+            const response = await fetch(url, { cache: 'no-store', signal: controller.signal });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return await response.json();
+          })(),
+          new Promise((_, reject) => {
+            timer = setTimeout(() => {
+              reject(new DOMException('Site feed request timed out', 'TimeoutError'));
+              controller.abort();
+            }, timeoutMs);
+          })
+        ]);
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
     async function loadSiteDataFromSheet() {
       const container = document.getElementById('bulletinFeedContainer');
+      const status = document.getElementById('siteLoadStatus');
+      let notice = '';
       if (container) setBulletinFeedMessage(container, 'Loading the latest Flight Wire bulletins...');
       try {
         const url = new URL(SUBMISSION_API_URL);
         url.searchParams.set('feed', 'site');
-        const response = await fetch(url.href, { cache: 'no-store' });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
-        if (!data || !data.ok) throw new Error('Unexpected site feed response');
+        const data = await fetchJsonWithTimeout(url.href);
+        if (!data || !data.ok || typeof data !== 'object') throw new Error('Unexpected site feed response');
 
         // If older deployment doesn't return Unified CMS properties (`settings` or `articles`), fall back
         if (!('settings' in data) && !('articles' in data)) {
-          if (Array.isArray(data.items)) applySmoreItems(data.items);
-          else await loadSmoreBulletinFeed();
+          if (!Array.isArray(data.items)) throw new Error('Unexpected legacy feed response');
+          notice = 'This feed uses an older format. Some sections use built-in content.';
+          console.info(notice);
+          applySmoreItems(data.items);
           await loadPublishedArticles();
           return;
+        }
+
+        if (('settings' in data && (!data.settings || typeof data.settings !== 'object' || Array.isArray(data.settings))) ||
+            ['articles', 'quick_wins', 'directory', 'quotes', 'studio', 'tech_tools', 'smore']
+              .some(key => key in data && (!Array.isArray(data[key]) ||
+                data[key].some(row => !row || typeof row !== 'object' || Array.isArray(row))))) {
+          throw new Error('Unexpected site feed format');
         }
 
         if (data.settings && typeof data.settings === 'object') {
@@ -2657,16 +2707,35 @@
           renderArticlesGrid(activeCategory);
         }
 
-        if (Array.isArray(data.smore)) {
-          applySmoreItems(data.smore);
-        }
+        if (Array.isArray(data.smore)) applySmoreItems(data.smore);
+        else await loadSmoreBulletinFeed();
 
         initFuse();
         document.getElementById('globalSearchInput')?.dispatchEvent(new Event('input'));
       } catch (err) {
-        console.warn('Unified site feed unavailable, trying legacy endpoints:', err);
-        loadSmoreBulletinFeed();
-        loadPublishedArticles();
+        console.warn('Unified site feed unavailable; using built-in content:', err);
+        notice = err.name === 'TimeoutError'
+          ? 'Site content took too long to load. Showing built-in content; refresh to try again.'
+          : 'Live site content is temporarily unavailable. Showing built-in content; refresh to try again.';
+        if (APP_DATA.bulletin && APP_DATA.bulletin.length) renderBulletins();
+        else if (container) setBulletinFeedMessage(container, 'The Flight Wire bulletin feed is temporarily unavailable. Please try again later.', 'error');
+      } finally {
+        try {
+          renderArticlesGrid(activeCategory);
+          renderDirectory('all');
+          renderLoungeQuotes();
+          renderStudioItems();
+          renderTechTools();
+          initFuse();
+        } finally {
+          status.textContent = notice;
+          status.hidden = !notice;
+          document.querySelectorAll('[data-sheet-region]').forEach(region => {
+            region.inert = false;
+            region.removeAttribute('aria-busy');
+          });
+          document.documentElement.classList.remove('site-loading');
+        }
       }
     }
 
@@ -2746,13 +2815,11 @@
       savedBookmarks = getStored('mms_saved_bookmarks', ['art-1', 'art-7']);
       document.getElementById('savedCountLabel').textContent = savedBookmarks.length;
 
-      initFuse();
       initRevolvingSearchSuggestions();
-      renderArticlesGrid('all');
-      renderDirectory('all');
-      renderLoungeQuotes();
-      renderStudioItems();
-      renderTechTools();
+      document.querySelectorAll('[data-sheet-region]').forEach(region => {
+        region.inert = true;
+        region.setAttribute('aria-busy', 'true');
+      });
       loadSiteDataFromSheet();
 
       // Interactive Video Chapter Buttons in EdTech Lab
