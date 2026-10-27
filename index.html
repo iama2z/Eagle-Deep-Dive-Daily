@@ -120,10 +120,10 @@
 
           <div class="cursor-pointer" id="mastheadHomeBtn" title="Return to Main Feed">
             <div class="flex items-center gap-2">
-              <span class="font-editorial font-extrabold text-xl sm:text-2xl tracking-tight text-ink-900 hover:text-red-600 transition-colors">Eagle Deep Dive Daily</span>
-              <span class="hidden xl:inline-block text-[11px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-red-600 text-white">MMS Eagles</span>
+              <span id="siteTitleText" class="font-editorial font-extrabold text-xl sm:text-2xl tracking-tight text-ink-900 hover:text-red-600 transition-colors">Eagle Deep Dive Daily</span>
+              <span id="siteBadgeText" class="hidden xl:inline-block text-[11px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-red-600 text-white">MMS Eagles</span>
             </div>
-            <p class="text-xs text-ink-600 hidden sm:block">Maize Middle School • Classroom Craft, Student Engagement, Teacher Support &amp; Tech</p>
+            <p id="siteSubtitleText" class="text-xs text-ink-600 hidden sm:block">Maize Middle School • Classroom Craft, Student Engagement, Teacher Support &amp; Tech</p>
           </div>
 
           <!-- TOP-LEFT SITE NAVIGATION DROPDOWN MENU -->
@@ -298,7 +298,7 @@
         </div>
 
         <div class="hidden lg:flex items-center gap-2 text-[11px] text-ink-600 font-medium pl-4 shrink-0">
-          <span class="italic">Built by teachers, for teachers</span>
+          <span id="siteTaglineText" class="italic">Built by teachers, for teachers</span>
         </div>
       </nav>
 
@@ -348,12 +348,13 @@
           <!-- HERO IMAGE -->
           <div class="lg:col-span-7 relative min-h-[280px] sm:min-h-[360px] bg-ink-900 overflow-hidden">
             <img 
+              id="heroFeatureImg"
               src="user_uploaded_files/ttl=63d/tool_generated/opt_watermarked_img_10640110943084536436.jpg" 
               alt="Engaged middle school classroom collaboration" 
               class="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700"
             />
             <div class="absolute top-4 left-4 flex items-center gap-2">
-              <span class="px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-ink-900/85 text-red-300 backdrop-blur-md">
+              <span id="heroFeatureBadge" class="px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-ink-900/85 text-red-300 backdrop-blur-md">
                 Cover Story • Student Engagement
               </span>
             </div>
@@ -363,16 +364,16 @@
           <div class="lg:col-span-5 p-6 sm:p-8 lg:p-10 flex flex-col justify-between bg-gradient-to-b from-white to-cream-50">
             <div class="space-y-4">
               <div class="flex items-center gap-2 text-xs text-ink-600 font-semibold">
-                <span>Science &amp; STEM Team</span>
+                <span id="heroFeatureAuthor">Science &amp; STEM Team</span>
                 <span>•</span>
-                <span>4 min read</span>
+                <span id="heroFeatureReadTime">4 min read</span>
               </div>
 
-              <h1 class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900 leading-tight">
+              <h1 id="heroFeatureTitle" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900 leading-tight">
                 The ‘Low-Floor, High-Ceiling’ Hook: Getting Every 8th Grader Talking in the First 4 Minutes
               </h1>
 
-              <p class="text-sm text-ink-600 leading-relaxed">
+              <p id="heroFeatureSummary" class="text-sm text-ink-600 leading-relaxed">
                 How replacing traditional glossary bellringers with visual phenomena controversies and 90-second table debates transforms passive classes into active investigators.
               </p>
 
@@ -380,9 +381,9 @@
               <div class="p-4 rounded-2xl bg-red-50/90 border border-red-200 space-y-1">
                 <div class="text-[10px] font-extrabold uppercase tracking-widest text-red-700 flex items-center gap-1.5">
                   <i data-lucide="zap" class="w-3.5 h-3.5 text-red-600"></i>
-                  <span>The 30-Second Takeaway</span>
+                  <span id="heroTakeawayLabel">The 30-Second Takeaway</span>
                 </div>
-                <p class="text-xs text-ink-800 leading-relaxed font-medium">
+                <p id="heroFeatureTakeaway" class="text-xs text-ink-800 leading-relaxed font-medium">
                   Project a counter-intuitive visual mystery with zero academic jargon first. Give tables 60 seconds to lock in a hunch before introducing formal vocabulary.
                 </p>
               </div>
@@ -390,11 +391,11 @@
 
             <div class="pt-6 mt-6 border-t border-cream-200 flex items-center justify-between gap-4">
               <button id="readHeroArticleBtn" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-ink-900 hover:bg-ink-800 text-white text-xs font-bold transition shadow-sm">
-                <span>Read Full Story &amp; Script</span>
+                <span id="heroButtonLabelText">Read Full Story &amp; Script</span>
                 <i data-lucide="arrow-right" class="w-4 h-4 text-red-400"></i>
               </button>
 
-              <button class="bookmark-btn p-2.5 rounded-full border border-cream-300 hover:bg-cream-100 text-ink-600 transition" data-id="art-1" title="Save to reading list">
+              <button id="heroBookmarkBtn" class="bookmark-btn p-2.5 rounded-full border border-cream-300 hover:bg-cream-100 text-ink-600 transition" data-id="art-1" title="Save to reading list">
                 <i data-lucide="bookmark" class="w-4 h-4"></i>
               </button>
             </div>
@@ -433,12 +434,12 @@
                 <i data-lucide="sparkles" class="w-5 h-5"></i>
               </div>
               <div>
-                <h3 class="font-editorial font-bold text-base text-ink-900">Instant Strategy Brainstorm</h3>
-                <p class="text-[11px] text-ink-600">Powered by Gemini Flash • Grounded in MMS Craft</p>
+                <h3 id="coachHeadingText" class="font-editorial font-bold text-base text-ink-900">Instant Strategy Brainstorm</h3>
+                <p id="coachSubtitleText" class="text-[11px] text-ink-600">Powered by Gemini Flash • Grounded in MMS Craft</p>
               </div>
             </div>
 
-            <p class="text-xs text-ink-600 leading-relaxed">
+            <p id="coachPromptIntroText" class="text-xs text-ink-600 leading-relaxed">
               Need a quick 5-minute sponge activity, a NotebookLM / OrbitNote workflow, or a de-escalation phrase?
             </p>
 
@@ -477,26 +478,12 @@
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <i data-lucide="coffee" class="w-4 h-4 text-red-600"></i>
-                <h3 class="font-editorial font-bold text-base text-ink-900">Overheard at MMS</h3>
+                <h3 id="loungeHeadingText" class="font-editorial font-bold text-base text-ink-900">Overheard at MMS</h3>
               </div>
-              <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-50 text-rose-700">Staff Lounge</span>
+              <span id="loungeBadgeText" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-50 text-rose-700">Staff Lounge</span>
             </div>
 
-            <div id="loungeQuotesContainer" class="space-y-3">
-              <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200 space-y-1.5">
-                <p class="text-xs italic text-ink-800 font-serif leading-relaxed">
-                  “Mr. H, if the Earth is spinning at 1,000 miles an hour, why don’t my shoes wear out faster when I stand still?”
-                </p>
-                <div class="text-[11px] text-ink-400 font-semibold text-right">— 8th Grade Science Debrief</div>
-              </div>
-
-              <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200 space-y-1.5">
-                <p class="text-xs italic text-ink-800 font-serif leading-relaxed">
-                  “I didn’t lose my homework, it’s just currently in an unverified location in my locker.”
-                </p>
-                <div class="text-[11px] text-ink-400 font-semibold text-right">— 7th Hour Hallway</div>
-              </div>
-            </div>
+            <div id="loungeQuotesContainer" class="space-y-3"></div>
 
             <button id="sidebarAddQuoteBtn" class="w-full py-2 rounded-xl border border-cream-300 hover:bg-cream-100 text-xs font-bold text-ink-800 transition">
               + Post a Classroom Quote or Win
@@ -521,8 +508,8 @@
             <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
             <span>Back to Editorial Feed</span>
           </button>
-          <h1 class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">Heart of MMS: Clean Building Directory</h1>
-          <p class="text-sm text-ink-600">Streamlined, color-coded access to internal USD 266 forms, maps, and operational links.</p>
+          <h1 id="directoryHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">Heart of MMS: Clean Building Directory</h1>
+          <p id="directorySubtitleText" class="text-sm text-ink-600">Streamlined, color-coded access to internal USD 266 forms, maps, and operational links.</p>
         </div>
 
         <div class="flex items-center gap-1.5 overflow-x-auto" id="hqCategoryFilter">
@@ -534,7 +521,6 @@
         </div>
       </div>
 
-      <!-- [COPILOT_HOOK: RESOURCES_DIRECTORY_GRID] -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="hqResourceGrid"></div>
     </div>
 
@@ -549,8 +535,8 @@
         </button>
         <div class="flex items-center justify-between flex-wrap gap-2">
           <div>
-            <h1 class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">The Flight Wire (Smore Bulletin Archive)</h1>
-            <p class="text-sm text-ink-600">Read administrative newsletters here and search their full text for past announcements.</p>
+            <h1 id="bulletinHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">The Flight Wire (Smore Bulletin Archive)</h1>
+            <p id="bulletinSubtitleText" class="text-sm text-ink-600">Read administrative newsletters here and search their full text for past announcements.</p>
           </div>
           <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 flex items-center gap-1.5">
             <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Automated Scraper Active
@@ -570,8 +556,8 @@
           <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
           <span>Back to Editorial Feed</span>
         </button>
-        <h1 class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">The Peer Lesson Studio</h1>
-        <p class="text-sm text-ink-600">Share a draft lab, CER prompt, or activity for low-stakes Warm &amp; Cool feedback from colleagues.</p>
+        <h1 id="studioHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">The Peer Lesson Studio</h1>
+        <p id="studioSubtitleText" class="text-sm text-ink-600">Share a draft lab, CER prompt, or activity for low-stakes Warm &amp; Cool feedback from colleagues.</p>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -621,28 +607,30 @@
             <span>Back to Editorial Feed</span>
           </button>
           <div class="flex items-center gap-2.5 flex-wrap">
-            <h1 class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">EdTech, AI &amp; Classroom Video Lab</h1>
-            <span class="px-3 py-0.5 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-red-100 text-ink-900">
+            <h1 id="academyHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">EdTech, AI &amp; Classroom Video Lab</h1>
+            <span id="academyBadgeText" class="px-3 py-0.5 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-red-100 text-ink-900">
               Field Toolkit
             </span>
           </div>
-          <p class="text-sm text-ink-600 mt-1">NotebookLM in Google Classroom, missing-student slide/video catch-up, content video creation, OrbitNote &amp; essential software.</p>
+          <p id="academySubtitleText" class="text-sm text-ink-600 mt-1">NotebookLM in Google Classroom, missing-student slide/video catch-up, content video creation, OrbitNote &amp; essential software.</p>
         </div>
       </div>
 
       <!-- PART 1: FEATURED STAFF VIDEO WALKTHROUGH (ANDREW'S NOTEBOOKLM DEMO) -->
       <section class="bg-white rounded-3xl border border-cream-300 overflow-hidden shadow-sm">
         <div class="grid grid-cols-1 lg:grid-cols-12">
-          <!-- INTERACTIVE VIDEO PLAYER PLACEHOLDER SLOT -->
-          <!-- [COPILOT_HOOK: ANDREW_NOTEBOOKLM_VIDEO_EMBED] -->
-          <!-- Replace the preview container below with your <iframe src="https://www.youtube.com/embed/..." /> or Google Drive video embed when ready -->
+          <!-- INTERACTIVE VIDEO PLAYER -->
           <div class="lg:col-span-7 bg-ink-900 p-6 sm:p-8 flex flex-col justify-between relative min-h-[300px] text-white">
             <div class="flex items-center justify-between gap-2 z-10">
               <span class="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-red-600 text-white flex items-center gap-1.5">
                 <i data-lucide="video" class="w-3.5 h-3.5"></i>
-                <span>Staff Walkthrough Video • Andrew Hogan</span>
+                <span id="academyVideoBadgeText">Staff Walkthrough Video • Andrew Hogan</span>
               </span>
-              <span class="text-xs font-mono text-ink-400">Embed Slot Ready</span>
+              <span id="academyVideoStatusLabel" class="text-xs font-mono text-ink-400">Interactive Chapter Guide</span>
+            </div>
+
+            <div id="academyVideoEmbedWrapper" class="hidden my-4 rounded-2xl overflow-hidden border border-ink-600/50 aspect-video bg-black z-10">
+              <iframe id="academyVideoIframe" class="w-full h-full" src="" title="Staff Walkthrough Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
 
             <div class="my-6 p-6 rounded-2xl bg-ink-800/90 border border-ink-600/50 space-y-3 z-10" id="videoChapterPreviewBox">
@@ -656,7 +644,7 @@
                 </div>
               </div>
               <p id="activeVideoChapterDesc" class="text-xs text-cream-200 leading-relaxed">
-                Click any chapter timestamp below to preview the workflow steps covered in the walkthrough video—or replace the <code class="text-red-300">[COPILOT_HOOK: ANDREW_NOTEBOOKLM_VIDEO_EMBED]</code> block with your recorded video link.
+                Click any chapter timestamp below to preview the workflow steps covered in the walkthrough video.
               </p>
             </div>
 
@@ -823,151 +811,8 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-xs">
-          <!-- TOOL 1: ORBITNOTE -->
-          <div class="bg-white rounded-3xl border-2 border-red-200 p-6 shadow-sm flex flex-col justify-between space-y-4">
-            <div class="space-y-2.5">
-              <div class="flex items-center justify-between">
-                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-red-100 text-ink-900">PDF &amp; Accessibility Star</span>
-                <a href="https://orbitnote.texthelp.com/" target="_blank" class="text-red-700 font-bold hover:underline flex items-center gap-1">
-                  <span>OrbitNote</span> <i data-lucide="external-link" class="w-3 h-3"></i>
-                </a>
-              </div>
-              <h3 class="font-editorial font-bold text-lg text-ink-900">OrbitNote (by Texthelp)</h3>
-              <p class="text-ink-600 leading-relaxed">
-                Transforms static PDFs in Google Classroom into interactive, accessible workspaces with Read&amp;Write tools built in.
-              </p>
-              <div class="space-y-2 pt-1">
-                <div class="p-2.5 rounded-xl bg-cream-100 border border-cream-200">
-                  <strong class="text-ink-900 block">🍎 Teacher Workflow:</strong>
-                  Assign PDFs directly via Google Classroom; leave voice comments for fast grading; use freehand drawing to model math/science diagrams live.
-                </div>
-                <div class="p-2.5 rounded-xl bg-red-50/60 border border-red-200">
-                  <strong class="text-ink-900 block">🎒 Student Workflow:</strong>
-                  Use Text-to-Speech read-aloud with dual-color word tracking, Picture Dictionary for Tier 3 terms, 4-color highlighters + "Collect Highlights" into a study doc, and Voice Notes.
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- TOOL 2: NOTEBOOKLM -->
-          <div class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm flex flex-col justify-between space-y-4">
-            <div class="space-y-2.5">
-              <div class="flex items-center justify-between">
-                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-red-100 text-red-900">AI Curriculum Co-Pilot</span>
-                <a href="https://notebooklm.google.com/" target="_blank" class="text-red-600 font-bold hover:underline flex items-center gap-1">
-                  <span>NotebookLM</span> <i data-lucide="external-link" class="w-3 h-3"></i>
-                </a>
-              </div>
-              <h3 class="font-editorial font-bold text-lg text-ink-900">Google NotebookLM</h3>
-              <p class="text-ink-600 leading-relaxed">
-                Source-grounded AI notebook that only uses the Google Docs, Slides, PDFs, and links you upload—zero outside hallucinations.
-              </p>
-              <div class="space-y-2 pt-1">
-                <div class="p-2.5 rounded-xl bg-cream-100 border border-cream-200">
-                  <strong class="text-ink-900 block">🍎 Teacher Workflow:</strong>
-                  Generate unit pacing guides, leveled reading passages, DOK assessment audits, and 5-slide catch-up outlines for missing students.
-                </div>
-                <div class="p-2.5 rounded-xl bg-red-50/60 border border-red-200">
-                  <strong class="text-ink-900 block">🎒 Student Workflow:</strong>
-                  Listen to the 2-host Audio Overview podcast at stations or after an absence, and review teacher-verified unit FAQs and study guides in Google Classroom.
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- TOOL 3: CANVA FOR EDUCATION / SLIDE & VIDEO STUDIO -->
-          <div class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm flex flex-col justify-between space-y-4">
-            <div class="space-y-2.5">
-              <div class="flex items-center justify-between">
-                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-900">Visuals &amp; Video Studio</span>
-                <a href="https://www.canva.com/education/" target="_blank" class="text-emerald-700 font-bold hover:underline flex items-center gap-1">
-                  <span>Canva Edu</span> <i data-lucide="external-link" class="w-3 h-3"></i>
-                </a>
-              </div>
-              <h3 class="font-editorial font-bold text-lg text-ink-900">Canva for Education &amp; Slides</h3>
-              <p class="text-ink-600 leading-relaxed">
-                All-in-one visual deck builder and browser-based video recorder (100% free for K-12 schools).
-              </p>
-              <div class="space-y-2 pt-1">
-                <div class="p-2.5 rounded-xl bg-cream-100 border border-cream-200">
-                  <strong class="text-ink-900 block">🍎 Teacher Workflow:</strong>
-                  Paste NotebookLM slide outlines into visual templates and use "Present &amp; Record" to make a 2-minute video link for Google Classroom.
-                </div>
-                <div class="p-2.5 rounded-xl bg-red-50/60 border border-red-200">
-                  <strong class="text-ink-900 block">🎒 Student Workflow:</strong>
-                  Collaborate in pairs on infographics, Frayer visual posters, or 90-second voice-over explainer videos without complex editing software.
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- TOOL 4: EDPUZZLE & SCREENCASTIFY -->
-          <div class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm flex flex-col justify-between space-y-4">
-            <div class="space-y-2.5">
-              <div class="flex items-center justify-between">
-                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-blue-100 text-blue-900">Interactive Video</span>
-                <a href="https://edpuzzle.com/" target="_blank" class="text-blue-700 font-bold hover:underline flex items-center gap-1">
-                  <span>Edpuzzle</span> <i data-lucide="external-link" class="w-3 h-3"></i>
-                </a>
-              </div>
-              <h3 class="font-editorial font-bold text-lg text-ink-900">Edpuzzle &amp; Screencastify</h3>
-              <p class="text-ink-600 leading-relaxed">
-                Turn passive video watching into active check-for-understanding pauses synced directly with Google Classroom grades.
-              </p>
-              <div class="space-y-2 pt-1">
-                <div class="p-2.5 rounded-xl bg-cream-100 border border-cream-200">
-                  <strong class="text-ink-900 block">🍎 Teacher Workflow:</strong>
-                  Trim any content clip to 3 minutes, embed 3 pause-and-predict questions, and turn on "Prevent Skipping" for station accountability.
-                </div>
-                <div class="p-2.5 rounded-xl bg-red-50/60 border border-red-200">
-                  <strong class="text-ink-900 block">🎒 Student Workflow:</strong>
-                  Re-watch the exact 20-second segment before a question if they get stuck, building self-paced comprehension.
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- TOOL 5: BRISK TEACHING & DIFFIT -->
-          <div class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm flex flex-col justify-between space-y-4">
-            <div class="space-y-2.5">
-              <div class="flex items-center justify-between">
-                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-rose-100 text-rose-900">Chrome Extension</span>
-                <a href="https://www.briskteaching.com/" target="_blank" class="text-rose-700 font-bold hover:underline flex items-center gap-1">
-                  <span>Brisk / Diffit</span> <i data-lucide="external-link" class="w-3 h-3"></i>
-                </a>
-              </div>
-              <h3 class="font-editorial font-bold text-lg text-ink-900">Brisk Teaching &amp; Diffit</h3>
-              <p class="text-ink-600 leading-relaxed">
-                Instant reading-level adaptation and Google Docs feedback helpers that live right inside your Chrome browser.
-              </p>
-              <div class="space-y-2 pt-1">
-                <div class="p-2.5 rounded-xl bg-cream-100 border border-cream-200">
-                  <strong class="text-ink-900 block">🍎 Teacher Workflow:</strong>
-                  Convert any web article into a 6th, 7th, or 8th-grade Google Doc or Google Slides deck in 10 seconds, then push it to OrbitNote.
-                </div>
-                <div class="p-2.5 rounded-xl bg-red-50/60 border border-red-200">
-                  <strong class="text-ink-900 block">🎒 Student Workflow:</strong>
-                  Access core grade-level concepts with scaffolded sentence stems and built-in vocabulary banks.
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- TOOL 6: COPILOT CUSTOM TOOL SLOT -->
-          <!-- [COPILOT_HOOK: ADDITIONAL_TEACHER_SOFTWARE_CARD] -->
-          <div class="rounded-3xl border-2 border-dashed border-cream-300 p-6 bg-cream-100/50 flex flex-col justify-between space-y-3">
-            <div class="space-y-2">
-              <span class="text-[10px] font-mono bg-white px-2.5 py-0.5 rounded border border-cream-300 text-ink-600">Copilot Ready Slot</span>
-              <h3 class="font-editorial font-bold text-lg text-ink-900">Add Department Software</h3>
-              <p class="text-ink-600 leading-relaxed">
-                Use GitHub Copilot or the "Share a Tip" button at the top of the page to add PhET Simulations, Desmos, Gizmos, or department-specific apps here.
-              </p>
-            </div>
-            <button id="addTechTipFromAcademyBtn" class="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-cream-200 text-ink-900 border border-cream-300 font-bold transition">
-              + Share a Tech or Software Tip
-            </button>
-          </div>
+        <div id="techToolsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-xs">
+          <!-- Dynamically populated from APP_DATA.techTools / Google Sheet tech_tools tab -->
         </div>
       </section>
     </div>
@@ -1111,9 +956,12 @@
           <input id="tipAuthor" type="text" placeholder="e.g., 8th Grade Science" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" required />
         </div>
 
-        <div class="pt-2 flex justify-end gap-2">
-          <button type="button" id="cancelShareTipBtn" class="px-4 py-2 rounded-full border border-cream-300 text-ink-600 font-bold">Cancel</button>
-          <button type="submit" class="px-5 py-2 rounded-full bg-ink-900 hover:bg-ink-800 text-white font-bold">Publish to Feed</button>
+        <div class="pt-2 flex items-center justify-between gap-2">
+          <p id="shareTipSubmissionStatus" class="hidden text-xs" role="status" aria-live="polite"></p>
+          <div class="flex justify-end gap-2 ml-auto">
+            <button type="button" id="cancelShareTipBtn" class="px-4 py-2 rounded-full border border-cream-300 text-ink-600 font-bold">Cancel</button>
+            <button type="submit" class="px-5 py-2 rounded-full bg-ink-900 hover:bg-ink-800 text-white font-bold">Submit for Review</button>
+          </div>
         </div>
       </form>
     </div>
@@ -1198,12 +1046,12 @@
   <footer class="bg-white border-t border-cream-300 py-8 mt-16 text-xs text-ink-600">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-2.5">
-        <span class="font-editorial font-bold text-ink-900 text-sm">Eagle Deep Dive Daily</span>
+        <span id="footerTitleText" class="font-editorial font-bold text-ink-900 text-sm">Eagle Deep Dive Daily</span>
         <span>•</span>
-        <span>Classroom Craft, Student Engagement, Teacher Support &amp; Tech/AI</span>
+        <span id="footerLeftText">Classroom Craft, Student Engagement, Teacher Support &amp; Tech/AI</span>
       </div>
       <div class="flex items-center gap-4 text-ink-400">
-        <span>Maize Middle School (USD 266)</span>
+        <span id="footerRightText">Maize Middle School (USD 266)</span>
         <span>•</span>
         <span>GitHub Pages Zero-Build Edition</span>
       </div>
@@ -1757,8 +1605,97 @@
             "Custodial sweep: Please ensure all lab and prep cabinets are locked prior to 4 PM."
           ]
         }
+      ],
+      loungeQuotes: [
+        {
+          id: "quote-1",
+          quote: "Wait… if plants make their own food from air and sunlight, why are we paying for groceries?",
+          attribution: "7th Hour Life Science Debate"
+        },
+        {
+          id: "quote-2",
+          quote: "Mr. H, I used the OrbitNote read-aloud voice at 1.5x speed and I actually finished the whole article before the bell.",
+          attribution: "8th Hour Social Studies"
+        }
+      ],
+      studioItems: [
+        {
+          id: "studio-1",
+          title: "8th Grade Plate Tectonics CER Lab Prompt",
+          subject: "8th Science",
+          dilemma: "Opening Hook & Student Buy-In",
+          warmFeedback: "Opening with the sonar map mystery hooked even reluctant readers immediately.",
+          coolFeedback: "I wonder if trimming the background paragraph to 3 bullet points would get them into the data faster.",
+          docUrl: ""
+        }
+      ],
+      techTools: [
+        {
+          id: "tool-1",
+          badge: "PDF & Accessibility • #1 Pick",
+          title: "OrbitNote (by Texthelp)",
+          linkLabel: "Google Classroom Integration",
+          url: "",
+          description: "Turns flat, inaccessible PDFs in Google Drive and Google Classroom into interactive, read-aloud workspaces.",
+          teacherWorkflow: "Push any PDF worksheet or lab packet through Google Classroom as an 'OrbitNote Assignment' so you never have to reformat a PDF into a Google Doc.",
+          studentWorkflow: "Students use Text-to-Speech with dual-color word tracking, highlight claims/evidence, click 'Collect Highlights', or leave 30-second voice notes."
+        },
+        {
+          id: "tool-2",
+          badge: "AI Unit & Catch-Up Hub",
+          title: "Google NotebookLM",
+          linkLabel: "notebooklm.google.com",
+          url: "https://notebooklm.google.com/",
+          description: "Your zero-hallucination AI teaching assistant grounded strictly in the Google Slides, Docs, and PDFs you upload.",
+          teacherWorkflow: "Map unit pacing, generate tiered reading passages, and build Google Classroom study guides in 60 seconds.",
+          studentWorkflow: "Generate a 5-slide 'What You Missed' summary and a 3-minute AI Audio/Video Overview to post in Google Classroom for absent students."
+        },
+        {
+          id: "tool-3",
+          badge: "Video & Visual Creation",
+          title: "Canva for Education & Screencastify",
+          linkLabel: "Chromebook Ready",
+          url: "https://www.canva.com/education/",
+          description: "Fastest recording tools for both Track A (teacher micro-videos) and Track B (student 90-second explainers).",
+          teacherWorkflow: "Open your Google Slides in Canva or Screencastify and click 'Record' to film a 2-minute lab walkthrough with your camera bubble in the corner.",
+          studentWorkflow: "Pairs use Canva Studio or Chromebook's built-in Screen Capture (Ctrl + Shift + Show Windows) to record their 3-Box Storyboard in one take."
+        },
+        {
+          id: "tool-4",
+          badge: "Interactive Video Checks",
+          title: "Edpuzzle + Google Classroom",
+          linkLabel: "Auto-Graded Video",
+          url: "https://edpuzzle.com/",
+          description: "Turns your 2-minute teacher screencasts or phenomenon clips into active, self-paced checkpoints.",
+          teacherWorkflow: "Drop 3 multiple-choice or open-ended pause points into your video and sync grades directly with Google Classroom.",
+          studentWorkflow: "Prevents passive skipping and lets absent or struggling learners re-watch a 20-second segment right before answering."
+        },
+        {
+          id: "tool-5",
+          badge: "Formative Concept Mapping",
+          title: "FigJam / Canva Whiteboards",
+          linkLabel: "Live Table Collaboration",
+          url: "https://www.figma.com/education/",
+          description: "Infinite digital sticky-note and diagramming canvas that replaces Jamboard for middle school table groups.",
+          teacherWorkflow: "Lock the background graphic organizer and give each table group a color-coded zone to sort vocabulary or build cause-and-effect chains.",
+          studentWorkflow: "Prepares groups visually before they record their 90-second student explainer video."
+        },
+        {
+          id: "tool-6",
+          badge: "AI Question & Rubric Helper",
+          title: "MagicSchool AI / Brisk Teaching",
+          linkLabel: "Chrome Extension",
+          url: "https://www.magicschool.ai/",
+          description: "Quick Chrome tools for leveling online articles, generating DOK 2/3 questions, and giving targeted Google Doc feedback.",
+          teacherWorkflow: "Use inside Google Docs to generate 'Glow & Grow' rubric feedback or instant exemplar paragraphs to model on the projector.",
+          studentWorkflow: "Helps teachers rapidly scaffold reading materials so every student can access the same high-ceiling classroom debate."
+        }
       ]
     };
+
+    const DEFAULT_ARTICLES_SNAPSHOT = APP_DATA.articles.map(a => ({ ...a }));
+    let siteSettings = {};
+    let currentHeroArticleId = 'art-1';
 
     let savedBookmarks = [];
     let activeCategory = 'all';
@@ -1828,8 +1765,20 @@
           title: r.title,
           category: r.category,
           desc: r.description,
-          tags: r.tags.join(' '),
+          tags: (r.tags || []).join(' '),
           action: () => switchView('view-directory')
+        });
+      });
+
+      (APP_DATA.techTools || []).forEach(t => {
+        items.push({
+          type: 'EdTech Tool',
+          id: t.id,
+          title: t.title,
+          category: t.badge || 'Tech & AI',
+          desc: `${t.description || ''} ${t.teacherWorkflow || ''} ${t.studentWorkflow || ''}`.trim(),
+          tags: 'edtech ai video orbitnote notebooklm tool',
+          action: () => switchView('view-academy')
         });
       });
 
@@ -1897,17 +1846,18 @@
       config.items.forEach(qt => {
         const div = document.createElement('div');
         div.className = 'p-4 rounded-2xl bg-ink-800/90 border border-ink-600/30 flex flex-col justify-between space-y-3 hover:border-red-500/50 transition';
+        const copyPayload = `${qt.title}: ${qt.tip}`;
         div.innerHTML = `
           <div class="space-y-1.5">
             <div class="flex items-center justify-between gap-2">
-              <span class="text-[10px] font-extrabold uppercase tracking-wider text-red-400">${qt.category}</span>
-              <button class="copy-quick-tip-btn text-[10px] font-semibold text-ink-400 hover:text-white flex items-center gap-1 transition" data-tip="${qt.title}: ${qt.tip.replace(/"/g, '&quot;')}" title="Copy quick win">
+              <span class="text-[10px] font-extrabold uppercase tracking-wider text-red-400">${escapeHtml(qt.category)}</span>
+              <button class="copy-quick-tip-btn text-[10px] font-semibold text-ink-400 hover:text-white flex items-center gap-1 transition" data-tip="${escapeHtml(copyPayload)}" title="Copy quick win">
                 <i data-lucide="copy" class="w-3 h-3"></i>
                 <span>Copy</span>
               </button>
             </div>
-            <h3 class="font-editorial font-bold text-sm text-white">${qt.title}</h3>
-            <p class="text-xs text-cream-200 leading-relaxed">${qt.tip}</p>
+            <h3 class="font-editorial font-bold text-sm text-white">${escapeHtml(qt.title)}</h3>
+            <p class="text-xs text-cream-200 leading-relaxed">${escapeHtml(qt.tip)}</p>
           </div>
         `;
         container.appendChild(div);
@@ -1968,6 +1918,46 @@
       sInput.addEventListener('blur', updateOverlayVisibility);
     }
 
+    // --- RENDER HERO COVER STORY ---
+    function renderHeroFeature() {
+      const hero = document.getElementById('heroFeatureSection');
+      if (!hero || !APP_DATA.articles.length) return;
+      const desiredId = siteSettings.hero_article_id || '';
+      const featured = (desiredId && APP_DATA.articles.find(a => a.id === desiredId || a.rawId === desiredId))
+        || APP_DATA.articles.find(a => a.featured)
+        || APP_DATA.articles[0];
+      if (!featured) return;
+
+      currentHeroArticleId = featured.id;
+      const imgEl = document.getElementById('heroFeatureImg');
+      if (imgEl && featured.image) imgEl.src = featured.image;
+
+      const badgeEl = document.getElementById('heroFeatureBadge');
+      if (badgeEl) {
+        badgeEl.textContent = siteSettings.hero_badge || `Cover Story • ${featured.category}`;
+      }
+      const authorEl = document.getElementById('heroFeatureAuthor');
+      if (authorEl) authorEl.textContent = featured.author;
+      const rtEl = document.getElementById('heroFeatureReadTime');
+      if (rtEl) rtEl.textContent = featured.readTime;
+      const titleEl = document.getElementById('heroFeatureTitle');
+      if (titleEl) titleEl.textContent = featured.title;
+      const summaryEl = document.getElementById('heroFeatureSummary');
+      if (summaryEl) summaryEl.textContent = featured.subtitle;
+      const takeawayEl = document.getElementById('heroFeatureTakeaway');
+      if (takeawayEl) takeawayEl.textContent = featured.tryTomorrow || featured.takeaway || featured.subtitle;
+      const btnLabelEl = document.getElementById('heroButtonLabelText');
+      if (btnLabelEl && siteSettings.hero_button_label) {
+        btnLabelEl.textContent = siteSettings.hero_button_label;
+      }
+      const heroBookmarkBtn = document.getElementById('heroBookmarkBtn');
+      if (heroBookmarkBtn) {
+        heroBookmarkBtn.dataset.id = featured.id;
+        const isSaved = savedBookmarks.includes(featured.id);
+        heroBookmarkBtn.innerHTML = `<i data-lucide="bookmark" class="w-4 h-4 ${isSaved ? 'fill-red-600 text-red-600' : ''}"></i>`;
+      }
+    }
+
     // --- RENDER EDITORIAL FEED ---
     function renderArticlesGrid(category = 'all') {
       const grid = document.getElementById('articlesGridContainer');
@@ -1978,11 +1968,12 @@
       if (!grid) return;
 
       renderQuickTips(category);
+      renderHeroFeature();
 
       if (category === 'all') {
         hero?.classList.remove('hidden');
         techBanner?.classList.add('hidden');
-        heading.textContent = 'Latest Articles & Classroom Playbooks';
+        heading.textContent = siteSettings.feed_heading_all || 'Latest Articles & Classroom Playbooks';
       } else if (category === 'Tech & AI') {
         hero?.classList.add('hidden');
         techBanner?.classList.remove('hidden');
@@ -2127,17 +2118,18 @@
       items.forEach(r => {
         const card = document.createElement('div');
         card.className = 'bg-white rounded-2xl border border-cream-300 p-5 shadow-2xs flex flex-col justify-between space-y-3';
+        const safeUrl = sanitizeHttpUrl(r.url) || '#';
         card.innerHTML = `
           <div class="space-y-2">
             <span class="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-cream-200 text-ink-800">
-              ${r.category}
+              ${escapeHtml(r.category)}
             </span>
-            <h3 class="font-editorial font-bold text-base text-ink-900">${r.title}</h3>
-            <p class="text-xs text-ink-600 leading-relaxed">${r.description}</p>
+            <h3 class="font-editorial font-bold text-base text-ink-900">${escapeHtml(r.title)}</h3>
+            <p class="text-xs text-ink-600 leading-relaxed">${escapeHtml(r.description)}</p>
           </div>
           <div class="pt-3 border-t border-cream-200 flex items-center justify-between text-xs">
             <span class="text-[10px] text-ink-400">USD 266 Google Login</span>
-            <a href="${r.url}" target="_blank" class="font-bold text-red-600 hover:underline flex items-center gap-1">
+            <a href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" class="font-bold text-red-600 hover:underline flex items-center gap-1">
               <span>Open Resource</span> <i data-lucide="external-link" class="w-3 h-3"></i>
             </a>
           </div>
@@ -2145,6 +2137,147 @@
         grid.appendChild(card);
       });
       lucide.createIcons();
+    }
+
+    function renderLoungeQuotes() {
+      const container = document.getElementById('loungeQuotesContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      (APP_DATA.loungeQuotes || []).forEach((q, idx) => {
+        const div = document.createElement('div');
+        div.className = idx % 2 === 0
+          ? 'p-3.5 rounded-2xl bg-cream-100 border border-cream-200 space-y-1.5'
+          : 'p-3.5 rounded-2xl bg-cream-50 border border-cream-200 space-y-1.5';
+        div.innerHTML = `
+          <p class="text-xs italic text-ink-800 font-serif leading-relaxed">“${escapeHtml(q.quote)}”</p>
+          <div class="text-[11px] text-ink-600 font-semibold text-right">— ${escapeHtml(q.attribution)}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderStudioItems() {
+      const studioContainer = document.getElementById('tuningSubmissionsContainer');
+      if (!studioContainer) return;
+      studioContainer.innerHTML = '';
+      (APP_DATA.studioItems || []).forEach(item => {
+        const docUrl = sanitizeHttpUrl(item.docUrl);
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-3 text-xs';
+        card.innerHTML = `
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-editorial font-bold text-base text-ink-900">${escapeHtml(item.title)}</span>
+            <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-bold text-[10px]">${escapeHtml(item.subject)}</span>
+          </div>
+          <p class="text-ink-600"><strong>Focus Dilemma:</strong> ${escapeHtml(item.dilemma)}</p>
+          <div class="p-3.5 rounded-2xl bg-cream-100 space-y-1">
+            ${item.warmFeedback ? `<p><strong>Warm Feedback:</strong> “${escapeHtml(item.warmFeedback)}”</p>` : ''}
+            ${item.coolFeedback ? `<p><strong>Cool Feedback:</strong> “${escapeHtml(item.coolFeedback)}”</p>` : ''}
+          </div>
+          ${docUrl ? `
+            <div class="pt-2 flex justify-end">
+              <a href="${escapeHtml(docUrl)}" target="_blank" rel="noopener noreferrer" class="font-bold text-red-600 hover:underline flex items-center gap-1">
+                <span>Open Lesson Document</span> <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              </a>
+            </div>
+          ` : ''}
+        `;
+        studioContainer.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function renderTechTools() {
+      const grid = document.getElementById('techToolsGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+      (APP_DATA.techTools || []).forEach((tool, idx) => {
+        const safeUrl = sanitizeHttpUrl(tool.url);
+        const isPrimary = idx === 0;
+        const card = document.createElement('div');
+        card.className = isPrimary
+          ? 'bg-white rounded-3xl border-2 border-red-300 p-6 shadow-sm space-y-3 flex flex-col justify-between'
+          : 'bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-3 flex flex-col justify-between';
+        const badgeClass = isPrimary
+          ? 'bg-red-600 text-white'
+          : 'bg-cream-200 text-ink-800';
+        const linkEl = safeUrl
+          ? `<a href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" class="text-red-700 font-bold hover:underline">${escapeHtml(tool.linkLabel || 'Open Tool')}</a>`
+          : `<span class="text-ink-400 font-semibold">${escapeHtml(tool.linkLabel || '')}</span>`;
+        card.innerHTML = `
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${badgeClass}">${escapeHtml(tool.badge || 'Classroom Tech')}</span>
+              ${linkEl}
+            </div>
+            <h3 class="font-editorial font-bold text-lg text-ink-900">${escapeHtml(tool.title)}</h3>
+            <p class="text-ink-600 leading-relaxed">${escapeHtml(tool.description)}</p>
+            <div class="p-3 rounded-2xl bg-cream-100 space-y-1 text-[11px] text-ink-800">
+              ${tool.teacherWorkflow ? `<p><strong>Teacher Workflow:</strong> ${escapeHtml(tool.teacherWorkflow)}</p>` : ''}
+              ${tool.studentWorkflow ? `<p><strong>Student Workflow:</strong> ${escapeHtml(tool.studentWorkflow)}</p>` : ''}
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function applySiteSettings(settings) {
+      if (!settings || typeof settings !== 'object') return;
+      siteSettings = { ...siteSettings, ...settings };
+
+      const setText = (id, key) => {
+        const val = String(siteSettings[key] ?? '').trim();
+        if (!val) return;
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      };
+
+      setText('siteTitleText', 'site_title');
+      setText('footerTitleText', 'site_title');
+      setText('siteBadgeText', 'site_badge');
+      setText('siteSubtitleText', 'site_subtitle');
+      setText('siteTaglineText', 'site_tagline');
+      setText('heroFeatureBadge', 'hero_badge');
+      setText('heroButtonLabelText', 'hero_button_label');
+      setText('coachHeadingText', 'coach_heading');
+      setText('coachSubtitleText', 'coach_subtitle');
+      setText('coachPromptIntroText', 'coach_prompt_intro');
+      setText('loungeHeadingText', 'lounge_heading');
+      setText('loungeBadgeText', 'lounge_badge');
+      setText('directoryHeadingText', 'directory_heading');
+      setText('directorySubtitleText', 'directory_subtitle');
+      setText('bulletinHeadingText', 'bulletin_heading');
+      setText('bulletinSubtitleText', 'bulletin_subtitle');
+      setText('studioHeadingText', 'studio_heading');
+      setText('studioSubtitleText', 'studio_subtitle');
+      setText('academyHeadingText', 'academy_heading');
+      setText('academyBadgeText', 'academy_badge');
+      setText('academySubtitleText', 'academy_subtitle');
+      setText('academyVideoBadgeText', 'academy_video_badge');
+      setText('activeVideoChapterTitle', 'academy_video_title');
+      setText('activeVideoChapterDesc', 'academy_video_desc');
+      setText('footerLeftText', 'footer_left');
+      setText('footerRightText', 'footer_right');
+
+      if (siteSettings.site_title) {
+        document.title = `${siteSettings.site_title} | ${siteSettings.site_subtitle || 'Maize Middle School'}`;
+      }
+
+      const videoUrl = sanitizeHttpUrl(siteSettings.academy_video_url);
+      const videoWrapper = document.getElementById('academyVideoEmbedWrapper');
+      const videoIframe = document.getElementById('academyVideoIframe');
+      if (videoWrapper && videoIframe) {
+        if (videoUrl) {
+          videoIframe.src = videoUrl;
+          videoWrapper.classList.remove('hidden');
+        } else {
+          videoIframe.removeAttribute('src');
+          videoWrapper.classList.add('hidden');
+        }
+      }
+
+      renderHeroFeature();
     }
 
     function renderBulletins() {
@@ -2182,28 +2315,52 @@
       if (!item || String(item.is_live).trim().toLowerCase() !== 'true') return null;
       const text = key => String(item[key] ?? '').trim();
       if (!['article_id', 'title', 'category', 'article_body_text'].every(key => text(key))) return null;
+      const rawId = text('article_id');
+      const isDefaultOverride = DEFAULT_ARTICLES_SNAPSHOT.some(a => a.id === rawId);
       const images = {
         'Student Engagement': IMG_ENGAGEMENT,
         'Classroom Management': IMG_MANAGEMENT,
         'Teacher Support': IMG_SUPPORT,
         'Tech & AI': IMG_TECH_AI
       };
+      const rawTags = text('tags')
+        ? text('tags').split(',').map(t => t.trim()).filter(Boolean)
+        : [text('category')];
       return {
-        id: 'published-' + text('article_id'),
+        id: isDefaultOverride ? rawId : ('published-' + rawId),
+        rawId: rawId,
         source: 'published_articles',
         title: text('title'),
         subtitle: text('summary'),
         category: text('category'),
         author: text('author') || 'MMS Staff',
-        readTime: `${Math.max(1, Math.ceil(text('article_body_text').split(/\s+/).length / 200))} min read`,
-        date: formatDateLabel(item.published_at),
+        readTime: text('read_time') || `${Math.max(1, Math.ceil(text('article_body_text').split(/\s+/).length / 200))} min read`,
+        date: formatDateLabel(item.published_at) || text('published_at'),
+        featured: item.featured === true || text('featured').toLowerCase() === 'true',
+        hasVideoDemo: item.has_video_demo === true || text('has_video_demo').toLowerCase() === 'true',
         image: sanitizeHttpUrl(item.cover_image_url) || images[text('category')] || IMG_SUPPORT,
-        takeaway: text('summary'),
-        tryTomorrow: '',
-        script: '',
+        takeaway: text('takeaway') || text('summary'),
+        tryTomorrow: text('try_tomorrow'),
+        script: text('script'),
         body: text('article_body_text').replace(/\r\n?/g, '\n').split(/\n\s*\n/),
-        tags: [text('category')]
+        tags: rawTags
       };
+    }
+
+    function applyPublishedArticles(rawItems) {
+      if (!Array.isArray(rawItems)) return;
+      const articles = [...new Map(rawItems.map(normalizePublishedArticle).filter(Boolean)
+        .map(article => [article.id, article])).values()];
+      if (!articles.length) return;
+      const touchesDefaults = articles.some(a => DEFAULT_ARTICLES_SNAPSHOT.some(d => d.id === a.rawId));
+      if (touchesDefaults) {
+        APP_DATA.articles = articles;
+      } else {
+        APP_DATA.articles = [...articles, ...DEFAULT_ARTICLES_SNAPSHOT];
+      }
+      initFuse();
+      renderArticlesGrid(activeCategory);
+      document.getElementById('globalSearchInput')?.dispatchEvent(new Event('input'));
     }
 
     async function loadPublishedArticles() {
@@ -2214,12 +2371,7 @@
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         if (!data?.ok || !Array.isArray(data.items)) throw new Error('Unexpected articles format');
-        const articles = [...new Map(data.items.map(normalizePublishedArticle).filter(Boolean)
-          .map(article => [article.id, article])).values()];
-        APP_DATA.articles = [...articles, ...APP_DATA.articles.filter(article => article.source !== 'published_articles')];
-        initFuse();
-        renderArticlesGrid(activeCategory);
-        document.getElementById('globalSearchInput')?.dispatchEvent(new Event('input'));
+        applyPublishedArticles(data.items);
       } catch (error) {
         console.warn('Published articles unavailable:', error);
       }
@@ -2340,6 +2492,29 @@
       container.innerHTML = `<div class="md:col-span-2 bg-white rounded-3xl border border-cream-300 p-6 shadow-sm text-xs text-center ${toneClass}">${escapeHtml(message)}</div>`;
     }
 
+    function applySmoreItems(rawItems) {
+      const container = document.getElementById('bulletinFeedContainer');
+      if (!container) return;
+      smoreIssues = [...new Map((rawItems || []).map(normalizeSmoreIssue).filter(Boolean)
+        .map(issue => [issue.issue_url, issue])).values()];
+      initFuse();
+      document.getElementById('globalSearchInput')?.dispatchEvent(new Event('input'));
+      const cards = smoreIssues.map(renderBulletinCard).filter(Boolean);
+
+      if (!cards.length) {
+        if (APP_DATA.bulletin && APP_DATA.bulletin.length) {
+          renderBulletins();
+        } else {
+          setBulletinFeedMessage(container, 'No bulletins have been published yet. Check back soon.');
+        }
+        return;
+      }
+
+      container.innerHTML = '';
+      cards.forEach(card => container.appendChild(card));
+      if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+    }
+
     async function loadSmoreBulletinFeed() {
       const container = document.getElementById('bulletinFeedContainer');
       if (!container) return;
@@ -2350,24 +2525,148 @@
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         if (!data || !data.ok || !Array.isArray(data.items)) throw new Error('Unexpected feed format');
+        applySmoreItems(data.items);
+      } catch (err) {
+        console.warn('Smore bulletin feed unavailable:', err);
+        if (APP_DATA.bulletin && APP_DATA.bulletin.length) {
+          renderBulletins();
+        } else {
+          setBulletinFeedMessage(container, 'The Flight Wire bulletin feed is temporarily unavailable. Please try again later.', 'error');
+        }
+      }
+    }
 
-        smoreIssues = [...new Map(data.items.map(normalizeSmoreIssue).filter(Boolean)
-          .map(issue => [issue.issue_url, issue])).values()];
-        initFuse();
-        document.getElementById('globalSearchInput')?.dispatchEvent(new Event('input'));
-        const cards = smoreIssues.map(renderBulletinCard).filter(Boolean);
+    async function loadSiteDataFromSheet() {
+      const container = document.getElementById('bulletinFeedContainer');
+      if (container) setBulletinFeedMessage(container, 'Loading the latest Flight Wire bulletins...');
+      try {
+        const url = new URL(SUBMISSION_API_URL);
+        url.searchParams.set('feed', 'site');
+        const response = await fetch(url.href, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        if (!data || !data.ok) throw new Error('Unexpected site feed response');
 
-        if (!cards.length) {
-          setBulletinFeedMessage(container, 'No bulletins have been published yet. Check back soon.');
+        // If older deployment doesn't return Unified CMS properties (`settings` or `articles`), fall back
+        if (!('settings' in data) && !('articles' in data)) {
+          if (Array.isArray(data.items)) applySmoreItems(data.items);
+          else await loadSmoreBulletinFeed();
+          await loadPublishedArticles();
           return;
         }
 
-        container.innerHTML = '';
-        cards.forEach(card => container.appendChild(card));
-        if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+        if (data.settings && typeof data.settings === 'object') {
+          applySiteSettings(data.settings);
+        }
+
+        if (Array.isArray(data.quick_wins) && data.quick_wins.length > 0) {
+          const grouped = {};
+          data.quick_wins.forEach(row => {
+            const sec = String(row.section || 'all').trim() || 'all';
+            const title = String(row.title || '').trim();
+            const tip = String(row.tip || '').trim();
+            if (!title || !tip) return;
+            if (!grouped[sec]) grouped[sec] = [];
+            grouped[sec].push({
+              category: String(row.category_label || sec).trim(),
+              title,
+              tip
+            });
+          });
+          Object.keys(grouped).forEach(sec => {
+            if (APP_DATA.quickTipsBySection[sec]) {
+              APP_DATA.quickTipsBySection[sec].items = grouped[sec];
+            } else {
+              APP_DATA.quickTipsBySection[sec] = {
+                heading: `${sec} Quick Wins`,
+                subtitle: 'Practical classroom adjustments',
+                badge: sec,
+                icon: 'flame',
+                accentClass: 'bg-red-600 text-white',
+                items: grouped[sec]
+              };
+            }
+          });
+          renderQuickTips(activeView === 'view-editorial' ? activeCategory : activeView);
+        }
+
+        if (Array.isArray(data.directory) && data.directory.length > 0) {
+          const resources = data.directory.map((r, i) => ({
+            id: String(r.resource_id || `res-${i + 1}`).trim(),
+            title: String(r.title || '').trim(),
+            category: String(r.category || 'Daily Operations').trim(),
+            description: String(r.description || '').trim(),
+            url: sanitizeHttpUrl(r.url),
+            tags: String(r.tags || '').split(',').map(t => t.trim()).filter(Boolean)
+          })).filter(r => r.title && r.url);
+          if (resources.length) {
+            APP_DATA.resources = resources;
+            const activeDirBtn = document.querySelector('#hqCategoryFilter .cat-pill.bg-ink-900');
+            renderDirectory(activeDirBtn ? activeDirBtn.dataset.cat : 'all');
+          }
+        }
+
+        if (Array.isArray(data.quotes) && data.quotes.length > 0) {
+          const quotes = data.quotes.map((q, i) => ({
+            id: String(q.quote_id || `quote-${i + 1}`).trim(),
+            quote: String(q.quote || '').trim(),
+            attribution: String(q.attribution || 'MMS Classroom').trim()
+          })).filter(q => q.quote);
+          if (quotes.length) {
+            APP_DATA.loungeQuotes = quotes;
+            renderLoungeQuotes();
+          }
+        }
+
+        if (Array.isArray(data.studio) && data.studio.length > 0) {
+          const studio = data.studio.map((s, i) => ({
+            id: String(s.studio_id || `studio-${i + 1}`).trim(),
+            title: String(s.title || '').trim(),
+            subject: String(s.subject || 'MMS Staff').trim(),
+            dilemma: String(s.dilemma || '').trim(),
+            warmFeedback: String(s.warm_feedback || '').trim(),
+            coolFeedback: String(s.cool_feedback || '').trim(),
+            docUrl: sanitizeHttpUrl(s.doc_url)
+          })).filter(s => s.title);
+          if (studio.length) {
+            APP_DATA.studioItems = studio;
+            renderStudioItems();
+          }
+        }
+
+        if (Array.isArray(data.tech_tools) && data.tech_tools.length > 0) {
+          const tools = data.tech_tools.map((t, i) => ({
+            id: String(t.tool_id || `tool-${i + 1}`).trim(),
+            badge: String(t.badge || 'Classroom Tech').trim(),
+            title: String(t.title || '').trim(),
+            linkLabel: String(t.link_label || '').trim(),
+            url: sanitizeHttpUrl(t.url),
+            description: String(t.description || '').trim(),
+            teacherWorkflow: String(t.teacher_workflow || '').trim(),
+            studentWorkflow: String(t.student_workflow || '').trim()
+          })).filter(t => t.title);
+          if (tools.length) {
+            APP_DATA.techTools = tools;
+            renderTechTools();
+          }
+        }
+
+        if (Array.isArray(data.articles) && data.articles.length > 0) {
+          applyPublishedArticles(data.articles);
+        } else {
+          renderArticlesGrid(activeCategory);
+        }
+
+        if (Array.isArray(data.smore)) {
+          applySmoreItems(data.smore);
+        }
+
+        initFuse();
+        document.getElementById('globalSearchInput')?.dispatchEvent(new Event('input'));
       } catch (err) {
-        console.warn('Smore bulletin feed unavailable:', err);
-        setBulletinFeedMessage(container, 'The Flight Wire bulletin feed is temporarily unavailable. Please try again later.', 'error');
+        console.warn('Unified site feed unavailable, trying legacy endpoints:', err);
+        loadSmoreBulletinFeed();
+        loadPublishedArticles();
       }
     }
 
@@ -2451,8 +2750,10 @@
       initRevolvingSearchSuggestions();
       renderArticlesGrid('all');
       renderDirectory('all');
-      loadSmoreBulletinFeed();
-      loadPublishedArticles();
+      renderLoungeQuotes();
+      renderStudioItems();
+      renderTechTools();
+      loadSiteDataFromSheet();
 
       // Interactive Video Chapter Buttons in EdTech Lab
       document.querySelectorAll('.video-chapter-btn').forEach(btn => {
@@ -2481,31 +2782,13 @@
         document.getElementById('shareTipModal').classList.remove('hidden');
       });
 
-      // Sample Studio Card
-      const studioContainer = document.getElementById('tuningSubmissionsContainer');
-      if (studioContainer) {
-        studioContainer.innerHTML = `
-          <div class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-3 text-xs">
-            <div class="flex items-center justify-between">
-              <span class="font-editorial font-bold text-base text-ink-900">8th Grade Plate Tectonics CER Lab Prompt</span>
-              <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-bold text-[10px]">8th Science</span>
-            </div>
-            <p class="text-ink-600"><strong>Focus Dilemma:</strong> Opening Hook &amp; Student Buy-In</p>
-            <div class="p-3.5 rounded-2xl bg-cream-100 space-y-1">
-              <p><strong>Warm Feedback:</strong> "Opening with the sonar map mystery hooked even reluctant readers immediately."</p>
-              <p><strong>Cool Feedback:</strong> "I wonder if trimming the background paragraph to 3 bullet points would get them into the data faster."</p>
-            </div>
-          </div>
-        `;
-      }
-
       // Masthead home click
       document.getElementById('mastheadHomeBtn')?.addEventListener('click', () => {
         switchView('view-editorial', 'all');
       });
 
       // Hero read button
-      document.getElementById('readHeroArticleBtn')?.addEventListener('click', () => openArticleReader('art-1'));
+      document.getElementById('readHeroArticleBtn')?.addEventListener('click', () => openArticleReader(currentHeroArticleId || 'art-1'));
 
       // Close Article Reader
       document.getElementById('closeArticleReaderBtn')?.addEventListener('click', () => {
@@ -2663,56 +2946,86 @@
 
       // Modals: Share Tip
       const tipModal = document.getElementById('shareTipModal');
-      document.getElementById('openShareTipModalBtn')?.addEventListener('click', () => tipModal.classList.remove('hidden'));
-      document.getElementById('sidebarAddQuoteBtn')?.addEventListener('click', () => tipModal.classList.remove('hidden'));
+      const tipStatus = document.getElementById('shareTipSubmissionStatus');
+      const resetTipStatus = () => {
+        if (tipStatus) {
+          tipStatus.textContent = '';
+          tipStatus.classList.add('hidden');
+        }
+      };
+      document.getElementById('openShareTipModalBtn')?.addEventListener('click', () => {
+        resetTipStatus();
+        document.getElementById('tipType').value = 'article';
+        tipModal.classList.remove('hidden');
+      });
+      document.getElementById('sidebarAddQuoteBtn')?.addEventListener('click', () => {
+        resetTipStatus();
+        document.getElementById('tipType').value = 'quote';
+        tipModal.classList.remove('hidden');
+      });
       document.getElementById('closeShareTipModalBtn')?.addEventListener('click', () => tipModal.classList.add('hidden'));
       document.getElementById('cancelShareTipBtn')?.addEventListener('click', () => tipModal.classList.add('hidden'));
 
-      document.getElementById('shareTipForm')?.addEventListener('submit', (e) => {
+      document.getElementById('shareTipForm')?.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const type = document.getElementById('tipType').value;
-        const cat = document.getElementById('tipCategory').value;
-        const title = document.getElementById('tipTitle').value;
-        const content = document.getElementById('tipContent').value;
-        const author = document.getElementById('tipAuthor').value;
+        const form = e.currentTarget;
+        const type = document.getElementById('tipType').value.trim() || 'article';
+        const cat = document.getElementById('tipCategory').value.trim();
+        const title = document.getElementById('tipTitle').value.trim();
+        const content = document.getElementById('tipContent').value.trim();
+        const author = document.getElementById('tipAuthor').value.trim();
+        const submitButton = form.querySelector('button[type="submit"]');
+        if (submitButton.disabled) return;
 
-        if (type === 'quote') {
-          const qBox = document.getElementById('loungeQuotesContainer');
-          const d = document.createElement('div');
-          d.className = 'p-3.5 rounded-2xl bg-red-50/70 border border-red-200 space-y-1.5';
-          d.innerHTML = `
-            <p class="text-xs italic text-ink-800 font-serif leading-relaxed">“${content}”</p>
-            <div class="text-[11px] text-ink-600 font-semibold text-right">— ${author} (${title})</div>
-          `;
-          qBox.prepend(d);
-        } else {
-          const newId = 'art-' + (APP_DATA.articles.length + 1);
-          let imgChoice = IMG_ENGAGEMENT;
-          if (cat === 'Classroom Management') imgChoice = IMG_MANAGEMENT;
-          if (cat === 'Teacher Support') imgChoice = IMG_SUPPORT;
-          if (cat === 'Tech & AI') imgChoice = IMG_TECH_AI;
+        const showTipStatus = (message, isError = false) => {
+          if (!tipStatus) return;
+          tipStatus.textContent = message;
+          tipStatus.className = `text-xs ${isError ? 'text-red-700' : 'text-emerald-700'}`;
+        };
 
-          APP_DATA.articles.unshift({
-            id: newId,
-            title: title,
-            subtitle: content,
-            category: cat,
-            author: author,
-            readTime: '2 min read',
-            date: 'Just now',
-            featured: false,
-            image: imgChoice,
-            takeaway: content,
-            tryTomorrow: content,
-            body: [content],
-            script: content,
-            tags: [cat.toLowerCase(), 'staff tip']
-          });
-          initFuse();
-          renderArticlesGrid(activeCategory);
+        if (!title || !content) {
+          showTipStatus('Please enter both a headline and the tip or quote content.', true);
+          return;
         }
-        e.target.reset();
-        tipModal.classList.add('hidden');
+
+        submitButton.disabled = true;
+        submitButton.textContent = 'Submitting…';
+        showTipStatus('Saving your contribution to the Google Sheet for review…');
+
+        try {
+          const payload = new URLSearchParams({
+            submitter_name: author,
+            submitter_email: '',
+            submission_type: type,
+            category: cat,
+            title,
+            content,
+            links: ''
+          });
+          const response = await fetch(SUBMISSION_API_URL, {
+            method: 'POST',
+            body: payload
+          });
+          if (!response.ok) throw new Error(`Request failed (${response.status}).`);
+          let result;
+          try {
+            result = await response.json();
+          } catch {
+            throw new Error('The server returned an unreadable response. Please try again later.');
+          }
+          if (!result?.ok) throw new Error(result?.error || 'The submission could not be saved.');
+
+          form.reset();
+          showTipStatus('Saved for review in the Google Sheet (status: pending).');
+        } catch (error) {
+          const message = error instanceof TypeError
+            ? 'Could not connect to the submission service. Please check your connection and try again.'
+            : error.message || 'We could not submit your tip. Please try again.';
+          showTipStatus(message, true);
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Submit for Review';
+        }
       });
 
       // Modals: AI Coach
@@ -2798,9 +3111,10 @@
 
         try {
           const payload = new URLSearchParams({
-            submitter_name: '',
+            submitter_name: subject,
             submitter_email: '',
             submission_type: 'lesson_draft',
+            category: dilemma,
             title,
             content,
             links: draftUrl.href
