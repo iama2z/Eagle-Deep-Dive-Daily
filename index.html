@@ -627,10 +627,18 @@
             <h1 id="bulletinHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">The Flight Wire (Smore Bulletin Archive)</h1>
             <p id="bulletinSubtitleText" class="text-sm text-ink-600">Read administrative newsletters here and search their full text for past announcements.</p>
           </div>
-          <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 flex items-center gap-1.5">
-            <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Automated Scraper Active
-          </span>
+          <button id="updateSmoreButton" type="button" disabled aria-describedby="smoreUpdateStatus" class="inline-flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-full bg-red-600 text-white hover:bg-red-900 disabled:opacity-50 disabled:cursor-not-allowed">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5" aria-hidden="true"></i>
+            <span id="updateSmoreLabel">Update newsletters</span>
+          </button>
         </div>
+        <details class="mt-2 text-xs text-ink-600">
+          <summary class="cursor-pointer font-bold text-red-600">Use a different Smore URL (this update only)</summary>
+          <label for="smoreCustomUrl" class="block mt-2 font-bold">Newsletter or profile URL</label>
+          <input id="smoreCustomUrl" type="url" maxlength="300" placeholder="https://app.smore.com/n/rsn15" class="mt-1 w-full max-w-md rounded-lg border border-cream-300 px-3 py-1.5 text-xs">
+          <p class="mt-1">Leave blank to refresh from the saved source. A custom URL is a one-time preview in this browser; it is not saved to the board.</p>
+        </details>
+        <p id="smoreUpdateStatus" role="status" aria-live="polite" class="mt-2 text-xs text-ink-600">Pull fresh newsletters from Smore. One website update every 15 minutes, shared by all visitors.</p>
       </div>
 
       <div id="bulletinFeedContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
@@ -2635,13 +2643,13 @@
       }
     }
 
-    async function fetchJsonWithTimeout(url, timeoutMs = 12000) {
+    async function fetchJsonWithTimeout(url, timeoutMs = 12000, options = {}) {
       const controller = new AbortController();
       let timer;
       try {
         return await Promise.race([
           (async () => {
-            const response = await fetch(url, { cache: 'no-store', signal: controller.signal });
+            const response = await fetch(url, { ...options, cache: 'no-store', signal: controller.signal });
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             return await response.json();
           })(),
@@ -2656,6 +2664,73 @@
         clearTimeout(timer);
       }
     }
+
+    let smoreUpdateTimer;
+
+    function setSmoreUpdateCooldown(seconds) {
+      clearInterval(smoreUpdateTimer);
+      const button = document.getElementById('updateSmoreButton');
+      const label = document.getElementById('updateSmoreLabel');
+      const until = Date.now() + seconds * 1000;
+      const tick = () => {
+        const remaining = Math.max(0, Math.ceil((until - Date.now()) / 1000));
+        button.disabled = remaining > 0;
+        label.textContent = remaining > 0
+          ? `Update available in ${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, '0')}`
+          : 'Update newsletters';
+        if (!remaining) clearInterval(smoreUpdateTimer);
+      };
+      tick();
+      if (seconds > 0) smoreUpdateTimer = setInterval(tick, 1000);
+    }
+
+    async function updateSmoreNewsletters() {
+      const button = document.getElementById('updateSmoreButton');
+      const label = document.getElementById('updateSmoreLabel');
+      const status = document.getElementById('smoreUpdateStatus');
+      if (button.disabled) return;
+      button.disabled = true;
+      button.setAttribute('aria-busy', 'true');
+      label.textContent = 'Updating...';
+      status.textContent = 'Fetching newsletters from Smore. This can take several minutes; current newsletters remain available.';
+      const customUrl = document.getElementById('smoreCustomUrl').value.trim();
+      let retryAfter = 0;
+      try {
+        const data = await fetchJsonWithTimeout(SMORE_FEED_API_URL, 360000, {
+          method: 'POST',
+          body: new URLSearchParams({ action: 'sync_smore', source_url: customUrl })
+        });
+        if (Number.isFinite(data?.retry_after_seconds) && data.retry_after_seconds >= 0) {
+          retryAfter = data.retry_after_seconds;
+        }
+        if (!data?.ok) {
+          if (data?.code === 'cooldown' || data?.code === 'busy') {
+            status.textContent = `${data.error} Current newsletters remain available.`;
+            return;
+          }
+          throw new Error(data?.error || 'Unexpected update response');
+        }
+        if (data.action !== 'sync_smore' || !Array.isArray(data.items)) {
+          throw new Error('The update endpoint is not available. Install and redeploy the latest Apps Script.');
+        }
+        applySmoreItems(data.items);
+        if (data.preview) {
+          status.textContent = `Showing a one-time preview from your URL (${data.items.length} issues). Reload to return to the saved board.`;
+          return;
+        }
+        status.textContent = `Newsletters updated at ${new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}. ${data.items.length} published issues available.`;
+      } catch (err) {
+        console.warn('Smore newsletter update failed:', err);
+        status.textContent = err.name === 'TimeoutError' || err.name === 'TypeError'
+          ? 'Could not confirm the update. It may still be running on the server. Current newsletters remain available; try again later or reload to check.'
+          : `Newsletter update failed: ${err.message} Current newsletters remain available.`;
+      } finally {
+        button.removeAttribute('aria-busy');
+        setSmoreUpdateCooldown(retryAfter);
+      }
+    }
+
+    document.getElementById('updateSmoreButton').addEventListener('click', updateSmoreNewsletters);
 
     async function loadSiteDataFromSheet() {
       const container = document.getElementById('bulletinFeedContainer');
@@ -2900,7 +2975,9 @@
         region.inert = true;
         region.setAttribute('aria-busy', 'true');
       });
-      loadSiteDataFromSheet();
+      loadSiteDataFromSheet().finally(() => {
+        document.getElementById('updateSmoreButton').disabled = false;
+      });
 
       // Interactive Video Chapter Buttons in EdTech Lab
       document.querySelectorAll('.video-chapter-btn').forEach(btn => {
