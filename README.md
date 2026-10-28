@@ -84,7 +84,7 @@ header is written into an empty tab). Setup adds all default site text keys and
 this row unless a `smore_source_url` (or legacy `source_url`) row already exists:
 
 ```text
-smore_source_url	https://www.smore.com/u/maizemiddleschool
+smore_source_url	https://app.smore.com/n/rsn15
 ```
 
 **Accepted source/issue URL formats.** Hosts must be `www.smore.com`,
@@ -198,6 +198,47 @@ Interval: Every 6 hours
 Delete old newsletter-sync triggers to avoid duplicate writers. Do not delete
 unrelated submission triggers. Larger archives may hit Apps Script execution or
 URL-fetch quotas; check failed executions and reduce the refresh frequency.
+
+### Update Flight Wire from the website
+
+Anyone can click **Update newsletters** on Flight Wire to fetch fresh Smore
+content, update the Sheet, and refresh the board and full-text search without
+reloading the page. Existing newsletters remain readable during the update.
+The button reports completion, failures, or an active cooldown.
+
+Install the updated `apps-script/Smore.gs` and redeploy the existing web app as a
+**New version**, then publish the updated `index.html`. The button sends a simple
+form-encoded `POST /exec` with `action=sync_smore`; existing submission forms and
+read-only GET feeds are unchanged. No credentials or private sheet data are sent
+back to the browser.
+
+Website-triggered sync attempts are limited to **one every 15 minutes across all
+visitors**, including failed attempts. Apps Script stores the timestamp in Script
+Properties and checks it while holding the same script lock used by spreadsheet
+and scheduled syncs. Reloading the page or using another browser cannot bypass
+this limit. Spreadsheet and scheduled syncs retain their existing behavior and
+do not consume the website cooldown. This limits expensive syncs, not all HTTP
+requests; an anonymous endpoint can still receive unwanted traffic.
+
+Updates may take several minutes. If the browser times out or loses its
+connection, it cannot confirm whether the server finished; reload later to check.
+A failed import preserves previously published content. Partial imports may save
+successful issues even though the button reports a failure; reload to see those.
+The countdown reflects the server's reported wait, and the server always checks
+again before starting another sync.
+
+**Changing the source URL.** New installs seed `smore_source_url` as
+`https://app.smore.com/n/rsn15`. An existing sheet keeps its current value: edit
+that cell in `settings` to change the permanent source used by all syncs. On the
+site, **Use a different Smore URL** accepts a newsletter or profile URL for a
+one-time **preview** in that visitor's browser. It uses the same 15-minute
+cooldown, is not saved to the Sheet, and disappears on reload, so visitors cannot
+change the shared board.
+
+After redeploying, check that the button imports a new or edited newsletter,
+updates full-body search, and shows a cooldown on a second click from another
+browser. Also verify a failed import keeps existing issues and that lesson
+submissions and spreadsheet/scheduled syncs still work.
 
 ### JSON contract / browser access
 

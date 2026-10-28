@@ -13,6 +13,9 @@ const SMORE_COLUMNS = [
   'cover_image_url', 'article_body_text'
 ];
 
+const SMORE_PUBLIC_SYNC_COOLDOWN_MS = 15 * 60 * 1000;
+const SMORE_PUBLIC_SYNC_LAST_ATTEMPT = 'smore_public_sync_last_attempt';
+
 // Utility pages on smore.com that look like issue slugs but are never newsletters.
 const SMORE_RESERVED_PATHS = /^(?:about|account|app|blog|business|careers|contact|dashboard|discover|educators|explore|features|gallery|help|jobs|legal|library|login|logout|newsletters|press|pricing|privacy|schools|search|settings|signup|support|templates|terms)$/i;
 
@@ -142,44 +145,127 @@ function syncSmoreFeed() {
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(1000)) throw new Error('Another newsletter sync is running');
   try {
-    setupSiteSheet();
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const raw = ss.getSheetByName('smore_feed_raw');
-    const published = ss.getSheetByName('smore_feed_public');
-    const rawHeaders = smoreHeaders_(raw, SMORE_COLUMNS, true);
-    const publicHeaders = smoreHeaders_(published, SMORE_COLUMNS, true);
-    const urls = new Set();
-    smoreReadIssues_(published, publicHeaders).concat(smoreReadIssues_(raw, rawHeaders)).forEach(row => {
-      const url = smoreIssueUrl_(row.issue.issue_url);
-      if (url) urls.add(url);
-    });
-    try {
-      smoreDiscover_(smoreSourceUrl_(ss.getSheetByName('settings'))).forEach(url => urls.add(url));
-    } catch (err) {
-      console.warn('Discovery failed; retrying known issue URLs. ' + err.message);
-    }
-    if (!urls.size) throw new Error('No issue URLs found. Add a public issue URL to the issue_url column of smore_feed_raw.');
-    const now = new Date().toISOString();
-    const refreshed = [];
-    const pending = [];
-    const failures = [];
-    for (const url of urls) {
-      try {
-        refreshed.push(Object.assign(smoreParseIssue_(smoreFetchIssue_(url), url), { last_synced_at: now }));
-      } catch (err) {
-        // Only the URL is recorded; the last successful article is never replaced.
-        pending.push({ issue_url: url });
-        failures.push(url + ': ' + err.message);
-      }
-    }
-    smoreWriteIssues_(raw, rawHeaders, refreshed.concat(pending));
-    smoreWriteIssues_(published, publicHeaders, refreshed);
-    appendAuditLog_(ss, 'smore_sync', 'smore_feed_public', 'batch', 'Smore Sync', 'Refreshed: ' + refreshed.length + ', Failures: ' + failures.length);
-    console.log(JSON.stringify({ refreshed: refreshed.map(issue => issue.issue_url), failures }));
-    if (failures.length) throw new Error('Some issues could not refresh; previous content retained. See execution log.');
+    syncSmoreFeedUnlocked_();
   } finally {
     lock.releaseLock();
   }
+}
+
+function requestPublicSmoreSync_(customSourceUrl) {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(1000)) {
+    return { ok: false, code: 'busy', error: 'Another newsletter sync is running. Please try again shortly.', retry_after_seconds: 10 };
+  }
+  try {
+    let customUrl = '';
+    if (customSourceUrl) {
+      customUrl = smoreNormalizeSource_(customSourceUrl);
+      if (!customUrl) {
+        return { ok: false, code: 'invalid_url', error: 'Enter a public Smore newsletter (smore.com/n/...) or profile (smore.com/u/...) URL.', retry_after_seconds: 0 };
+      }
+    }
+    const properties = PropertiesService.getScriptProperties();
+    const now = Date.now();
+    const lastAttempt = Number(properties.getProperty(SMORE_PUBLIC_SYNC_LAST_ATTEMPT)) || 0;
+    const remaining = lastAttempt + SMORE_PUBLIC_SYNC_COOLDOWN_MS - now;
+    if (remaining > 0) {
+      return {
+        ok: false, code: 'cooldown',
+        error: 'Website updates are limited to once every 15 minutes for all visitors.',
+        retry_after_seconds: Math.ceil(remaining / 1000)
+      };
+    }
+    // Reserve the cooldown before fetching, including attempts that fail.
+    properties.setProperty(SMORE_PUBLIC_SYNC_LAST_ATTEMPT, String(now));
+    let items;
+    if (customUrl) {
+      // Preview only: nothing is written to the sheet, so visitors cannot change the shared board.
+      items = smorePreviewItems_(customUrl);
+    } else {
+      syncSmoreFeedUnlocked_();
+      items = publicSmoreItems_(true);
+    }
+    return {
+      ok: true, action: 'sync_smore', items: items, preview: !!customUrl,
+      retry_after_seconds: Math.max(0, Math.ceil((now + SMORE_PUBLIC_SYNC_COOLDOWN_MS - Date.now()) / 1000))
+    };
+  } catch (err) {
+    console.error('Public Smore sync failed: ' + err.message);
+    const lastAttempt = Number(PropertiesService.getScriptProperties().getProperty(SMORE_PUBLIC_SYNC_LAST_ATTEMPT)) || 0;
+    return {
+      ok: false, code: 'sync_failed', error: String(err.message),
+      retry_after_seconds: Math.max(0, Math.ceil((lastAttempt + SMORE_PUBLIC_SYNC_COOLDOWN_MS - Date.now()) / 1000))
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function smoreNormalizeSource_(value) {
+  const text = String(value || '').trim();
+  if (text.length > 300) return '';
+  const issue = smoreIssueUrl_(text);
+  if (issue) return issue;
+  const match = text.match(/^https:\/\/(?:www\.|app\.)?smore\.com\/u\/([a-z0-9_-]+)\/?$/i);
+  return match ? 'https://www.smore.com/u/' + match[1] : '';
+}
+
+function smorePreviewItems_(sourceUrl) {
+  const urls = smoreDiscover_(sourceUrl).slice(0, 10);
+  const previews = [];
+  const failures = [];
+  urls.forEach(url => {
+    try {
+      previews.push(smoreParseIssue_(smoreFetchIssue_(url), url));
+    } catch (err) {
+      failures.push(url + ': ' + err.message);
+    }
+  });
+  if (!previews.length) throw new Error('No readable newsletters found at that URL.' + (failures.length ? ' ' + failures[0] : ''));
+  const byUrl = new Map(publicSmoreItems_(false).map(item => [item.issue_url, item]));
+  previews.forEach(issue => {
+    const url = smoreIssueUrl_(issue.issue_url);
+    byUrl.set(url, Object.fromEntries(SMORE_COLUMNS.map(key => [key, key === 'issue_url' ? url : (issue[key] || '')])));
+  });
+  return [...byUrl.values()];
+}
+
+function syncSmoreFeedUnlocked_() {
+  setupSiteSheet();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const raw = ss.getSheetByName('smore_feed_raw');
+  const published = ss.getSheetByName('smore_feed_public');
+  const rawHeaders = smoreHeaders_(raw, SMORE_COLUMNS, true);
+  const publicHeaders = smoreHeaders_(published, SMORE_COLUMNS, true);
+  const urls = new Set();
+  smoreReadIssues_(published, publicHeaders).concat(smoreReadIssues_(raw, rawHeaders)).forEach(row => {
+    const url = smoreIssueUrl_(row.issue.issue_url);
+    if (url) urls.add(url);
+  });
+  try {
+    smoreDiscover_(smoreSourceUrl_(ss.getSheetByName('settings'))).forEach(url => urls.add(url));
+  } catch (err) {
+    console.warn('Discovery failed; retrying known issue URLs. ' + err.message);
+  }
+  if (!urls.size) throw new Error('No issue URLs found. Add a public issue URL to the issue_url column of smore_feed_raw.');
+  const now = new Date().toISOString();
+  const refreshed = [];
+  const pending = [];
+  const failures = [];
+  for (const url of urls) {
+    try {
+      refreshed.push(Object.assign(smoreParseIssue_(smoreFetchIssue_(url), url), { last_synced_at: now }));
+    } catch (err) {
+      // Only the URL is recorded; the last successful article is never replaced.
+      pending.push({ issue_url: url });
+      failures.push(url + ': ' + err.message);
+    }
+  }
+  smoreWriteIssues_(raw, rawHeaders, refreshed.concat(pending));
+  smoreWriteIssues_(published, publicHeaders, refreshed);
+  appendAuditLog_(ss, 'smore_sync', 'smore_feed_public', 'batch', 'Smore Sync', 'Refreshed: ' + refreshed.length + ', Failures: ' + failures.length);
+  console.log(JSON.stringify({ refreshed: refreshed.map(issue => issue.issue_url), failures }));
+  if (failures.length) throw new Error('Some issues could not refresh; previous content retained. See execution log.');
 }
 
 function smoreDiscover_(sourceUrl) {
@@ -308,10 +394,6 @@ function publicTableItems_(sheetName, columns, requiredKeys) {
 
 function doPost(e) {
   try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sheet = ss.getSheetByName('submissions') || ss.insertSheet('submissions');
-    const headers = smoreHeaders_(sheet, SUBMISSION_COLUMNS, true);
-
     let body = {};
     if (e && e.parameter && Object.keys(e.parameter).length > 0) {
       body = e.parameter;
@@ -322,6 +404,17 @@ function doPost(e) {
         body = {};
       }
     }
+
+    if (body.action === 'sync_smore') {
+      return smoreJson_(requestPublicSmoreSync_(body.source_url));
+    }
+    if (body.action) {
+      return smoreJson_({ ok: false, error: 'Unknown action' });
+    }
+
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName('submissions') || ss.insertSheet('submissions');
+    const headers = smoreHeaders_(sheet, SUBMISSION_COLUMNS, true);
 
     const submitterName = cleanSubmissionText_(body.submitter_name || '');
     const submitterEmail = cleanSubmissionText_(body.submitter_email || '');
@@ -701,7 +794,7 @@ function seedDefaultSettings_(settingsSheet) {
     settingsSheet.getDataRange().getValues().map(r => String(r[0] || '').trim())
   );
   const defaults = [
-    ['smore_source_url', 'https://www.smore.com/u/maizemiddleschool', 'Public Smore profile or issue URL to sync'],
+    ['smore_source_url', 'https://app.smore.com/n/rsn15', 'Public Smore profile or issue URL to sync'],
     ['site_title', 'Eagle Deep Dive Daily', 'Main publication title in the top header and footer'],
     ['site_badge', 'MMS Eagles', 'Pill badge next to the main title'],
     ['site_subtitle', 'Maize Middle School • Classroom Craft, Student Engagement, Teacher Support & Tech', 'Subtitle under the main title'],
