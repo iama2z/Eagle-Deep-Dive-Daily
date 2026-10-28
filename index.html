@@ -507,6 +507,8 @@
             <span class="text-xs text-ink-600 font-medium" id="feedArticleCount">Showing 9 stories</span>
           </div>
 
+          <button id="contributeTopicBtn" type="button" class="hidden px-5 py-2 rounded-full bg-ink-900 hover:bg-ink-800 text-white text-xs font-bold">Contribute to this Topic</button>
+
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="articlesGridContainer">
             <!-- Dynamically rendered article cards -->
           </div>
@@ -999,7 +1001,7 @@
   <!-- MODAL: SHARE A CLASSROOM TIP OR QUOTE -->
   <!-- ========================================== -->
   <div id="shareTipModal" class="fixed inset-0 bg-ink-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl shadow-2xl border border-cream-300 max-w-lg w-full p-6 sm:p-8 space-y-4">
+    <div class="bg-white rounded-3xl shadow-2xl border border-cream-300 max-w-lg w-full p-6 sm:p-8 space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-cream-200">
         <div>
           <h3 class="font-editorial font-bold text-xl text-ink-900">Share a Classroom Tip or Win</h3>
@@ -1020,7 +1022,7 @@
         </div>
 
         <div>
-          <label class="block font-bold text-ink-800 mb-1">Category</label>
+          <label for="tipCategory" class="block font-bold text-ink-800 mb-1">Topic</label>
           <select id="tipCategory" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 bg-white">
             <option value="Student Engagement">Student Engagement</option>
             <option value="Classroom Management">Classroom Management</option>
@@ -1030,18 +1032,28 @@
         </div>
 
         <div>
-          <label class="block font-bold text-ink-800 mb-1">Headline or Tool Name</label>
+          <label for="tipTitle" class="block font-bold text-ink-800 mb-1">Title</label>
           <input id="tipTitle" type="text" placeholder="e.g., Using OrbitNote Voice Comments for Lab Feedback" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" required />
         </div>
 
         <div>
-          <label class="block font-bold text-ink-800 mb-1">The Tip, Takeaway, or Quote</label>
+          <label for="tipLink" class="block font-bold text-ink-800 mb-1">Link (optional)</label>
+          <input id="tipLink" type="url" placeholder="https://..." class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" />
+        </div>
+
+        <div>
+          <label for="tipContent" class="block font-bold text-ink-800 mb-1">Submission text</label>
           <textarea id="tipContent" rows="3" placeholder="Describe how you use it in class and why it works..." class="w-full p-3.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" required></textarea>
         </div>
 
         <div>
-          <label class="block font-bold text-ink-800 mb-1">Your Name / Department</label>
+          <label for="tipAuthor" class="block font-bold text-ink-800 mb-1">Your Name / Department</label>
           <input id="tipAuthor" type="text" placeholder="e.g., 8th Grade Science" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" required />
+        </div>
+
+        <div>
+          <label for="tipEmail" class="block font-bold text-ink-800 mb-1">Email (optional)</label>
+          <input id="tipEmail" type="email" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" />
         </div>
 
         <div class="pt-2 flex items-center justify-between gap-2">
@@ -2053,6 +2065,8 @@
       const techBanner = document.getElementById('techAiSpotlightBanner');
       const heading = document.getElementById('feedSectionHeading');
       const countEl = document.getElementById('feedArticleCount');
+      document.getElementById('contributeTopicBtn')?.classList.toggle('hidden',
+        !['Student Engagement', 'Classroom Management', 'Teacher Support', 'Tech & AI'].includes(category));
       if (!grid) return;
 
       renderQuickTips(category);
@@ -3085,6 +3099,12 @@
           tipStatus.classList.add('hidden');
         }
       };
+      document.getElementById('contributeTopicBtn')?.addEventListener('click', () => {
+        resetTipStatus();
+        document.getElementById('tipType').value = 'article';
+        document.getElementById('tipCategory').value = activeCategory;
+        tipModal.classList.remove('hidden');
+      });
       document.getElementById('openShareTipModalBtn')?.addEventListener('click', () => {
         resetTipStatus();
         document.getElementById('tipType').value = 'article';
@@ -3106,6 +3126,8 @@
         const title = document.getElementById('tipTitle').value.trim();
         const content = document.getElementById('tipContent').value.trim();
         const author = document.getElementById('tipAuthor').value.trim();
+        const email = document.getElementById('tipEmail').value.trim();
+        const link = document.getElementById('tipLink').value.trim();
         const submitButton = form.querySelector('button[type="submit"]');
         if (submitButton.disabled) return;
 
@@ -3115,8 +3137,8 @@
           tipStatus.className = `text-xs ${isError ? 'text-red-700' : 'text-emerald-700'}`;
         };
 
-        if (!title || !content) {
-          showTipStatus('Please enter both a headline and the tip or quote content.', true);
+        if (!author || !title || !content) {
+          showTipStatus('Please enter your name / department, a title, and submission text.', true);
           return;
         }
 
@@ -3127,12 +3149,12 @@
         try {
           const payload = new URLSearchParams({
             submitter_name: author,
-            submitter_email: '',
+            submitter_email: email,
             submission_type: type,
             category: cat,
             title,
             content,
-            links: ''
+            links: link
           });
           const response = await fetch(SUBMISSION_API_URL, {
             method: 'POST',
@@ -3148,6 +3170,7 @@
           if (!result?.ok) throw new Error(result?.error || 'The submission could not be saved.');
 
           form.reset();
+          document.getElementById('tipCategory').value = cat;
           showTipStatus('Saved for review in the Google Sheet (status: pending).');
         } catch (error) {
           const message = error instanceof TypeError
