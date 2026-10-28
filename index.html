@@ -507,6 +507,11 @@
             <span class="text-xs text-ink-600 font-medium" id="feedArticleCount">Showing 9 stories</span>
           </div>
 
+          <div id="savedStorageWarning" class="hidden flex items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900" role="note">
+            <i data-lucide="triangle-alert" class="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true"></i>
+            <p>Saved articles are stored in this browser. Clearing browser data/cache will remove your saved items.</p>
+          </div>
+
           <button id="contributeTopicBtn" type="button" class="hidden px-5 py-2 rounded-full bg-ink-900 hover:bg-ink-800 text-white text-xs font-bold">Contribute to this Topic</button>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="articlesGridContainer">
@@ -2065,10 +2070,12 @@
       const techBanner = document.getElementById('techAiSpotlightBanner');
       const heading = document.getElementById('feedSectionHeading');
       const countEl = document.getElementById('feedArticleCount');
+      const savedStorageWarning = document.getElementById('savedStorageWarning');
       document.getElementById('contributeTopicBtn')?.classList.toggle('hidden',
         !['Student Engagement', 'Classroom Management', 'Teacher Support', 'Tech & AI'].includes(category));
       if (!grid) return;
 
+      savedStorageWarning?.classList.toggle('hidden', category !== 'saved');
       renderQuickTips(category);
       renderHeroFeature();
 
