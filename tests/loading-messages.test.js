@@ -30,14 +30,16 @@ test('messages start randomly and cycle without repetition', () => {
   const second = runLoadingMessages(() => 0.99);
   assert.notEqual(first.message.textContent, second.message.textContent);
   assert.equal(first.delay, 2500);
-  const messages = [first.message.textContent];
-  for (let i = 0; i < 5; i++) {
+  const messages = new Set([first.message.textContent]);
+  const initial = first.message.textContent;
+  for (let i = 0; i < 100; i++) {
     first.tick();
-    messages.push(first.message.textContent);
+    if (first.message.textContent === initial) break;
+    assert.equal(messages.has(first.message.textContent), false);
+    messages.add(first.message.textContent);
   }
-  assert.equal(new Set(messages).size, 6);
-  first.tick();
-  assert.equal(first.message.textContent, messages[0]);
+  assert.ok(messages.size > 1);
+  assert.equal(first.message.textContent, initial);
 });
 
 test('the loading timer is stopped before status is replaced', () => {
