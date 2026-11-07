@@ -261,7 +261,7 @@ The site also ignores feed rows whose URL is not on `smore.com`,
 3. Click **Deploy**. Updating the existing deployment preserves this URL:
 
 ```text
-https://script.google.com/macros/s/AKfycbyAxb9nhP6H34pWi5icBPtWLoNSenmHalzwbkQr81p5WScUl1ez1Ym9RoglEk2RWWQb/exec
+https://script.google.com/macros/s/AKfycbz9PnGOz1N2vigDKqc3VOq4UhlxZ27U9eUB7X6Tk_DrLVeayF7umHmkLyEAl7FMPAK0/exec
 ```
 
 Use the currently active `/exec` web app URL, **not** the library URL or
