@@ -11,8 +11,9 @@ they are ready.
 ### Sheet-first loading
 
 On refresh, skeleton placeholders cover the Sheet-controlled page regions until
-`?feed=site` has been applied. A status message announces loading; the page then
-reveals its final content and enables interactions. Each feed request, including
+`?feed=site` has been applied. The loading screen cycles through messages in a
+random order on each refresh; the page then reveals its final content and enables
+interactions. Each feed request, including
 reading its JSON body, has a 12-second timeout. Failed, invalid, or timed-out site
 requests reveal built-in content with a non-blocking notice and a console warning.
 Refresh to retry. Flight Wire shows local bulletins when available, otherwise an
