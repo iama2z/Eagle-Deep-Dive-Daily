@@ -1106,6 +1106,12 @@
           <input id="tipLink" type="url" placeholder="https://..." class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" />
         </div>
 
+        <div id="tipCoverImageField">
+          <label for="tipCoverImage" class="block font-bold text-ink-800 mb-1">Cover image link (optional)</label>
+          <input id="tipCoverImage" type="url" placeholder="https://..." aria-describedby="tipCoverImageHelp" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" />
+          <p id="tipCoverImageHelp" class="mt-1 text-ink-600">Paste a public image URL or Google Drive image link. Drive images must allow anyone with the link to view, if school policy permits. Use only images you have permission to publish; no file upload is needed.</p>
+        </div>
+
         <div>
           <label for="tipContent" class="block font-bold text-ink-800 mb-1">Submission text</label>
           <textarea id="tipContent" rows="3" placeholder="Describe how you use it in class and why it works..." class="w-full p-3.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" required></textarea>
@@ -3400,6 +3406,11 @@
       document.getElementById('closeShareTipModalBtn')?.addEventListener('click', () => tipModal.classList.add('hidden'));
       document.getElementById('cancelShareTipBtn')?.addEventListener('click', () => tipModal.classList.add('hidden'));
 
+      document.getElementById('tipType')?.addEventListener('change', (e) => {
+        const isArticle = e.target.value === 'article';
+        document.getElementById('tipCoverImageField').classList.toggle('hidden', !isArticle);
+        document.getElementById('tipCoverImage').disabled = !isArticle;
+      });
       document.getElementById('shareTipForm')?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const form = e.currentTarget;
@@ -3410,6 +3421,7 @@
         const author = document.getElementById('tipAuthor').value.trim();
         const email = document.getElementById('tipEmail').value.trim();
         const link = document.getElementById('tipLink').value.trim();
+        const coverImage = type === 'article' ? document.getElementById('tipCoverImage').value.trim() : '';
         const submitButton = form.querySelector('button[type="submit"]');
         if (submitButton.disabled) return;
 
@@ -3421,6 +3433,10 @@
 
         if (!author || !title || !content) {
           showTipStatus('Please enter your name / department, a title, and submission text.', true);
+          return;
+        }
+        if (coverImage && !sanitizeHttpUrl(coverImage)) {
+          showTipStatus('Please use an http:// or https:// cover image link.', true);
           return;
         }
 
@@ -3436,7 +3452,8 @@
             category: cat,
             title,
             content,
-            links: link
+            links: link,
+            cover_image_url: coverImage
           });
           const response = await fetch(SUBMISSION_API_URL, {
             method: 'POST',
@@ -3452,6 +3469,7 @@
           if (!result?.ok) throw new Error(result?.error || 'The submission could not be saved.');
 
           form.reset();
+          document.getElementById('tipType').dispatchEvent(new Event('change'));
           document.getElementById('tipCategory').value = cat;
           showTipStatus('Saved for review in the Google Sheet (status: pending).');
         } catch (error) {
