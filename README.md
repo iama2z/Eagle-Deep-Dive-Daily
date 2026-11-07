@@ -55,11 +55,31 @@ The site is powered by a unified Google Apps Script (`apps-script/Smore.gs`) bou
 | `lounge_quotes` | "Overheard at MMS" Staff Lounge quotes in the sidebar | `quote_id`, `quote`, `attribution`, `is_live` |
 | `peer_studio` | Published Peer Lesson Studio cards | `studio_id`, `title`, `subject`, `dilemma`, `warm_feedback`, `cool_feedback`, `doc_url`, `is_live` |
 | `tech_tools` | EdTech, AI & Classroom Video Lab software cards | `tool_id`, `badge`, `title`, `link_label`, `url`, `description`, `teacher_workflow`, `student_workflow`, `is_live` |
+| `image_library` | Optional approved images for articles | `image_id`, `category`, `label`, `image_url`, `is_live` |
 | `smore_feed_raw` / `smore_feed_public` | Automated Smore Flight Wire newsletter archive | `issue_url`, `issue_title`, `published_at`, `summary`, `cover_image_url`, `article_body_text` |
 | `submissions` / `review_queue` | Incoming staff form submissions (`status = pending`) | `id`, `submitted_at`, `submitter_name`, `submitter_email`, `submission_type`, `title`, `content`, `links`, `status`, `category`, `reviewed_by`, `reviewed_at` |
 | `audit_log` | Automatic log of submissions, approvals, and Smore syncs | `timestamp`, `action`, `source_tab`, `item_id`, `title`, `details` |
 
 *(Note: If your sheet still has the tab spelled `puplished_articles`, the script automatically detects and works with both `published_articles` and `puplished_articles`.)*
+
+### Article images and placeholders
+
+Put a public image URL, Google Drive file link, or an `image_library` ID or
+label in an article's `cover_image_url` column. An optional `image_url` column
+is used if `cover_image_url` is blank. Drive files must be shared so site
+visitors can view them. In `image_library`, enter an image URL and a category;
+blank or `TRUE` in `is_live` includes the image, while `FALSE` hides it. If an
+article has no usable image, the page chooses a library image in the same
+category, then the matching `default_img_*` setting or a built-in image.
+Failed image loads fall back to the built-in support image.
+
+Live sheet articles replace the built-in samples. Set `show_placeholder_articles`
+to `TRUE` in `settings` to include samples that were not overridden by a sheet
+article. Articles may use `body` instead of `article_body_text`.
+
+After updating the Apps Script, deploy a new version of its web app. The page
+changes in `index.html` must also be published to the site; updating Apps Script
+alone does not publish the page.
 
 ### 3. Approving Submissions with One Click
 

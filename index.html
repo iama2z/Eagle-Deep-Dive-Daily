@@ -431,7 +431,8 @@
           <div class="lg:col-span-7 relative min-h-[280px] sm:min-h-[360px] bg-ink-900 overflow-hidden">
             <img 
               id="heroFeatureImg"
-              src="user_uploaded_files/ttl=63d/tool_generated/opt_watermarked_img_10640110943084536436.jpg" 
+              src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80"
+              onerror="this.onerror=null; this.src=IMG_SUPPORT;"
               alt="Engaged middle school classroom collaboration" 
               class="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700"
             />
@@ -924,7 +925,7 @@
       
       <!-- MODAL IMAGE HEADER -->
       <div class="relative h-56 sm:h-64 bg-ink-900">
-        <img id="readerHeroImg" src="user_uploaded_files/ttl=63d/tool_generated/opt_watermarked_img_10640110943084536436.jpg" alt="Article header" class="w-full h-full object-cover opacity-90" />
+        <img id="readerHeroImg" src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80" onerror="this.onerror=null; this.src=IMG_SUPPORT;" alt="Article header" class="w-full h-full object-cover opacity-90" />
         <button id="closeArticleReaderBtn" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-ink-900/80 hover:bg-ink-900 text-white flex items-center justify-center transition">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
@@ -1168,10 +1169,70 @@
   <!-- APPLICATION LOGIC -->
   <script>
     const SUBMISSION_API_URL = "https://script.google.com/macros/s/AKfycbyAxb9nhP6H34pWi5icBPtWLoNSenmHalzwbkQr81p5WScUl1ez1Ym9RoglEk2RWWQb/exec";
-    const IMG_ENGAGEMENT = "user_uploaded_files/ttl=63d/tool_generated/opt_watermarked_img_10640110943084536436.jpg";
-    const IMG_MANAGEMENT = "user_uploaded_files/ttl=63d/tool_generated/opt_watermarked_img_8563596362175423207.jpg";
-    const IMG_SUPPORT = "user_uploaded_files/ttl=63d/tool_generated/opt_watermarked_img_573880434360361359.jpg";
-    const IMG_TECH_AI = "user_uploaded_files/ttl=63d/tool_generated/opt_watermarked_img_2185100976365494820.jpg";
+    const IMG_ENGAGEMENT = "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80";
+    const IMG_MANAGEMENT = "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80";
+    const IMG_SUPPORT    = "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80";
+    const IMG_TECH_AI    = "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80";
+    let approvedImageLibrary = [];
+
+    function normalizeImageSource(rawInput) {
+      const input = String(rawInput ?? '').trim();
+      if (!input) return '';
+      if (/^https?:\/\//i.test(input)) {
+        try {
+          const parsed = new URL(input);
+          if (parsed.hostname.toLowerCase() === 'drive.google.com') {
+            const match = parsed.pathname.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+            const id = match ? match[1] : parsed.searchParams.get('id');
+            if (id && /^[a-zA-Z0-9_-]+$/.test(id)) return `https://lh3.googleusercontent.com/d/${id}`;
+          }
+          return input;
+        } catch {
+          return '';
+        }
+      }
+      return /^(images\/|assets\/|\.\/)/i.test(input) ? input : '';
+    }
+
+    function resolveImageUrl(rawInput, category = '', fallbackSeed = '') {
+      const input = String(rawInput ?? '').trim();
+      const cat = String(category || '').trim().toLowerCase();
+      if (input) {
+        const lower = input.toLowerCase();
+        const hit = approvedImageLibrary.find(img =>
+          (img.id && img.id.toLowerCase() === lower) || (img.label && img.label.toLowerCase() === lower));
+        if (hit && hit.url) return hit.url;
+        const source = normalizeImageSource(input);
+        if (source) return source;
+      }
+
+      if (cat) {
+        const matches = approvedImageLibrary.filter(img =>
+          String(img.category || '').trim().toLowerCase() === cat && img.url);
+        if (matches.length) {
+          const seed = String(fallbackSeed || category);
+          let sum = 0;
+          for (let i = 0; i < seed.length; i++) sum += seed.charCodeAt(i);
+          return matches[sum % matches.length].url;
+        }
+      }
+      const s = (typeof siteSettings !== 'undefined' && siteSettings) || {};
+      const defaults = {
+        'student engagement': s.default_img_engagement || IMG_ENGAGEMENT,
+        'classroom management': s.default_img_management || IMG_MANAGEMENT,
+        'teacher support': s.default_img_support || IMG_SUPPORT,
+        'tech & ai': s.default_img_tech_ai || IMG_TECH_AI
+      };
+      return defaults[cat] || IMG_SUPPORT;
+    }
+
+    function setArticleImage(element, src) {
+      element.onerror = function() {
+        this.onerror = null;
+        this.src = IMG_SUPPORT;
+      };
+      element.src = src;
+    }
 
     // Revolving Search Suggestions that fade in and fade out inside the white search box
     const REVOLVING_SUGGESTIONS = [
@@ -2037,7 +2098,7 @@
 
       currentHeroArticleId = featured.id;
       const imgEl = document.getElementById('heroFeatureImg');
-      if (imgEl && featured.image) imgEl.src = featured.image;
+      if (imgEl && featured.image) setArticleImage(imgEl, featured.image);
 
       const badgeEl = document.getElementById('heroFeatureBadge');
       if (badgeEl) {
@@ -2135,7 +2196,7 @@
         card.innerHTML = `
           <div>
             <div class="relative h-44 bg-ink-900 overflow-hidden" data-open-id="${escapeHtml(art.id)}">
-              <img src="${escapeHtml(art.image)}" alt="${escapeHtml(art.title)}" class="w-full h-full object-cover" />
+              <img src="${escapeHtml(art.image)}" onerror="this.onerror=null; this.src=IMG_SUPPORT;" alt="${escapeHtml(art.title)}" class="w-full h-full object-cover" />
               <div class="absolute top-3 left-3 flex items-center gap-1.5 flex-wrap">
                 <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${badgeStyle} shadow-2xs">
                   ${escapeHtml(art.category)}
@@ -2194,7 +2255,7 @@
       document.getElementById('readerScriptBox').classList.toggle('hidden', !art.script);
       document.getElementById('readerOriginalSmore').classList.add('hidden');
       document.getElementById('readerHeroImg').classList.remove('hidden');
-      document.getElementById('readerHeroImg').src = art.image;
+      setArticleImage(document.getElementById('readerHeroImg'), art.image);
       document.getElementById('readerCategoryBadge').textContent = art.category;
       document.getElementById('readerAuthor').textContent = art.author;
       document.getElementById('readerReadTime').textContent = art.readTime;
@@ -2425,35 +2486,34 @@
     function normalizePublishedArticle(item) {
       if (!item || String(item.is_live).trim().toLowerCase() !== 'true') return null;
       const text = key => String(item[key] ?? '').trim();
-      if (!['article_id', 'title', 'category', 'article_body_text'].every(key => text(key))) return null;
+      if (!['article_id', 'title', 'category'].every(key => text(key))) return null;
+      const bodyText = text('article_body_text') || text('body');
+      if (!bodyText) return null;
       const rawId = text('article_id');
+      const title = text('title');
+      const category = text('category');
       const isDefaultOverride = DEFAULT_ARTICLES_SNAPSHOT.some(a => a.id === rawId);
-      const images = {
-        'Student Engagement': IMG_ENGAGEMENT,
-        'Classroom Management': IMG_MANAGEMENT,
-        'Teacher Support': IMG_SUPPORT,
-        'Tech & AI': IMG_TECH_AI
-      };
+      const rawImage = text('cover_image_url') || text('image_url');
       const rawTags = text('tags')
         ? text('tags').split(',').map(t => t.trim()).filter(Boolean)
-        : [text('category')];
+        : [category];
       return {
         id: isDefaultOverride ? rawId : ('published-' + rawId),
         rawId: rawId,
         source: 'published_articles',
-        title: text('title'),
-        subtitle: text('summary'),
-        category: text('category'),
+        title,
+        subtitle: text('summary') || bodyText.slice(0, 160) + '…',
+        category,
         author: text('author') || 'MMS Staff',
-        readTime: text('read_time') || `${Math.max(1, Math.ceil(text('article_body_text').split(/\s+/).length / 200))} min read`,
+        readTime: text('read_time') || `${Math.max(1, Math.ceil(bodyText.split(/\s+/).length / 200))} min read`,
         date: formatDateLabel(item.published_at) || text('published_at'),
         featured: item.featured === true || text('featured').toLowerCase() === 'true',
         hasVideoDemo: item.has_video_demo === true || text('has_video_demo').toLowerCase() === 'true',
-        image: sanitizeHttpUrl(item.cover_image_url) || images[text('category')] || IMG_SUPPORT,
-        takeaway: text('takeaway') || text('summary'),
+        image: resolveImageUrl(rawImage, category, rawId || title),
+        takeaway: text('takeaway') || text('summary') || bodyText.slice(0, 140),
         tryTomorrow: text('try_tomorrow'),
         script: text('script'),
-        body: text('article_body_text').replace(/\r\n?/g, '\n').split(/\n\s*\n/),
+        body: bodyText.replace(/\r\n?/g, '\n').split(/\n\s*\n/),
         tags: rawTags
       };
     }
@@ -2463,11 +2523,10 @@
       const articles = [...new Map(rawItems.map(normalizePublishedArticle).filter(Boolean)
         .map(article => [article.id, article])).values()];
       if (!articles.length) return;
-      const touchesDefaults = articles.some(a => DEFAULT_ARTICLES_SNAPSHOT.some(d => d.id === a.rawId));
-      if (touchesDefaults) {
-        APP_DATA.articles = articles;
-      } else {
-        APP_DATA.articles = [...articles, ...DEFAULT_ARTICLES_SNAPSHOT];
+      APP_DATA.articles = articles;
+      if (String(siteSettings.show_placeholder_articles || 'FALSE').trim().toUpperCase() === 'TRUE') {
+        const taken = new Set(articles.map(a => a.rawId));
+        APP_DATA.articles = [...articles, ...DEFAULT_ARTICLES_SNAPSHOT.filter(d => !taken.has(d.id))];
       }
       initFuse();
       renderArticlesGrid(activeCategory);
@@ -2512,7 +2571,7 @@
       if (!issue) return;
       const image = document.getElementById('readerHeroImg');
       image.classList.toggle('hidden', !issue.cover_image_url);
-      if (issue.cover_image_url) image.src = issue.cover_image_url;
+      if (issue.cover_image_url) setArticleImage(image, issue.cover_image_url);
       else image.removeAttribute('src');
       document.getElementById('readerCategoryBadge').textContent = 'Flight Wire';
       document.getElementById('readerAuthor').textContent = 'Smore Newsletter';
@@ -2754,7 +2813,7 @@
         }
 
         if (('settings' in data && (!data.settings || typeof data.settings !== 'object' || Array.isArray(data.settings))) ||
-            ['articles', 'quick_wins', 'directory', 'quotes', 'studio', 'tech_tools', 'smore']
+            ['articles', 'quick_wins', 'directory', 'quotes', 'studio', 'tech_tools', 'smore', 'image_library']
               .some(key => key in data && (!Array.isArray(data[key]) ||
                 data[key].some(row => !row || typeof row !== 'object' || Array.isArray(row))))) {
           throw new Error('Unexpected site feed format');
@@ -2854,6 +2913,18 @@
             APP_DATA.techTools = tools;
             renderTechTools();
           }
+        }
+
+        if (Array.isArray(data.image_library) && data.image_library.length > 0) {
+          approvedImageLibrary = data.image_library
+            .filter(row => String(row.is_live ?? 'TRUE').trim().toLowerCase() !== 'false')
+            .map((row, idx) => ({
+              id: String(row.image_id || `img-${idx + 1}`).trim(),
+              category: String(row.category || 'Student Engagement').trim(),
+              label: String(row.label || '').trim(),
+              url: normalizeImageSource(row.image_url)
+            }))
+            .filter(img => img.url);
         }
 
         if (Array.isArray(data.articles) && data.articles.length > 0) {
