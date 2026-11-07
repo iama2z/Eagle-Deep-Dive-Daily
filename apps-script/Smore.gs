@@ -45,6 +45,8 @@ const TECH_TOOL_COLUMNS = [
   'tool_id', 'badge', 'title', 'link_label', 'url', 'description', 'teacher_workflow', 'student_workflow', 'is_live'
 ];
 
+const IMAGE_LIBRARY_COLUMNS = ['image_id', 'category', 'label', 'image_url', 'is_live'];
+
 const SUBMISSION_COLUMNS = [
   'id', 'submitted_at', 'submitter_name', 'submitter_email', 'submission_type',
   'title', 'content', 'links', 'status', 'category', 'reviewed_by', 'reviewed_at'
@@ -119,6 +121,9 @@ function setupSiteSheet() {
   if (techSheet.getLastRow() < 2) {
     seedSheetRows_(techSheet, techHeaders, defaultTechToolsSeed_());
   }
+
+  const imageSheet = ss.getSheetByName('image_library') || ss.insertSheet('image_library');
+  smoreHeaders_(imageSheet, IMAGE_LIBRARY_COLUMNS, true);
 
   const submissionsSheet = ss.getSheetByName('submissions') || ss.insertSheet('submissions');
   smoreHeaders_(submissionsSheet, SUBMISSION_COLUMNS, true);
@@ -305,7 +310,8 @@ function doGet(e) {
         directory: publicTableItems_('directory_links', DIRECTORY_LINK_COLUMNS, ['title', 'url']),
         quotes: publicTableItems_('lounge_quotes', LOUNGE_QUOTE_COLUMNS, ['quote']),
         studio: publicTableItems_('peer_studio', PEER_STUDIO_COLUMNS, ['title']),
-        tech_tools: publicTableItems_('tech_tools', TECH_TOOL_COLUMNS, ['title'])
+        tech_tools: publicTableItems_('tech_tools', TECH_TOOL_COLUMNS, ['title']),
+        image_library: publicTableItems_('image_library', IMAGE_LIBRARY_COLUMNS, ['image_url'], true)
       });
     }
     return smoreJson_({ ok: true, items: publicSmoreItems_(true) });
@@ -343,22 +349,29 @@ function publishedArticles_() {
   if (!sheet || sheet.getLastRow() < 2) return [];
   const [rawHeaders, ...rows] = sheet.getDataRange().getValues();
   const headers = rawHeaders.map(h => String(h || '').trim());
-  const required = ['article_id', 'title', 'category', 'article_body_text', 'is_live'];
+  const required = ['article_id', 'title', 'category', 'is_live'];
   if (!headers.length || required.some(key => !headers.includes(key))) {
     throw new Error('Missing required published_articles headers: ' + required.join(', '));
+  }
+  if (!headers.includes('article_body_text') && !headers.includes('body')) {
+    throw new Error('Missing required published_articles header: article_body_text or body');
   }
   return rows.filter(row => {
     const val = row[headers.indexOf('is_live')];
     return val === true || String(val || '').trim().toLowerCase() === 'true';
   }).map(row => Object.fromEntries(PUBLISHED_ARTICLE_COLUMNS.map(key => {
     const idx = headers.indexOf(key);
-    const value = idx >= 0 ? row[idx] : '';
+    let value = idx >= 0 ? row[idx] : '';
+    if ((key === 'article_body_text' || key === 'cover_image_url') && !String(value ?? '').trim()) {
+      const aliasIdx = headers.indexOf(key === 'article_body_text' ? 'body' : 'image_url');
+      if (aliasIdx >= 0) value = row[aliasIdx];
+    }
     if (key === 'is_live') return [key, true];
     if (key === 'featured' || key === 'has_video_demo') {
       return [key, value === true || String(value || '').trim().toLowerCase() === 'true'];
     }
     return [key, value instanceof Date ? value.toISOString() : String(value == null ? '' : value).trim()];
-  }))).filter(item => required.every(key => item[key]));
+  }))).filter(item => required.every(key => item[key]) && item.article_body_text);
 }
 
 function publicSettings_() {
@@ -377,7 +390,7 @@ function publicSettings_() {
   return out;
 }
 
-function publicTableItems_(sheetName, columns, requiredKeys) {
+function publicTableItems_(sheetName, columns, requiredKeys, blankIsLive = false) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
   if (!sheet || sheet.getLastRow() < 2) return [];
   const [rawHeaders, ...rows] = sheet.getDataRange().getValues();
@@ -387,7 +400,8 @@ function publicTableItems_(sheetName, columns, requiredKeys) {
   return rows.filter(row => {
     if (liveIdx < 0) return true;
     const val = row[liveIdx];
-    return val === true || String(val || '').trim().toLowerCase() === 'true';
+    const live = String(val ?? '').trim().toLowerCase();
+    return val === true || live === 'true' || (blankIsLive && live === '');
   }).map(row => Object.fromEntries(columns.map(key => {
     const idx = headers.indexOf(key);
     const value = idx >= 0 ? row[idx] : '';
