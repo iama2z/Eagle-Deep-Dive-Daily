@@ -294,7 +294,7 @@
               </button>
               <button id="openSettingsModalBtn" class="text-[11px] font-semibold text-ink-600 hover:text-ink-900 flex items-center gap-1.5 px-2 py-1 rounded-lg hover:bg-cream-100 transition">
                 <i data-lucide="settings" class="w-3.5 h-3.5"></i>
-                <span>AI Proxy</span>
+                <span>Settings</span>
               </button>
             </div>
           </div>
@@ -309,17 +309,17 @@
               type="text" 
               placeholder="" 
               autocomplete="off"
-              aria-label="Search classroom tips, tech & AI tools, strategies, or building resources"
+              aria-label="Search articles, tips, tools, or building resources by keyword"
               class="w-full bg-white text-sm text-ink-900 pl-10 pr-28 py-2.5 rounded-full border border-cream-300 shadow-2xs focus:outline-none focus:ring-2 focus:ring-red-600/30 focus:border-red-600 transition-all"
             />
             <!-- FADING PLACEHOLDER OVERLAY INSIDE THE WHITE TEXT BOX (SHOWN WHENEVER INPUT IS EMPTY) -->
             <div id="revolvingSuggestionOverlay" class="absolute left-10 right-28 pointer-events-none flex items-center overflow-hidden">
               <span id="revolvingSuggestionText" class="revolving-placeholder revolving-fade-in text-xs sm:text-sm text-ink-400 truncate select-none">
-                Try: "NotebookLM for missing students"...
+                Try: "missing students"...
               </span>
             </div>
-            <button id="searchModeToggleBtn" class="absolute right-1.5 z-10 text-[11px] font-bold px-2.5 py-1 rounded-full bg-cream-200 hover:bg-cream-300 text-ink-800 transition flex items-center gap-1" title="Switch between Instant Filter and AI Assistant">
-              <span id="searchModeLabel">⚡ Instant</span>
+            <button id="globalSearchSubmitBtn" class="absolute right-1.5 z-10 text-[11px] font-bold px-2.5 py-1 rounded-full bg-cream-200 hover:bg-cream-300 text-ink-800 transition flex items-center gap-1" title="Search by keyword">
+              <span>Search</span>
             </button>
           </div>
 
@@ -327,8 +327,8 @@
           <div id="searchResultsDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-cream-300 max-h-[75vh] overflow-y-auto p-4 z-50">
             <div class="flex items-center justify-between pb-2.5 mb-3 border-b border-cream-200">
               <div class="flex items-center gap-2">
-                <span id="resultsCountBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-100 text-red-900">0 matches</span>
-                <span id="resultsModeSubtitle" class="text-xs text-ink-600">Articles, Tech &amp; AI tools, quick wins &amp; directory</span>
+                <span id="resultsCountBadge" role="status" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-100 text-red-900">0 matches</span>
+                <span id="resultsModeSubtitle" class="text-xs text-ink-600">Articles, tools, quick wins &amp; directory</span>
               </div>
               <button id="closeSearchResultsBtn" class="text-ink-400 hover:text-ink-900 p-1">
                 <i data-lucide="x" class="w-4 h-4"></i>
@@ -553,46 +553,46 @@
         <!-- RIGHT 4 COLUMNS: EDITORIAL SIDEBAR -->
         <aside class="lg:col-span-4 space-y-6">
 
-          <!-- SIDEBAR WIDGET 1: ASK THE AI INSTRUCTIONAL COACH -->
+          <!-- SIDEBAR WIDGET 1: ARTICLE FINDER -->
           <div class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-4">
             <div class="flex items-center gap-2.5">
               <div class="w-9 h-9 rounded-xl bg-red-100 text-red-700 flex items-center justify-center">
-                <i data-lucide="sparkles" class="w-5 h-5"></i>
+                <i data-lucide="search" class="w-5 h-5"></i>
               </div>
               <div>
-                <h3 id="coachHeadingText" class="font-editorial font-bold text-base text-ink-900">Instant Strategy Brainstorm</h3>
-                <p id="coachSubtitleText" class="text-[11px] text-ink-600">Powered by Gemini Flash • Grounded in MMS Craft</p>
+                <h3 id="coachHeadingText" class="font-editorial font-bold text-base text-ink-900">Find an Article</h3>
+                <p id="coachSubtitleText" class="text-[11px] text-ink-600">Search published articles by keyword</p>
               </div>
             </div>
 
             <p id="coachPromptIntroText" class="text-xs text-ink-600 leading-relaxed">
-              Need a quick 5-minute sponge activity, a NotebookLM / OrbitNote workflow, or a de-escalation phrase?
+              Enter a topic or a few keywords, or choose a shortcut below. Minor typos are OK.
             </p>
 
             <div class="space-y-2">
-              <textarea id="sidebarCoachInput" rows="2" placeholder="e.g., How do I use NotebookLM to catch up a missing student, or give me a 3-minute hook..." class="w-full p-3 text-xs bg-cream-50 border border-cream-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-600/30"></textarea>
+              <textarea id="sidebarCoachInput" aria-label="Article search keywords" rows="2" placeholder="e.g., missing students, OrbitNote, bellringers..." class="w-full p-3 text-xs bg-cream-50 border border-cream-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-600/30"></textarea>
               <button id="sidebarCoachSubmitBtn" class="w-full py-2.5 px-4 rounded-xl bg-ink-900 hover:bg-ink-800 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition">
-                <i data-lucide="wand-2" class="w-3.5 h-3.5 text-red-400"></i>
-                <span>Generate Classroom Idea</span>
+                <i data-lucide="search" class="w-3.5 h-3.5 text-red-400"></i>
+                <span>Search Articles</span>
               </button>
             </div>
 
             <div class="flex flex-wrap gap-1.5 pt-1">
-              <button class="quick-coach-chip text-[11px] bg-red-50 hover:bg-red-100 text-ink-900 font-semibold px-2.5 py-1 rounded-full transition" data-prompt="How can I use NotebookLM and Google Classroom to generate catch-up slides or audio for missing students?">
-                + Missing Student AI
+              <button class="quick-coach-chip text-[11px] bg-red-50 hover:bg-red-100 text-ink-900 font-semibold px-2.5 py-1 rounded-full transition" data-prompt="missing students">
+                + Missing Students
               </button>
-              <button class="quick-coach-chip text-[11px] bg-red-50 hover:bg-red-100 text-ink-900 font-semibold px-2.5 py-1 rounded-full transition" data-prompt="Give me a quick OrbitNote PDF annotation routine for middle schoolers.">
+              <button class="quick-coach-chip text-[11px] bg-red-50 hover:bg-red-100 text-ink-900 font-semibold px-2.5 py-1 rounded-full transition" data-prompt="OrbitNote">
                 + OrbitNote Tip
               </button>
-              <button class="quick-coach-chip text-[11px] bg-cream-100 hover:bg-cream-200 text-ink-800 px-2.5 py-1 rounded-full transition" data-prompt="How do I structure a 90-second student-made explainer video project?">
+              <button class="quick-coach-chip text-[11px] bg-cream-100 hover:bg-cream-200 text-ink-800 px-2.5 py-1 rounded-full transition" data-prompt="student video">
                 + Student Video
               </button>
-              <button class="quick-coach-chip text-[11px] bg-cream-100 hover:bg-cream-200 text-ink-800 px-2.5 py-1 rounded-full transition" data-prompt="How do I reset a chatty 6th hour class after lunch without yelling?">
+              <button class="quick-coach-chip text-[11px] bg-cream-100 hover:bg-cream-200 text-ink-800 px-2.5 py-1 rounded-full transition" data-prompt="reset">
                 + Post-Lunch Reset
               </button>
             </div>
 
-            <div id="sidebarCoachOutput" class="hidden p-3.5 rounded-2xl bg-red-50/70 border border-red-200 text-xs text-ink-800 leading-relaxed space-y-1.5">
+            <div id="sidebarCoachOutput" class="hidden p-3.5 rounded-2xl bg-red-50/70 border border-red-200 text-xs text-ink-800 leading-relaxed space-y-1.5" aria-label="Article search results">
               <!-- Output appears here -->
             </div>
           </div>
@@ -1154,18 +1154,18 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- MODAL: ASK AI COACH (GEMINI FLASH) -->
+  <!-- MODAL: ARTICLE SEARCH -->
   <!-- ========================================== -->
   <div id="geminiModal" class="fixed inset-0 bg-ink-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl shadow-2xl border border-cream-300 max-w-xl w-full p-6 sm:p-8 space-y-4">
       <div class="flex items-center justify-between pb-3 border-b border-cream-200">
         <div class="flex items-center gap-2.5">
           <div class="w-9 h-9 rounded-xl bg-red-600 text-white flex items-center justify-center font-bold">
-            <i data-lucide="sparkles" class="w-5 h-5"></i>
+            <i data-lucide="search" class="w-5 h-5"></i>
           </div>
           <div>
-            <h3 class="font-editorial font-bold text-lg text-ink-900">MMS Instructional &amp; EdTech Coach</h3>
-            <p class="text-[11px] text-ink-600">Powered by Gemini Flash • Strategies, Tech/AI workflows &amp; building answers</p>
+            <h3 class="font-editorial font-bold text-lg text-ink-900">Find an Article</h3>
+            <p class="text-[11px] text-ink-600">Search published articles by keyword</p>
           </div>
         </div>
         <button id="closeGeminiModalBtn" class="text-ink-400 hover:text-ink-900 p-1">
@@ -1174,35 +1174,35 @@
       </div>
 
       <div class="space-y-2">
-        <label class="text-xs font-bold text-ink-800">What classroom challenge, tech tool, or building question can I help with?</label>
-        <textarea id="geminiQueryInput" rows="3" placeholder="e.g., How do I use NotebookLM for missing students, how do students annotate in OrbitNote, or give me 3 bellringers for forces & motion..." class="w-full p-3.5 text-xs bg-cream-50 border border-cream-300 rounded-2xl focus:ring-2 focus:ring-red-600/30 focus:outline-none"></textarea>
+        <label for="geminiQueryInput" class="text-xs font-bold text-ink-800">Enter a topic or a few keywords</label>
+        <textarea id="geminiQueryInput" rows="3" placeholder="e.g., missing students, OrbitNote, bellringers..." class="w-full p-3.5 text-xs bg-cream-50 border border-cream-300 rounded-2xl focus:ring-2 focus:ring-red-600/30 focus:outline-none"></textarea>
       </div>
 
       <div class="flex items-center justify-between gap-3">
         <span class="text-[11px] text-ink-400 flex items-center gap-1">
           <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i>
-          <span>Cloudflare Worker Proxy Ready</span>
+          <span>Local keyword search • No API needed</span>
         </span>
         <button id="geminiSubmitBtn" class="px-5 py-2.5 rounded-full bg-ink-900 hover:bg-ink-800 text-white font-bold text-xs flex items-center gap-1.5 transition">
           <i data-lucide="send" class="w-3.5 h-3.5 text-red-400"></i>
-          <span>Get Strategy</span>
+          <span>Search Articles</span>
         </button>
       </div>
 
       <div id="geminiResponseContainer" class="hidden p-4 rounded-2xl bg-cream-100 border border-cream-300 text-xs space-y-2">
         <div class="flex items-center justify-between font-bold text-ink-900">
           <span class="flex items-center gap-1.5 text-red-600">
-            <i data-lucide="bot" class="w-4 h-4"></i> Coach Response
+            <i data-lucide="search" class="w-4 h-4"></i> Matching Articles
           </span>
           <span id="geminiLatencyBadge" class="text-[10px] font-normal text-ink-400"></span>
         </div>
-        <div id="geminiResponseText" class="text-ink-800 leading-relaxed whitespace-pre-line"></div>
+        <div id="geminiResponseText" class="text-ink-800 leading-relaxed space-y-2"></div>
       </div>
     </div>
   </div>
 
   <!-- ========================================== -->
-  <!-- MODAL: SETTINGS & PROXY CONFIGURATION -->
+  <!-- MODAL: SETTINGS -->
   <!-- ========================================== -->
   <div id="settingsModal" class="fixed inset-0 bg-ink-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl shadow-2xl border border-cream-300 max-w-md w-full p-6 space-y-4 text-xs">
@@ -1214,15 +1214,11 @@
       </div>
 
       <div class="space-y-3">
-        <div>
-          <label class="block font-bold text-ink-800 mb-1">Cloudflare Worker Proxy URL (Gemini Flash)</label>
-          <input id="workerUrlInput" type="url" placeholder="https://mms-gemini-proxy.your-subdomain.workers.dev" class="w-full p-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" />
-          <p class="text-[11px] text-ink-600 mt-1">Leave blank to use the built-in instructional coach simulator.</p>
-        </div>
+        <p class="text-ink-600">Bookmarks are saved in this browser. Article search runs locally and needs no API configuration.</p>
 
         <div class="pt-3 border-t border-cream-200 flex items-center justify-between">
           <button id="clearStorageBtn" class="text-rose-600 hover:underline font-bold">Reset Saved Bookmarks</button>
-          <button id="saveSettingsBtn" class="px-4 py-2 rounded-full bg-ink-900 text-white font-bold">Save Changes</button>
+          <button id="saveSettingsBtn" class="px-4 py-2 rounded-full bg-ink-900 text-white font-bold">Done</button>
         </div>
       </div>
     </div>
@@ -1314,14 +1310,14 @@
 
     // Revolving Search Suggestions that fade in and fade out inside the white search box
     const REVOLVING_SUGGESTIONS = [
-      'Try: "NotebookLM for missing students"...',
-      'Try: "OrbitNote PDF in Google Classroom"...',
-      'Ask AI: "90-sec student video storyboard"...',
-      'Try: "bellringer hooks for 8th grade"...',
-      'Ask AI: "5-minute post-lunch class reset"...',
-      'Try: "de-escalating student shutdowns"...',
-      'Try: "sub coverage & Frontline login"...',
-      'Try: "Tier 2 MTSS referral form"...'
+      'Try: "missing students"...',
+      'Try: "OrbitNote PDF"...',
+      'Try: "student video"...',
+      'Try: "bellringer"...',
+      'Try: "class reset"...',
+      'Try: "de-escalation"...',
+      'Try: "Frontline"...',
+      'Try: "MTSS referral"...'
     ];
 
     const APP_DATA = {
@@ -1946,8 +1942,8 @@
     let savedBookmarks = [];
     let activeCategory = 'all';
     let activeView = 'view-editorial';
-    let searchMode = 'instant';
     let fuse = null;
+    let articleFuse = null;
     let currentReaderScript = '';
     let suggestionIndex = 0;
     let suggestionInterval = null;
@@ -2067,11 +2063,17 @@
         });
       });
 
-      fuse = new Fuse(items, {
-        keys: ['title', 'category', 'desc', 'tags', 'body'],
+      const options = {
+        keys: [
+          { name: 'title', weight: 3 },
+          { name: 'tags', weight: 2 },
+          'category', 'desc', 'body'
+        ],
         threshold: 0.36,
         ignoreLocation: true
-      });
+      };
+      fuse = new Fuse(items, options);
+      articleFuse = new Fuse(items.filter(item => item.type === 'Article Playbook'), options);
     }
 
     // --- DYNAMIC CONTEXT-AWARE QUICK WINS RENDERER ---
@@ -2504,9 +2506,9 @@
       setText('siteTaglineText', 'site_tagline');
       setText('heroFeatureBadge', 'hero_badge');
       setText('heroButtonLabelText', 'hero_button_label');
-      setText('coachHeadingText', 'coach_heading');
-      setText('coachSubtitleText', 'coach_subtitle');
-      setText('coachPromptIntroText', 'coach_prompt_intro');
+      setText('coachHeadingText', 'article_search_heading');
+      setText('coachSubtitleText', 'article_search_subtitle');
+      setText('coachPromptIntroText', 'article_search_intro');
       setText('loungeHeadingText', 'lounge_heading');
       setText('loungeBadgeText', 'lounge_badge');
       setText('directoryHeadingText', 'directory_heading');
@@ -3237,49 +3239,57 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // --- AI COACH SIMULATOR & CLOUDFLARE WORKER CALL ---
-    async function askCoach(promptText, targetEl) {
+    // --- SHARED LOCAL KEYWORD SEARCH ---
+    function searchByKeywords(query, index) {
+      const tokens = [...new Set(query.toLowerCase().match(/[\p{L}\p{N}]+/gu) || [])];
+      if (!tokens.length) return [];
+      return index.search({
+        $and: tokens.map(token => ({
+          $or: ['title', 'category', 'desc', 'tags', 'body'].map(key => ({ [key]: token }))
+        }))
+      });
+    }
+
+    function renderSearchResults(query, targetEl, index) {
       targetEl.classList.remove('hidden');
-      targetEl.innerHTML = '<span class="italic text-ink-400 animate-pulse">Drafting classroom-tested strategy...</span>';
-
-      const workerUrl = getStored('mms_worker_url', '');
-      if (workerUrl && workerUrl.startsWith('http')) {
-        try {
-          const res = await fetch(workerUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query: promptText })
-          });
-          if (res.ok) {
-            const data = await res.json();
-            targetEl.textContent = data.answer || 'No response received.';
-            return;
-          }
-        } catch (e) {
-          console.warn('Worker unreachable, using built-in pedagogical simulator.');
-        }
+      targetEl.replaceChildren();
+      const status = document.createElement('p');
+      status.setAttribute('role', 'status');
+      targetEl.appendChild(status);
+      if (!index) {
+        status.textContent = 'Search is not ready yet. Wait for content to load, then try again.';
+        return [];
       }
+      if (!query.match(/[\p{L}\p{N}]/u)) {
+        status.textContent = 'Enter a topic or a few keywords to search.';
+        return [];
+      }
+      const results = searchByKeywords(query, index);
+      const visible = results.slice(0, 6);
+      status.textContent = results.length
+        ? `${results.length} matches${results.length > visible.length ? ' - showing the top 6. Add keywords to narrow your search.' : ''}`
+        : `No matches for "${query}". Try fewer keywords, another spelling, or a topic such as bellringer or OrbitNote.`;
+      visible.forEach(({ item }) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'block w-full text-left p-3 rounded-xl hover:bg-cream-100 focus-visible:ring-2 focus-visible:ring-red-600 transition border border-cream-300';
+        button.innerHTML = `
+          <span class="block text-[10px] font-bold uppercase tracking-wider text-red-700">${escapeHtml(item.type)} &middot; ${escapeHtml(item.category)}</span>
+          <span class="block font-bold text-xs text-ink-900">${escapeHtml(item.title)}</span>
+          <span class="block text-[11px] text-ink-600 line-clamp-2">${escapeHtml(item.desc)}</span>
+        `;
+        button.addEventListener('click', () => {
+          document.getElementById('searchResultsDropdown').classList.add('hidden');
+          document.getElementById('geminiModal').classList.add('hidden');
+          item.action();
+        });
+        targetEl.appendChild(button);
+      });
+      return results;
+    }
 
-      setTimeout(() => {
-        const q = promptText.toLowerCase();
-        let reply = '';
-        if (q.includes('notebooklm') || q.includes('missing') || q.includes('absent')) {
-          reply = "NotebookLM Missing-Student Workflow: 1) Upload this week's Google Slides and lab PDF into your unit NotebookLM. 2) Prompt it to generate a '5-Slide Catch-Up Summary' + click 'Audio Overview'. 3) Post both links under an 'Absent? Start Here' topic in Google Classroom so absent students can catch up in 5 minutes without needing a 1-on-1 lecture.";
-        } else if (q.includes('orbitnote') || q.includes('orbit note') || q.includes('pdf')) {
-          reply = "OrbitNote Routine for Google Classroom: Attach your reading or lab PDF via OrbitNote so students get built-in Text-to-Speech read-alouds and picture dictionaries. Have students highlight the main Claim in Yellow and Evidence in Green, then click the 'Collect Highlights' button to automatically compile their notes into a clean Google Doc.";
-        } else if (q.includes('video') || q.includes('storyboard')) {
-          reply = "90-Second Student Video Protocol: Require pairs to complete a '3-Box Paper Storyboard' first (Box 1: Hook Question & Claim, Box 2: Annotated Diagram Proof, Box 3: Bust a Common Myth). Once you stamp their paper storyboard, give them 10 minutes to record a single-take screencast or paper-slide video.";
-        } else if (q.includes('sponge') || q.includes('5-min') || q.includes('five')) {
-          reply = "Try 'Two Truths and a Fib: Unit Edition.' Put 3 statements about today's topic on the board (2 true, 1 sneaky misconception). Give pairs 90 seconds to whisper-debate and hold up 1, 2, or 3 fingers on your count. Zero copies needed and instant engagement.";
-        } else if (q.includes('reset') || q.includes('chatty') || q.includes('6th hour') || q.includes('lunch')) {
-          reply = "Post-Lunch Reset Trick: Dim one bank of lights before students enter and project a 'Silent Visual Oddity' (an optical illusion or zoomed-in microscope photo). Stand at the door and whisper: 'See if you can figure out what's on the screen before the bell rings.' Whispering at the door naturally lowers hallway vocal volume.";
-        } else if (q.includes('vocab') || q.includes('frayer')) {
-          reply = "Try the 'Forbidden Words' routine: Give partners the target vocabulary term and 3 taboo words they aren't allowed to say, and challenge them to get their partner to guess the concept in 45 seconds using real-world examples.";
-        } else {
-          reply = `For "${promptText}": Start with a 60-second visual comparison or table prediction so every student has a low-stakes entry point before direct instruction begins. Follow up with a 2-minute partner turn-and-talk or an OrbitNote/NotebookLM scaffold to lock in the concept.`;
-        }
-        targetEl.innerHTML = `<strong class="block text-red-900 mb-1">Coach Suggestion:</strong>${reply}`;
-      }, 350);
+    function searchArticles(query, targetEl) {
+      return renderSearchResults(query, targetEl, articleFuse);
     }
 
     // --- EVENT LISTENERS ---
@@ -3408,8 +3418,8 @@
       // Search Input (Dropdown only opens when user types a query)
       const sInput = document.getElementById('globalSearchInput');
       const sDrop = document.getElementById('searchResultsDropdown');
-      sInput?.addEventListener('input', (e) => {
-        const q = e.target.value.trim();
+      const runGlobalSearch = () => {
+        const q = sInput.value.trim();
         if (!q) {
           sDrop.classList.add('hidden');
           return;
@@ -3417,72 +3427,49 @@
         sDrop.classList.remove('hidden');
         const list = document.getElementById('searchResultsList');
         const badge = document.getElementById('resultsCountBadge');
-        const subtitle = document.getElementById('resultsModeSubtitle');
-
-        if (searchMode === 'instant') {
-          const res = fuse.search(q);
-          badge.textContent = `${res.length} matches`;
-          subtitle.textContent = 'Searching articles, Tech & AI tools, quick wins & directory';
-          list.innerHTML = '';
-          if (res.length === 0) {
-            list.innerHTML = `<div class="p-4 text-center text-xs text-ink-600">No instant matches for "${escapeHtml(q)}". Click <strong>⚡ Instant</strong> to switch to <strong>✨ AI Coach</strong>!</div>`;
-            return;
-          }
-          res.slice(0, 6).forEach(r => {
-            const d = document.createElement('div');
-            d.className = 'p-3 rounded-xl hover:bg-cream-100 cursor-pointer transition border border-transparent hover:border-cream-300';
-            d.innerHTML = `
-              <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-red-700 mb-0.5">
-                <span>${escapeHtml(r.item.type)}</span>
-                <span>${escapeHtml(r.item.category)}</span>
-              </div>
-              <div class="font-bold text-xs text-ink-900">${escapeHtml(r.item.title)}</div>
-              <div class="text-[11px] text-ink-600 line-clamp-1">${escapeHtml(r.item.desc)}</div>
-            `;
-            d.addEventListener('click', () => {
-              sDrop.classList.add('hidden');
-              r.item.action();
-            });
-            list.appendChild(d);
-          });
-        } else {
-          badge.textContent = 'AI Coach';
-          subtitle.textContent = 'Natural language strategy brainstorm';
-          list.innerHTML = `
-            <div class="p-3.5 rounded-xl bg-red-50 border border-red-200 text-xs space-y-2.5">
-              <p class="font-bold text-ink-900">Ask AI Instructional Coach: "${q}"</p>
-              <button id="askCoachFromSearchBtn" class="px-4 py-1.5 rounded-full bg-ink-900 hover:bg-ink-800 text-white font-bold transition">Get Strategy Now</button>
-            </div>
-          `;
-          document.getElementById('askCoachFromSearchBtn')?.addEventListener('click', () => {
-            sDrop.classList.add('hidden');
-            document.getElementById('geminiModal').classList.remove('hidden');
-            document.getElementById('geminiQueryInput').value = q;
-            askCoach(q, document.getElementById('geminiResponseContainer'));
-          });
+        const results = renderSearchResults(q, list, fuse);
+        badge.textContent = fuse ? `${results.length} matches` : 'Loading';
+      };
+      sInput?.addEventListener('input', runGlobalSearch);
+      sInput?.addEventListener('focus', runGlobalSearch);
+      sInput?.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          runGlobalSearch();
+          document.querySelector('#searchResultsList button')?.focus();
+        } else if (e.key === 'Escape') {
+          sDrop.classList.add('hidden');
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          document.querySelector('#searchResultsList button')?.focus();
         }
       });
-
-      document.getElementById('searchModeToggleBtn')?.addEventListener('click', () => {
-        searchMode = searchMode === 'instant' ? 'ai' : 'instant';
-        document.getElementById('searchModeLabel').textContent = searchMode === 'instant' ? '⚡ Instant' : '✨ AI Coach';
-        if (sInput.value.trim().length > 0) {
-          sInput.dispatchEvent(new Event('input'));
+      document.getElementById('globalSearchSubmitBtn')?.addEventListener('click', runGlobalSearch);
+      sDrop.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          sInput.focus();
+          sDrop.classList.add('hidden');
         }
       });
 
       document.getElementById('closeSearchResultsBtn')?.addEventListener('click', () => sDrop.classList.add('hidden'));
 
-      // Sidebar Coach
+      // Sidebar article search
       const sideOut = document.getElementById('sidebarCoachOutput');
       document.getElementById('sidebarCoachSubmitBtn')?.addEventListener('click', () => {
         const val = document.getElementById('sidebarCoachInput').value.trim();
-        if (val) askCoach(val, sideOut);
+        searchArticles(val, sideOut);
+      });
+      document.getElementById('sidebarCoachInput')?.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          searchArticles(e.target.value.trim(), sideOut);
+        }
       });
       document.querySelectorAll('.quick-coach-chip').forEach(chip => {
         chip.addEventListener('click', () => {
           document.getElementById('sidebarCoachInput').value = chip.dataset.prompt;
-          askCoach(chip.dataset.prompt, sideOut);
+          searchArticles(chip.dataset.prompt, sideOut);
         });
       });
 
@@ -3591,25 +3578,24 @@
         }
       });
 
-      // Modals: AI Coach
+      // Modals: Article search
       const gModal = document.getElementById('geminiModal');
       document.getElementById('openAiCoachModalBtn')?.addEventListener('click', () => gModal.classList.remove('hidden'));
       document.getElementById('closeGeminiModalBtn')?.addEventListener('click', () => gModal.classList.add('hidden'));
       document.getElementById('geminiSubmitBtn')?.addEventListener('click', () => {
         const q = document.getElementById('geminiQueryInput').value.trim();
-        if (q) askCoach(q, document.getElementById('geminiResponseContainer'));
+        document.getElementById('geminiResponseContainer').classList.remove('hidden');
+        searchArticles(q, document.getElementById('geminiResponseText'));
       });
 
       // Modals: Settings
       const setModal = document.getElementById('settingsModal');
       document.getElementById('openSettingsModalBtn')?.addEventListener('click', () => {
         topLeftDrop?.classList.add('hidden');
-        document.getElementById('workerUrlInput').value = getStored('mms_worker_url', '');
         setModal.classList.remove('hidden');
       });
       document.getElementById('closeSettingsModalBtn')?.addEventListener('click', () => setModal.classList.add('hidden'));
       document.getElementById('saveSettingsBtn')?.addEventListener('click', () => {
-        setStored('mms_worker_url', document.getElementById('workerUrlInput').value.trim());
         setModal.classList.add('hidden');
       });
       document.getElementById('clearStorageBtn')?.addEventListener('click', () => {
@@ -3714,8 +3700,8 @@
           topLeftDrop.classList.add('hidden');
         }
 
-        const searchToggle = document.getElementById('searchModeToggleBtn');
-        if (sDrop && !sDrop.contains(e.target) && e.target !== sInput && !searchToggle?.contains(e.target)) {
+        const searchButton = document.getElementById('globalSearchSubmitBtn');
+        if (sDrop && !sDrop.contains(e.target) && e.target !== sInput && !searchButton?.contains(e.target)) {
           sDrop.classList.add('hidden');
         }
       });

@@ -30,6 +30,27 @@ Quick manual checks (browser developer tools → Network):
 - [ ] Check search, topic/directory filters, bookmarks, article/newsletter modals,
       submission forms, Quick Wins, quotes, studio cards, and tech tools.
 
+### Local keyword search
+
+The sidebar **Find an Article** box keeps the former chat layout but returns
+published article titles and excerpts; selecting a match opens the article.
+Topic shortcuts and Enter submit a search (Shift+Enter adds a line break).
+The top search bar also includes Quick Wins, directory links, tools, and Flight
+Wire. Use Tab to navigate result buttons, Enter to open one, and Escape to close
+the top search dropdown.
+
+Both use the existing Fuse.js library for typo-tolerant keyword matching across
+titles, tags, categories, descriptions, and full article text. Each keyword must
+match, in any order; titles and tags receive extra weight. Results show the top
+six matches; add keywords to narrow the list. No AI API, generated answers,
+proxy URL, or API key is used.
+
+The sidebar's Sheet settings are `article_search_heading`,
+`article_search_subtitle`, and `article_search_intro`. Old `coach_*` settings
+are ignored so previously saved AI messaging does not reappear. Existing Sheets
+work without redeployment; run `setupSiteSheet` with the updated Apps Script to
+append the new editable settings without clearing existing content.
+
 ## Unified Google Sheet CMS + Smore Sync Setup
 
 ### School News and Social on Flight Wire
