@@ -49,7 +49,7 @@ const IMAGE_LIBRARY_COLUMNS = ['image_id', 'category', 'label', 'image_url', 'is
 
 const SUBMISSION_COLUMNS = [
   'id', 'submitted_at', 'submitter_name', 'submitter_email', 'submission_type',
-  'title', 'content', 'links', 'status', 'category', 'reviewed_by', 'reviewed_at'
+  'title', 'content', 'links', 'status', 'category', 'reviewed_by', 'reviewed_at', 'cover_image_url'
 ];
 
 const AUDIT_LOG_COLUMNS = [
@@ -441,6 +441,10 @@ function doPost(e) {
     const content = String(body.content || '').replace(/<[^>]*>/g, ' ').replace(/\r\n?/g, '\n').trim();
     const links = cleanSubmissionText_(body.links || '');
     const category = cleanSubmissionText_(body.category || '');
+    const coverImageUrl = String(body.cover_image_url || '').trim();
+    if (coverImageUrl && !/^https?:\/\/[^\s/?#]+(?:[/?#][^\s]*)?$/i.test(coverImageUrl)) {
+      return smoreJson_({ ok: false, error: 'Cover image link must be an http:// or https:// URL.' });
+    }
 
     if (!submissionType || !title || !content) {
       return smoreJson_({ ok: false, error: 'Missing required fields: submission_type, title, content' });
@@ -458,6 +462,7 @@ function doPost(e) {
       title: title,
       content: content,
       links: links,
+      cover_image_url: coverImageUrl,
       status: 'pending',
       category: category,
       reviewed_by: '',
@@ -543,7 +548,7 @@ function publishApprovedSubmissions() {
           article_body_text: content,
           author: author,
           published_at: now,
-          cover_image_url: '',
+          cover_image_url: r.issue.cover_image_url || '',
           is_live: 'TRUE',
           takeaway: content.slice(0, 220),
           try_tomorrow: content,

@@ -115,7 +115,7 @@ The site is powered by a unified Google Apps Script (`apps-script/Smore.gs`) bou
 | `tech_tools` | EdTech, AI & Classroom Video Lab software cards | `tool_id`, `badge`, `title`, `link_label`, `url`, `description`, `teacher_workflow`, `student_workflow`, `is_live` |
 | `image_library` | Optional approved images for articles | `image_id`, `category`, `label`, `image_url`, `is_live` |
 | `smore_feed_raw` / `smore_feed_public` | Automated Smore Flight Wire newsletter archive | `issue_url`, `issue_title`, `published_at`, `summary`, `cover_image_url`, `article_body_text` |
-| `submissions` / `review_queue` | Incoming staff form submissions (`status = pending`) | `id`, `submitted_at`, `submitter_name`, `submitter_email`, `submission_type`, `title`, `content`, `links`, `status`, `category`, `reviewed_by`, `reviewed_at` |
+| `submissions` / `review_queue` | Incoming staff form submissions (`status = pending`) | `id`, `submitted_at`, `submitter_name`, `submitter_email`, `submission_type`, `title`, `content`, `links`, `status`, `category`, `reviewed_by`, `reviewed_at`, `cover_image_url` |
 | `audit_log` | Automatic log of submissions, approvals, and Smore syncs | `timestamp`, `action`, `source_tab`, `item_id`, `title`, `details` |
 
 *(Note: If your sheet still has the tab spelled `puplished_articles`, the script automatically detects and works with both `published_articles` and `puplished_articles`.)*
@@ -140,6 +140,15 @@ changes in `index.html` must also be published to the site; updating Apps Script
 alone does not publish the page.
 
 ### 3. Approving Submissions with One Click
+
+For articles, teachers can enter a public image URL or Google Drive image link
+in **Share a Tip → Cover image link (optional)**. This is separate from the
+resource **Link** field and does not upload files. Check image permissions and
+sharing during review. The link is saved as `cover_image_url` in `submissions`
+and copied to the article when approved; leaving it blank uses category images.
+Copy the updated `Smore.gs`, run `setupSiteSheet` to append the new column without
+clearing existing rows, redeploy the web app, and publish the updated `index.html`
+to enable this workflow. Older submissions without an image still publish normally.
 
 When teachers submit a form on the site (**Share a Tip**, **Post a Classroom Quote**, or **Post a Lesson Draft** in Peer Lesson Studio):
 1. A new row is added to `submissions` with `status = pending`.
