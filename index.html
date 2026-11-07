@@ -659,9 +659,17 @@
     <div id="view-bulletin" class="view-section hidden space-y-6">
       <section class="space-y-3">
         <h1 class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">Flight Wire: School Updates</h1>
-        <p class="text-sm text-ink-600">Public school news and social posts. Sources are labeled so district updates are distinguishable from MMS updates.</p>
+        <p class="text-sm text-ink-600">MMS updates first, with district posts and Smore newsletters in their own tabs.</p>
+        <button class="back-to-feed-btn text-xs font-bold text-red-600">Back to Editorial Feed</button>
+        <div role="tablist" aria-label="Flight Wire sections" class="flex flex-wrap gap-2">
+          <button id="flightTab-mms" type="button" role="tab" aria-selected="true" aria-controls="flightPanel-mms" tabindex="0" data-flight-tab="mms" class="rounded-full px-4 py-2 text-sm font-bold bg-ink-900 text-white">MMS Updates</button>
+          <button id="flightTab-district" type="button" role="tab" aria-selected="false" aria-controls="flightPanel-district" tabindex="-1" data-flight-tab="district" class="rounded-full px-4 py-2 text-sm font-bold bg-cream-100 text-ink-600">District Updates</button>
+          <button id="flightTab-smore" type="button" role="tab" aria-selected="false" aria-controls="flightPanel-smore" tabindex="-1" data-flight-tab="smore" class="rounded-full px-4 py-2 text-sm font-bold bg-cream-100 text-ink-600">Smore Archive</button>
+        </div>
         <button id="reloadSchoolUpdates" type="button" class="text-sm font-bold text-red-600 disabled:opacity-50">Reload saved updates</button>
         <p id="schoolUpdateStatus" role="status" class="text-xs text-ink-600">Loading saved school updates...</p>
+      </section>
+      <section id="flightPanel-mms" role="tabpanel" aria-labelledby="flightTab-mms" tabindex="0" class="space-y-3">
         <h2 class="font-editorial font-bold text-xl">News</h2>
         <p class="text-xs text-ink-600">Headlines link to the complete articles on the school website.</p>
         <div id="schoolNewsCards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
@@ -671,10 +679,18 @@
         <p class="text-xs text-ink-600">These open the official calendars; events are not imported into this site.</p>
         <div class="flex flex-wrap gap-4 text-sm font-bold text-red-600">
           <a href="https://mms.usd266.com/about-us/calendar" target="_blank" rel="noopener noreferrer">MMS calendar</a>
-          <a href="https://www.usd266.com/district/calendar" target="_blank" rel="noopener noreferrer">District calendar</a>
           <a href="https://gobound.com/ks/schools/maizems/calendar" target="_blank" rel="noopener noreferrer">MMS athletics calendar</a>
         </div>
       </section>
+      <section id="flightPanel-district" role="tabpanel" aria-labelledby="flightTab-district" tabindex="0" hidden class="space-y-3">
+        <h2 class="font-editorial font-bold text-xl">District News</h2>
+        <div id="districtNewsCards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        <h2 class="font-editorial font-bold text-xl">District Social</h2>
+        <p class="text-xs text-ink-600">District and other account updates are kept here rather than mixed into MMS Updates.</p>
+        <div id="districtSocialCards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        <a href="https://www.usd266.com/district/calendar" target="_blank" rel="noopener noreferrer" class="text-sm font-bold text-red-600">Official district calendar</a>
+      </section>
+      <section id="flightPanel-smore" role="tabpanel" aria-labelledby="flightTab-smore" tabindex="0" hidden class="space-y-3">
       <div class="pb-5 border-b border-cream-300">
         <button class="back-to-feed-btn inline-flex items-center gap-1.5 text-xs font-bold text-red-600 hover:text-red-900 mb-2">
           <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
@@ -700,6 +716,7 @@
       </div>
 
       <div id="bulletinFeedContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+      </section>
     </div>
 
     <!-- ========================================== -->
@@ -2045,6 +2062,7 @@
           tags: 'school news social announcement',
           action: () => {
             switchView('view-bulletin');
+            selectFlightTab(schoolUpdateAudience(item));
             document.getElementById('school-update-' + index)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }
         });
@@ -2559,6 +2577,41 @@
     let smoreIssues = [];
     let schoolUpdates = [];
 
+    function schoolUpdateAudience(item) {
+      return /^(?:MMS News|MMS|Maize Middle School)$/i.test(String(item.source || '').trim())
+        ? 'mms' : 'district';
+    }
+
+    function selectFlightTab(name) {
+      document.querySelectorAll('[data-flight-tab]').forEach(tab => {
+        const selected = tab.dataset.flightTab === name;
+        tab.setAttribute('aria-selected', String(selected));
+        tab.tabIndex = selected ? 0 : -1;
+        tab.classList.toggle('bg-ink-900', selected);
+        tab.classList.toggle('text-white', selected);
+        tab.classList.toggle('bg-cream-100', !selected);
+        tab.classList.toggle('text-ink-600', !selected);
+        document.getElementById('flightPanel-' + tab.dataset.flightTab).hidden = !selected;
+      });
+    }
+
+    document.querySelectorAll('[data-flight-tab]').forEach(tab => {
+      tab.addEventListener('click', () => selectFlightTab(tab.dataset.flightTab));
+      tab.addEventListener('keydown', event => {
+        const tabs = [...document.querySelectorAll('[data-flight-tab]')];
+        const index = tabs.indexOf(tab);
+        let next;
+        if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+        else if (event.key === 'ArrowLeft') next = (index + tabs.length - 1) % tabs.length;
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = tabs.length - 1;
+        else return;
+        event.preventDefault();
+        selectFlightTab(tabs[next].dataset.flightTab);
+        tabs[next].focus();
+      });
+    });
+
     async function loadSchoolUpdates() {
       const status = document.getElementById('schoolUpdateStatus');
       const button = document.getElementById('reloadSchoolUpdates');
@@ -2573,13 +2626,17 @@
           throw new Error(data?.error || 'School updates are not available from this deployment.');
         }
         schoolUpdates = [];
+        const containers = ['schoolNewsCards', 'schoolSocialCards', 'districtNewsCards', 'districtSocialCards']
+          .map(id => document.getElementById(id));
+        containers.forEach(container => container.replaceChildren());
         ['news', 'social'].forEach(source => {
-          const container = document.getElementById(source === 'news' ? 'schoolNewsCards' : 'schoolSocialCards');
-          container.replaceChildren();
           data.updates[source].forEach(raw => {
             if (!raw || typeof raw.id !== 'string' || typeof raw.title !== 'string' ||
                 typeof raw.text !== 'string' || typeof raw.source !== 'string') return;
             const item = { ...raw, url: sanitizeHttpUrl(raw.url) };
+            const audience = schoolUpdateAudience(item);
+            const container = document.getElementById(
+              (audience === 'mms' ? 'school' : 'district') + (source === 'news' ? 'NewsCards' : 'SocialCards'));
             const card = document.createElement('article');
             card.id = 'school-update-' + schoolUpdates.length;
             card.className = 'bg-white rounded-3xl border border-cream-300 p-6 space-y-2';
@@ -2605,7 +2662,9 @@
             container.append(card);
             schoolUpdates.push(item);
           });
-          if (!container.childElementCount) container.textContent = 'No saved updates in this section yet.';
+        });
+        containers.forEach(container => {
+          if (!container.childElementCount) container.textContent = 'No saved updates from this source yet. District account posts are in District Updates.';
         });
         status.textContent = 'Showing saved updates. Reload reads the spreadsheet; school staff sync the sources through Apps Script.';
         initFuse();

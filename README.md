@@ -62,9 +62,14 @@ upstream sources. Add a time-driven trigger for **`syncSchoolUpdates`** every
 six hours for automatic imports, or use the Sheet menu **Eagle Site CMS →
 4. Sync School News & Social** after reloading the Sheet.
 
-Flight Wire displays News, Social, and official calendar links above the existing
-Smore archive. News headlines and Social text participate in Instant search;
-selecting a search result scrolls to its card. Calendar events are not imported.
+Flight Wire opens on **MMS Updates**, with separate **District Updates** and
+**Smore Archive** tabs. The MMS tab accepts sources labeled `MMS News`, `MMS`,
+or `Maize Middle School` (case-insensitive); district and unrecognized account
+labels stay in District Updates, rather than being guessed from post text.
+Existing saved rows work without another Apps Script deployment. Tabs support
+arrow keys, Home, and End. News headlines and Social text participate in Instant
+search; selecting a result opens its tab and scrolls to its card. Calendar events
+are not imported.
 The existing Smore button affects only Smore; staff Smore submissions are not
 included in this phase.
 
