@@ -32,6 +32,63 @@ Quick manual checks (browser developer tools → Network):
 
 ## Unified Google Sheet CMS + Smore Sync Setup
 
+### School News and Social on Flight Wire
+
+Install **both** `apps-script/Smore.gs` and `apps-script/SchoolUpdates.gs`
+as separate files in the same sheet-bound Apps Script project. Keep only one
+`doGet` and `doPost`. `SchoolFeedCheck.gs` is an optional diagnostic, not required
+for the live feed.
+
+Run **`syncSchoolUpdates`** once from the Apps Script toolbar. It creates
+`school_news` and `school_social` tabs, with columns `id`, `title`, `text`, `url`,
+`published_at`, and `source`. Each source is fetched independently; errors appear
+in the execution log, and failed sources keep their previous entries. Existing
+IDs are updated, new IDs appended, and unrelated columns preserved. Old entries
+remain archived; deleted upstream entries are not automatically removed.
+
+News imports recognizable linked headlines from the public MMS News page,
+including clearly labeled district news. It does **not** extract full article
+bodies; cards link to the school website. Social imports text from Juicer's
+`posts.items`, accepting only source IDs `783230` and `778997`, with the account
+name and original publication date. Some posts have no original URL; their text
+still displays. HTML is converted to text and never executed by the site.
+School layout changes or empty/unrecognized responses require manual inspection.
+
+Redeploy the existing web app as a **New version** and publish `index.html`.
+`GET /exec?feed=school` returns `{ok:true, updates:{news:[], social:[]}}`
+with only the six documented columns. It does not fetch upstream sites on each
+page load. **Reload saved updates** reads these spreadsheet tabs again, not the
+upstream sources. Add a time-driven trigger for **`syncSchoolUpdates`** every
+six hours for automatic imports, or use the Sheet menu **Eagle Site CMS →
+4. Sync School News & Social** after reloading the Sheet.
+
+Flight Wire displays News, Social, and official calendar links above the existing
+Smore archive. News headlines and Social text participate in Instant search;
+selecting a search result scrolls to its card. Calendar events are not imported.
+The existing Smore button affects only Smore; staff Smore submissions are not
+included in this phase.
+
+After deployment, verify both sources have rows, cards show the correct source,
+Social text search finds a phrase, and calendar links open official sites.
+Run sync twice to confirm no duplicate rows. Check a failed source leaves its
+rows intact, then verify existing Smore readers and submission forms still work.
+
+### Check the public school feeds before integration
+
+To test News RSS, Juicer Social JSON, and Calendar iCalendar from Google's
+network, add a **separate script file** named `SchoolFeedCheck` in the same
+Apps Script project and paste `apps-script/SchoolFeedCheck.gs` into it.
+Keep `Smore.gs` unchanged. Select **`testSchoolFeeds`** in the toolbar and click
+**Run**, authorizing external requests if prompted. No deployment is needed.
+
+Open the execution log (or **Executions → testSchoolFeeds → Logs**). It reports
+each feed separately, including sample news text, calendar events, and the
+Social response structure. Share those samples or the errors to determine the
+next integration step. This check does not write to the spreadsheet or alter
+the live site, and it uses Apps Script's normal request identity rather than
+attempting to bypass server access controls. A successful empty feed is valid
+but does not establish that article/event extraction works with actual entries.
+
 The site is powered by a unified Google Apps Script (`apps-script/Smore.gs`) bound to your Google Sheet. It lets you edit **all site text, headings, articles, quick wins, directory links, staff lounge quotes, peer lesson studio cards, and EdTech tools** directly in your Google Sheet, while also syncing Smore newsletters and receiving form submissions (`Share a Tip`, `Post a Quote`, and `Peer Lesson Studio`) into `submissions` for review.
 
 ### 1. Paste the Unified Apps Script (`apps-script/Smore.gs`)
