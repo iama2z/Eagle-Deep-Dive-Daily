@@ -61,6 +61,7 @@ function onOpen() {
     .addItem('2. Publish Approved Submissions', 'publishApprovedSubmissions')
     .addSeparator()
     .addItem('3. Sync Smore Newsletters Now', 'syncSmoreFeed')
+    .addItem('4. Sync School News & Social', 'syncSchoolUpdates')
     .addToUi();
 }
 
@@ -288,6 +289,9 @@ function smoreDiscover_(sourceUrl) {
 function doGet(e) {
   try {
     const feed = e && e.parameter && String(e.parameter.feed || '').trim().toLowerCase();
+    if (feed === 'school') {
+      return smoreJson_({ ok: true, updates: publicSchoolUpdates_() });
+    }
     if (feed === 'articles') {
       return smoreJson_({ ok: true, items: publishedArticles_() });
     }

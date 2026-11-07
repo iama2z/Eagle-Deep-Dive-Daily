@@ -242,8 +242,8 @@
                   <i data-lucide="newspaper" class="w-4 h-4"></i>
                 </div>
                 <div>
-                  <div class="text-xs font-bold text-ink-900">Flight Wire (Smore Board)</div>
-                  <div class="text-[11px] text-ink-600">Weekly admin Smore newsletters indexed for search</div>
+                  <div class="text-xs font-bold text-ink-900">Flight Wire (School Updates)</div>
+                  <div class="text-[11px] text-ink-600">News, social posts, calendars, and newsletter archive</div>
                 </div>
               </button>
 
@@ -616,6 +616,24 @@
     <!-- TUCKED-AWAY VIEW 2: FLIGHT WIRE (SMORE ARCHIVE) -->
     <!-- ========================================== -->
     <div id="view-bulletin" class="view-section hidden space-y-6">
+      <section class="space-y-3">
+        <h1 class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">Flight Wire: School Updates</h1>
+        <p class="text-sm text-ink-600">Public school news and social posts. Sources are labeled so district updates are distinguishable from MMS updates.</p>
+        <button id="reloadSchoolUpdates" type="button" class="text-sm font-bold text-red-600 disabled:opacity-50">Reload saved updates</button>
+        <p id="schoolUpdateStatus" role="status" class="text-xs text-ink-600">Loading saved school updates...</p>
+        <h2 class="font-editorial font-bold text-xl">News</h2>
+        <p class="text-xs text-ink-600">Headlines link to the complete articles on the school website.</p>
+        <div id="schoolNewsCards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        <h2 class="font-editorial font-bold text-xl">Social</h2>
+        <div id="schoolSocialCards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        <h2 class="font-editorial font-bold text-xl">Calendars</h2>
+        <p class="text-xs text-ink-600">These open the official calendars; events are not imported into this site.</p>
+        <div class="flex flex-wrap gap-4 text-sm font-bold text-red-600">
+          <a href="https://mms.usd266.com/about-us/calendar" target="_blank" rel="noopener noreferrer">MMS calendar</a>
+          <a href="https://www.usd266.com/district/calendar" target="_blank" rel="noopener noreferrer">District calendar</a>
+          <a href="https://gobound.com/ks/schools/maizems/calendar" target="_blank" rel="noopener noreferrer">MMS athletics calendar</a>
+        </div>
+      </section>
       <div class="pb-5 border-b border-cream-300">
         <button class="back-to-feed-btn inline-flex items-center gap-1.5 text-xs font-bold text-red-600 hover:text-red-900 mb-2">
           <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
@@ -623,7 +641,7 @@
         </button>
         <div class="flex items-center justify-between flex-wrap gap-2">
           <div>
-            <h1 id="bulletinHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">The Flight Wire (Smore Bulletin Archive)</h1>
+            <h2 id="bulletinHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">Smore Newsletter Archive</h2>
             <p id="bulletinSubtitleText" class="text-sm text-ink-600">Read administrative newsletters here and search their full text for past announcements.</p>
           </div>
           <button id="updateSmoreButton" type="button" disabled aria-describedby="smoreUpdateStatus" class="inline-flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-full bg-red-600 text-white hover:bg-red-900 disabled:opacity-50 disabled:cursor-not-allowed">
@@ -1903,6 +1921,18 @@
         });
       });
 
+      schoolUpdates.forEach((item, index) => {
+        items.push({
+          type: 'Flight Wire', id: 'school-' + item.id, title: item.title,
+          category: item.source, desc: item.text, body: item.text,
+          tags: 'school news social announcement',
+          action: () => {
+            switchView('view-bulletin');
+            document.getElementById('school-update-' + index)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        });
+      });
+
       fuse = new Fuse(items, {
         keys: ['title', 'category', 'desc', 'tags', 'body'],
         threshold: 0.36,
@@ -2406,6 +2436,68 @@
     // --- LIVE SMORE BULLETIN FEED (GOOGLE APPS SCRIPT) ---
     const SMORE_FEED_API_URL = SUBMISSION_API_URL;
     let smoreIssues = [];
+    let schoolUpdates = [];
+
+    async function loadSchoolUpdates() {
+      const status = document.getElementById('schoolUpdateStatus');
+      const button = document.getElementById('reloadSchoolUpdates');
+      if (button.disabled) return;
+      button.disabled = true;
+      status.textContent = 'Loading saved school updates...';
+      try {
+        const url = new URL(SUBMISSION_API_URL);
+        url.searchParams.set('feed', 'school');
+        const data = await fetchJsonWithTimeout(url.href);
+        if (!data?.ok || !Array.isArray(data.updates?.news) || !Array.isArray(data.updates?.social)) {
+          throw new Error(data?.error || 'School updates are not available from this deployment.');
+        }
+        schoolUpdates = [];
+        ['news', 'social'].forEach(source => {
+          const container = document.getElementById(source === 'news' ? 'schoolNewsCards' : 'schoolSocialCards');
+          container.replaceChildren();
+          data.updates[source].forEach(raw => {
+            if (!raw || typeof raw.id !== 'string' || typeof raw.title !== 'string' ||
+                typeof raw.text !== 'string' || typeof raw.source !== 'string') return;
+            const item = { ...raw, url: sanitizeHttpUrl(raw.url) };
+            const card = document.createElement('article');
+            card.id = 'school-update-' + schoolUpdates.length;
+            card.className = 'bg-white rounded-3xl border border-cream-300 p-6 space-y-2';
+            const label = document.createElement('p');
+            label.className = 'text-xs text-ink-600';
+            label.textContent = item.source + (formatDateLabel(item.published_at) ? ' · ' + formatDateLabel(item.published_at) : '');
+            const title = document.createElement('h3');
+            title.className = 'font-bold text-ink-900';
+            title.textContent = item.title;
+            const text = document.createElement('p');
+            text.className = 'text-sm text-ink-600 whitespace-pre-line';
+            text.textContent = item.text;
+            card.append(label, title, text);
+            if (item.url) {
+              const link = document.createElement('a');
+              link.href = item.url;
+              link.target = '_blank';
+              link.rel = 'noopener noreferrer';
+              link.className = 'inline-block text-sm font-bold text-red-600';
+              link.textContent = source === 'news' ? 'Read on the school website' : 'Open original post';
+              card.append(link);
+            }
+            container.append(card);
+            schoolUpdates.push(item);
+          });
+          if (!container.childElementCount) container.textContent = 'No saved updates in this section yet.';
+        });
+        status.textContent = 'Showing saved updates. Reload reads the spreadsheet; school staff sync the sources through Apps Script.';
+        initFuse();
+        document.getElementById('globalSearchInput')?.dispatchEvent(new Event('input'));
+      } catch (err) {
+        console.warn('School updates unavailable:', err);
+        status.textContent = 'Could not load school updates. ' + err.message + ' Existing content is retained; use Reload saved updates to retry.';
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    document.getElementById('reloadSchoolUpdates').addEventListener('click', loadSchoolUpdates);
 
     function normalizePublishedArticle(item) {
       if (!item || String(item.is_live).trim().toLowerCase() !== 'true') return null;
@@ -2962,6 +3054,7 @@
       });
       loadSiteDataFromSheet().finally(() => {
         document.getElementById('updateSmoreButton').disabled = false;
+        loadSchoolUpdates();
       });
 
       // Interactive Video Chapter Buttons in EdTech Lab
