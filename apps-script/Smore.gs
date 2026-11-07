@@ -30,7 +30,7 @@ const QUICK_WINS_COLUMNS = [
 ];
 
 const DIRECTORY_LINK_COLUMNS = [
-  'resource_id', 'title', 'category', 'description', 'url', 'tags', 'is_live'
+  'resource_id', 'title', 'category', 'description', 'url', 'tags', 'update_status', 'is_live'
 ];
 
 const LOUNGE_QUOTE_COLUMNS = [

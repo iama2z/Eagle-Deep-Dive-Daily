@@ -117,7 +117,7 @@ The site is powered by a unified Google Apps Script (`apps-script/Smore.gs`) bou
 | `settings` | Change any site heading, subtitle, badge, cover story ID, or video embed URL | `key`, `value`, `description` |
 | `published_articles` | All main feed articles & playbooks (set `is_live` to `TRUE` or `FALSE`) | `article_id`, `title`, `category`, `summary`, `article_body_text`, `author`, `published_at`, `cover_image_url`, `is_live`, `takeaway`, `try_tomorrow`, `script`, `read_time`, `featured`, `has_video_demo`, `tags` |
 | `quick_wins` | Context-aware Quick Wins banner cards per section (`all`, `Student Engagement`, `Classroom Management`, `Teacher Support`, `Tech & AI`, `saved`, `view-directory`, `view-bulletin`, `view-studio`, `view-academy`) | `tip_id`, `section`, `category_label`, `title`, `tip`, `is_live` |
-| `directory_links` | Heart of MMS Building Directory cards | `resource_id`, `title`, `category`, `description`, `url`, `tags`, `is_live` |
+| `directory_links` | Heart of MMS Building Directory cards | `resource_id`, `title`, `category`, `description`, `url`, `tags`, `update_status`, `is_live` |
 | `lounge_quotes` | "Overheard at MMS" Staff Lounge quotes in the sidebar | `quote_id`, `quote`, `attribution`, `is_live` |
 | `peer_studio` | Published Peer Lesson Studio cards | `studio_id`, `title`, `subject`, `dilemma`, `warm_feedback`, `cool_feedback`, `doc_url`, `is_live` |
 | `tech_tools` | EdTech, AI & Classroom Video Lab software cards | `tool_id`, `badge`, `title`, `link_label`, `url`, `description`, `teacher_workflow`, `student_workflow`, `is_live` |
@@ -127,6 +127,18 @@ The site is powered by a unified Google Apps Script (`apps-script/Smore.gs`) bou
 | `audit_log` | Automatic log of submissions, approvals, and Smore syncs | `timestamp`, `action`, `source_tab`, `item_id`, `title`, `details` |
 
 *(Note: If your sheet still has the tab spelled `puplished_articles`, the script automatically detects and works with both `published_articles` and `puplished_articles`.)*
+
+### Heart of MMS directory
+
+The site includes a searchable snapshot of the MMS resource list in
+`mms-directory-data.js`. It can be searched by title or category, filtered by
+the workbook's categories, and displays the workbook's update status. Links
+that require a USD 266 account remain gated by the destination service. The
+live `directory_links` feed can override the snapshot; use `update_status`
+values `updated` or `needs-update` to show status badges.
+
+Two links with token-like URL parameters were left out of the snapshot. Replace
+them with stable links before adding them to the directory.
 
 ### Article images and placeholders
 
