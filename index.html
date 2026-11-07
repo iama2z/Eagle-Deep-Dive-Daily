@@ -665,6 +665,7 @@
         </div>
         <button id="reloadSchoolUpdates" type="button" class="text-sm font-bold text-red-600 disabled:opacity-50">Reload saved updates</button>
         <p id="schoolUpdateStatus" role="status" class="text-xs text-ink-600">Loading saved school updates...</p>
+        <p class="text-xs text-ink-600">Updates older than seven days are tucked away; items without a date remain visible.</p>
       </section>
       <section id="flightPanel-mms" role="tabpanel" aria-labelledby="flightTab-mms" tabindex="0" class="space-y-3">
         <h2 class="font-editorial font-bold text-xl">News</h2>
@@ -2060,6 +2061,7 @@
           action: () => {
             switchView('view-bulletin');
             selectFlightTab(schoolUpdateAudience(item));
+            revealSchoolUpdate(item, index);
             document.getElementById('school-update-' + index)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }
         });
@@ -2579,6 +2581,87 @@
         ? 'mms' : 'district';
     }
 
+    function schoolUpdateIsOlderThanWeek(item, now = Date.now()) {
+      const published = Date.parse(item.published_at || '');
+      return Number.isFinite(published) && published < now - 7 * 24 * 60 * 60 * 1000;
+    }
+
+    function schoolUpdateGroup(item) {
+      return schoolUpdateAudience(item) + '-' + item.kind;
+    }
+
+    const expandedSchoolUpdateGroups = new Set();
+
+    function revealSchoolUpdate(item, index) {
+      if (schoolUpdateIsOlderThanWeek(item)) expandedSchoolUpdateGroups.add(schoolUpdateGroup(item));
+      renderSchoolUpdateCards();
+    }
+
+    function renderSchoolUpdateCards() {
+      const groups = [
+        { key: 'mms-news', container: 'schoolNewsCards', empty: 'No MMS news from the past week.' },
+        { key: 'mms-social', container: 'schoolSocialCards', empty: 'No MMS social posts from the past week.' },
+        { key: 'district-news', container: 'districtNewsCards', empty: 'No district news from the past week.' },
+        { key: 'district-social', container: 'districtSocialCards', empty: 'No district social posts from the past week.' }
+      ];
+
+      groups.forEach(group => {
+        const container = document.getElementById(group.container);
+        const items = schoolUpdates.map((item, index) => ({ item, index }))
+          .filter(entry => schoolUpdateGroup(entry.item) === group.key);
+        const older = items.filter(entry => schoolUpdateIsOlderThanWeek(entry.item));
+        const expanded = expandedSchoolUpdateGroups.has(group.key);
+        const visible = expanded ? items : items.filter(entry => !schoolUpdateIsOlderThanWeek(entry.item));
+        container.replaceChildren();
+
+        if (!visible.length && !older.length) {
+          container.textContent = group.empty;
+          return;
+        }
+
+        visible.forEach(({ item, index }) => {
+          const card = document.createElement('article');
+          card.id = 'school-update-' + index;
+          card.className = 'bg-white rounded-3xl border border-cream-300 p-6 space-y-2';
+          const label = document.createElement('p');
+          label.className = 'text-xs text-ink-600';
+          label.textContent = item.source + (formatDateLabel(item.published_at) ? ' · ' + formatDateLabel(item.published_at) : '');
+          const title = document.createElement('h3');
+          title.className = 'font-bold text-ink-900';
+          title.textContent = item.title;
+          const text = document.createElement('p');
+          text.className = 'text-sm text-ink-600 whitespace-pre-line';
+          text.textContent = item.text;
+          card.append(label, title, text);
+          if (item.url) {
+            const link = document.createElement('a');
+            link.href = item.url;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.className = 'inline-block text-sm font-bold text-red-600';
+            link.textContent = item.kind === 'news' ? 'Read on the school website' : 'Open original post';
+            card.append(link);
+          }
+          container.append(card);
+        });
+
+        if (older.length) {
+          const toggle = document.createElement('button');
+          toggle.type = 'button';
+          toggle.className = 'md:col-span-2 justify-self-center text-sm font-bold text-red-600 hover:text-red-900';
+          toggle.setAttribute('aria-expanded', String(expanded));
+          toggle.setAttribute('aria-controls', group.container);
+          toggle.textContent = expanded ? 'Show fewer updates' : `Show ${older.length} older updates`;
+          toggle.addEventListener('click', () => {
+            if (expanded) expandedSchoolUpdateGroups.delete(group.key);
+            else expandedSchoolUpdateGroups.add(group.key);
+            renderSchoolUpdateCards();
+          });
+          container.append(toggle);
+        }
+      });
+    }
+
     function selectFlightTab(name) {
       document.querySelectorAll('[data-flight-tab]').forEach(tab => {
         const selected = tab.dataset.flightTab === name;
@@ -2623,46 +2706,15 @@
           throw new Error(data?.error || 'School updates are not available from this deployment.');
         }
         schoolUpdates = [];
-        const containers = ['schoolNewsCards', 'schoolSocialCards', 'districtNewsCards', 'districtSocialCards']
-          .map(id => document.getElementById(id));
-        containers.forEach(container => container.replaceChildren());
+        expandedSchoolUpdateGroups.clear();
         ['news', 'social'].forEach(source => {
           data.updates[source].forEach(raw => {
             if (!raw || typeof raw.id !== 'string' || typeof raw.title !== 'string' ||
                 typeof raw.text !== 'string' || typeof raw.source !== 'string') return;
-            const item = { ...raw, url: sanitizeHttpUrl(raw.url) };
-            const audience = schoolUpdateAudience(item);
-            const container = document.getElementById(
-              (audience === 'mms' ? 'school' : 'district') + (source === 'news' ? 'NewsCards' : 'SocialCards'));
-            const card = document.createElement('article');
-            card.id = 'school-update-' + schoolUpdates.length;
-            card.className = 'bg-white rounded-3xl border border-cream-300 p-6 space-y-2';
-            const label = document.createElement('p');
-            label.className = 'text-xs text-ink-600';
-            label.textContent = item.source + (formatDateLabel(item.published_at) ? ' · ' + formatDateLabel(item.published_at) : '');
-            const title = document.createElement('h3');
-            title.className = 'font-bold text-ink-900';
-            title.textContent = item.title;
-            const text = document.createElement('p');
-            text.className = 'text-sm text-ink-600 whitespace-pre-line';
-            text.textContent = item.text;
-            card.append(label, title, text);
-            if (item.url) {
-              const link = document.createElement('a');
-              link.href = item.url;
-              link.target = '_blank';
-              link.rel = 'noopener noreferrer';
-              link.className = 'inline-block text-sm font-bold text-red-600';
-              link.textContent = source === 'news' ? 'Read on the school website' : 'Open original post';
-              card.append(link);
-            }
-            container.append(card);
-            schoolUpdates.push(item);
+            schoolUpdates.push({ ...raw, kind: source, url: sanitizeHttpUrl(raw.url) });
           });
         });
-        containers.forEach(container => {
-          if (!container.childElementCount) container.textContent = 'No saved updates from this source yet. District account posts are in District Updates.';
-        });
+        renderSchoolUpdateCards();
         status.textContent = 'Showing saved updates. Reload reads the spreadsheet; school staff sync the sources through Apps Script.';
         initFuse();
         document.getElementById('globalSearchInput')?.dispatchEvent(new Event('input'));

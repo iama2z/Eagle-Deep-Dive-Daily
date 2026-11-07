@@ -41,8 +41,21 @@ test('tab selection hides other panels and updates accessibility state', () => {
   }
 });
 
+test('only dated posts older than seven days are collapsed by default', () => {
+  const context = vm.createContext({});
+  vm.runInContext(page.slice(start, end), context);
+  const now = Date.parse('2026-11-07T21:00:00Z');
+  assert.equal(context.schoolUpdateIsOlderThanWeek({ published_at: '2026-10-31T20:59:59Z' }, now), true);
+  assert.equal(context.schoolUpdateIsOlderThanWeek({ published_at: '2026-10-31T21:00:00Z' }, now), false);
+  assert.equal(context.schoolUpdateIsOlderThanWeek({ published_at: '2026-11-01T12:00:00Z' }, now), false);
+  assert.equal(context.schoolUpdateIsOlderThanWeek({ published_at: '' }, now), false);
+  assert.equal(context.schoolUpdateIsOlderThanWeek({ published_at: 'not a date' }, now), false);
+  assert.match(page, /Show \$\{older\.length\} older updates/);
+  assert.match(page, /expandedSchoolUpdateGroups\.add\(schoolUpdateGroup\(item\)\)/);
+});
+
 test('search opens the matching school update tab before scrolling', () => {
-  assert.match(page, /selectFlightTab\(schoolUpdateAudience\(item\)\);\s*document\.getElementById\('school-update-'/);
+  assert.match(page, /selectFlightTab\(schoolUpdateAudience\(item\)\);\s*revealSchoolUpdate\(item, index\);\s*document\.getElementById\('school-update-'/);
   for (const match of page.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) {
     assert.doesNotThrow(() => new vm.Script(match[1]));
   }

@@ -69,7 +69,10 @@ labels stay in District Updates, rather than being guessed from post text.
 Existing saved rows work without another Apps Script deployment. Tabs support
 arrow keys, Home, and End. News headlines and Social text participate in Instant
 search; selecting a result opens its tab and scrolls to its card. Calendar events
-are not imported.
+are not imported. Dated school updates older than seven days start collapsed
+behind a per-section **Show older updates** button; undated items stay visible
+because their age cannot be determined. Older posts remain searchable, and
+selecting a matching result reveals the relevant section before scrolling to it.
 The existing Smore button affects only Smore; staff Smore submissions are not
 included in this phase.
 
