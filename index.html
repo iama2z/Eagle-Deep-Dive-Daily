@@ -385,9 +385,33 @@
         <img src="eagle-logo.svg" alt="">
       </div>
       <div class="font-editorial text-xl font-bold text-ink-900">Diving in…</div>
-      <div class="text-sm text-ink-600">Burnout prevention protocol enabled.</div>
+      <div id="loadingMessage" class="text-sm text-ink-600">Burnout prevention protocol enabled.</div>
     </div>
   </div>
+  <script>
+    const stopLoadingMessages = (() => {
+      const message = document.getElementById('loadingMessage');
+      const messages = [
+        'Burnout prevention protocol enabled.',
+        'Gathering fresh ideas for your classroom.',
+        'Preparing practical tips for busy teachers.',
+        'Finding a little inspiration for your day.',
+        'Getting the latest from the Eagles community.',
+        'Making room for your next quick win.'
+      ];
+      for (let i = messages.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [messages[i], messages[j]] = [messages[j], messages[i]];
+      }
+      let index = 0;
+      message.textContent = messages[index];
+      const timer = setInterval(() => {
+        index = (index + 1) % messages.length;
+        message.textContent = messages[index];
+      }, 2500);
+      return () => clearInterval(timer);
+    })();
+  </script>
   <main data-sheet-region class="sheet-region flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
     <!-- ========================================== -->
@@ -2954,6 +2978,7 @@
           renderTechTools();
           initFuse();
         } finally {
+          stopLoadingMessages();
           status.textContent = notice;
           status.hidden = !notice;
           document.querySelectorAll('[data-sheet-region]').forEach(region => {
