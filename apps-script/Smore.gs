@@ -89,38 +89,44 @@ function setupSiteSheet() {
   seedDefaultSettings_(settings);
 
   const articlesSheet = getPublishedArticlesSheet_(ss) || ss.insertSheet('published_articles');
+  const articlesSheetWasEmpty = !articlesSheet.getLastRow();
   const articleHeaders = smoreHeaders_(articlesSheet, PUBLISHED_ARTICLE_COLUMNS, true);
-  if (articlesSheet.getLastRow() < 2) {
+  if (articlesSheetWasEmpty) {
     seedSheetRows_(articlesSheet, articleHeaders, defaultArticlesSeed_());
   }
 
   const quickWinsSheet = ss.getSheetByName('quick_wins') || ss.insertSheet('quick_wins');
+  const quickWinsSheetWasEmpty = !quickWinsSheet.getLastRow();
   const quickWinsHeaders = smoreHeaders_(quickWinsSheet, QUICK_WINS_COLUMNS, true);
-  if (quickWinsSheet.getLastRow() < 2) {
+  if (quickWinsSheetWasEmpty) {
     seedSheetRows_(quickWinsSheet, quickWinsHeaders, defaultQuickWinsSeed_());
   }
 
   const directorySheet = ss.getSheetByName('directory_links') || ss.insertSheet('directory_links');
+  const directorySheetWasEmpty = !directorySheet.getLastRow();
   const directoryHeaders = smoreHeaders_(directorySheet, DIRECTORY_LINK_COLUMNS, true);
-  if (directorySheet.getLastRow() < 2) {
+  if (directorySheetWasEmpty) {
     seedSheetRows_(directorySheet, directoryHeaders, defaultDirectorySeed_());
   }
 
   const quotesSheet = ss.getSheetByName('lounge_quotes') || ss.insertSheet('lounge_quotes');
+  const quotesSheetWasEmpty = !quotesSheet.getLastRow();
   const quotesHeaders = smoreHeaders_(quotesSheet, LOUNGE_QUOTE_COLUMNS, true);
-  if (quotesSheet.getLastRow() < 2) {
+  if (quotesSheetWasEmpty) {
     seedSheetRows_(quotesSheet, quotesHeaders, defaultQuotesSeed_());
   }
 
   const studioSheet = ss.getSheetByName('peer_studio') || ss.insertSheet('peer_studio');
+  const studioSheetWasEmpty = !studioSheet.getLastRow();
   const studioHeaders = smoreHeaders_(studioSheet, PEER_STUDIO_COLUMNS, true);
-  if (studioSheet.getLastRow() < 2) {
+  if (studioSheetWasEmpty) {
     seedSheetRows_(studioSheet, studioHeaders, defaultStudioSeed_());
   }
 
   const techSheet = ss.getSheetByName('tech_tools') || ss.insertSheet('tech_tools');
+  const techSheetWasEmpty = !techSheet.getLastRow();
   const techHeaders = smoreHeaders_(techSheet, TECH_TOOL_COLUMNS, true);
-  if (techSheet.getLastRow() < 2) {
+  if (techSheetWasEmpty) {
     seedSheetRows_(techSheet, techHeaders, defaultTechToolsSeed_());
   }
 
