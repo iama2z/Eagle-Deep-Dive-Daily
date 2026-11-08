@@ -200,7 +200,7 @@ to enable this workflow. Older submissions without an image still publish normal
 
 When teachers submit a form on the site (**Share a Tip**, **Post a Classroom Quote**, or **Post a Lesson Draft** in Peer Lesson Studio):
 1. A new row is added to `submissions` with `status = pending`.
-2. To publish it to the live site, change its `status` cell in `submissions` (or `review_queue`) to **`approved`**.
+2. To publish it to the live site, pick **`approved`** from the `status` dropdown in `submissions` (or `review_queue`). Other choices: `pending` (hides a live item again), `published` (set by the script), and `delete` (removes the live item and the submission row). Run **Setup** once to add the dropdown.
 3. In your Google Sheet top menu bar, click **Eagle Site CMS → 2. Publish Approved Submissions**.
 4. The script automatically copies the item into the matching live tab (`published_articles`, `lounge_quotes`, or `peer_studio` with `is_live = TRUE`), updates the submission status to `published`, and records an entry in `audit_log`.
 

@@ -54,6 +54,8 @@ const SUBMISSION_COLUMNS = [
   'title', 'content', 'links', 'status', 'category', 'reviewed_by', 'reviewed_at', 'cover_image_url'
 ];
 
+const SUBMISSION_STATUSES = ['pending', 'approved', 'published', 'delete'];
+
 const AUDIT_LOG_COLUMNS = [
   'timestamp', 'action', 'source_tab', 'item_id', 'title', 'details'
 ];
@@ -134,13 +136,44 @@ function setupSiteSheet() {
   smoreHeaders_(imageSheet, IMAGE_LIBRARY_COLUMNS, true);
 
   const submissionsSheet = ss.getSheetByName('submissions') || ss.insertSheet('submissions');
-  smoreHeaders_(submissionsSheet, SUBMISSION_COLUMNS, true);
+  applyStatusDropdown_(submissionsSheet, smoreHeaders_(submissionsSheet, SUBMISSION_COLUMNS, true));
 
   const reviewQueueSheet = ss.getSheetByName('review_queue') || ss.insertSheet('review_queue');
-  smoreHeaders_(reviewQueueSheet, SUBMISSION_COLUMNS, true);
+  applyStatusDropdown_(reviewQueueSheet, smoreHeaders_(reviewQueueSheet, SUBMISSION_COLUMNS, true));
 
   const auditSheet = ss.getSheetByName('audit_log') || ss.insertSheet('audit_log');
   smoreHeaders_(auditSheet, AUDIT_LOG_COLUMNS, true);
+}
+
+function applyStatusDropdown_(sheet, headers) {
+  const col = headers.indexOf('status') + 1;
+  if (!col) return;
+  const rows = Math.max(sheet.getMaxRows() - 1, 1000);
+  if (sheet.getMaxRows() < rows + 1) sheet.insertRowsAfter(sheet.getMaxRows(), rows + 1 - sheet.getMaxRows());
+  const rule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(SUBMISSION_STATUSES, true)
+    .setAllowInvalid(false)
+    .setHelpText('pending = waiting, approved = publish on next run, published = live, delete = remove from site and sheet')
+    .build();
+  sheet.getRange(2, col, rows, 1).setDataValidation(rule);
+}
+
+function liveTarget_(ss, type) {
+  if (type === 'quote' || type === 'lounge_quote') {
+    const sheet = ss.getSheetByName('lounge_quotes');
+    return { sheet, headers: smoreHeaders_(sheet, LOUNGE_QUOTE_COLUMNS, true), idKey: 'quote_id' };
+  }
+  if (type === 'lesson_draft' || type === 'studio') {
+    const sheet = ss.getSheetByName('peer_studio');
+    return { sheet, headers: smoreHeaders_(sheet, PEER_STUDIO_COLUMNS, true), idKey: 'studio_id' };
+  }
+  const sheet = getPublishedArticlesSheet_(ss);
+  return { sheet, headers: smoreHeaders_(sheet, PUBLISHED_ARTICLE_COLUMNS, true), idKey: 'article_id' };
+}
+
+function liveRowsById_(target, id) {
+  if (!id) return [];
+  return smoreReadIssues_(target.sheet, target.headers).filter(r => r.issue[target.idKey] === id);
 }
 
 function getPublishedArticlesSheet_(ss) {
@@ -557,6 +590,8 @@ function publishApprovedSubmissions() {
   setupSiteSheet();
   const now = new Date().toISOString();
   let publishedCount = 0;
+  let hiddenCount = 0;
+  let deletedCount = 0;
   const statusCounts = {};
 
   ['submissions', 'review_queue'].forEach(tabName => {
@@ -568,14 +603,51 @@ function publishApprovedSubmissions() {
     if (statusIdx < 0) return;
 
     const rows = smoreReadIssues_(sheet, headers);
+    const rowsToDelete = [];
     rows.forEach(r => {
       const status = String(r.issue.status || '').toLowerCase();
       const statusKey = tabName + ': ' + (status || '(blank)');
       statusCounts[statusKey] = (statusCounts[statusKey] || 0) + 1;
+      const type = String(r.issue.submission_type || 'article').toLowerCase();
+
+      if (status === 'delete' || status === 'pending') {
+        if (!r.issue.id) {
+          if (status === 'delete') rowsToDelete.push(r.row);
+          return;
+        }
+        const target = liveTarget_(ss, type);
+        if (!target.sheet) return;
+        const live = liveRowsById_(target, r.issue.id);
+        if (status === 'delete') {
+          live.map(l => l.row).sort((a, b) => b - a).forEach(n => target.sheet.deleteRow(n));
+          if (live.length) appendAuditLog_(ss, 'deleted_live_item', tabName, r.issue.id, r.issue.title, 'Removed from live tab');
+          rowsToDelete.push(r.row);
+          deletedCount++;
+        } else {
+          const liveCol = target.headers.indexOf('is_live') + 1;
+          live.forEach(l => {
+            if (liveCol && String(l.issue.is_live).toLowerCase() !== 'false') {
+              target.sheet.getRange(l.row, liveCol).setValue('FALSE');
+              hiddenCount++;
+            }
+          });
+        }
+        return;
+      }
+
       if (status !== 'approved' && status !== 'publish') return;
 
-      const type = String(r.issue.submission_type || 'article').toLowerCase();
       const id = r.issue.id || ('item_' + Utilities.getUuid().slice(0, 8));
+      const existing = r.issue.id ? liveRowsById_(liveTarget_(ss, type), id) : [];
+      if (existing.length) {
+        const target = liveTarget_(ss, type);
+        const liveCol = target.headers.indexOf('is_live') + 1;
+        if (liveCol) existing.forEach(l => target.sheet.getRange(l.row, liveCol).setValue('TRUE'));
+        sheet.getRange(r.row, statusIdx + 1).setValue('published');
+        if (reviewedAtIdx >= 0) sheet.getRange(r.row, reviewedAtIdx + 1).setValue(now);
+        publishedCount++;
+        return;
+      }
       const title = r.issue.title || 'Staff Contribution';
       const content = r.issue.content || '';
       const author = r.issue.submitter_name || 'MMS Staff';
@@ -640,11 +712,14 @@ function publishApprovedSubmissions() {
       }
       publishedCount++;
     });
+    rowsToDelete.sort((a, b) => b - a).forEach(n => sheet.deleteRow(n));
   });
 
   try {
     let msg = 'Published ' + publishedCount + ' approved submission(s).';
-    if (!publishedCount) {
+    if (hiddenCount) msg += '\nHid ' + hiddenCount + ' item(s) set back to pending.';
+    if (deletedCount) msg += '\nDeleted ' + deletedCount + ' item(s) marked delete.';
+    if (!publishedCount && !hiddenCount && !deletedCount) {
       const found = Object.keys(statusCounts).map(k => k + ' x' + statusCounts[k]).join('\n');
       msg += '\n\nOnly rows with status "approved" are published. Rows found:\n' + (found || 'none in submissions or review_queue');
     }
