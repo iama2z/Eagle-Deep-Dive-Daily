@@ -303,6 +303,7 @@ function doGet(e) {
       return smoreJson_({ ok: true, items: publishedArticles_() });
     }
     if (feed === 'site' || feed === 'all') {
+      ensureLoungeQuoteIds_();
       return smoreJson_({
         ok: true,
         settings: publicSettings_(),
@@ -412,6 +413,28 @@ function publicTableItems_(sheetName, columns, requiredKeys, blankIsLive = false
   }))).filter(item => (requiredKeys || []).every(k => item[k]));
 }
 
+// Persist IDs before publishing manually entered posts to the feed.
+function ensureLoungeQuoteIds_() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('lounge_quotes');
+  if (!sheet || sheet.getLastRow() < 2) return;
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const headers = smoreHeaders_(sheet, LOUNGE_QUOTE_COLUMNS, true);
+    const idCol = headers.indexOf('quote_id') + 1;
+    const quoteIdx = headers.indexOf('quote');
+    const rows = sheet.getDataRange().getValues();
+    for (let i = 1; i < rows.length; i++) {
+      if (String(rows[i][quoteIdx] || '').trim() && !String(rows[i][idCol - 1] || '').trim()) {
+        sheet.getRange(i + 1, idCol).setValue('q_' + Utilities.getUuid());
+      }
+    }
+    SpreadsheetApp.flush();
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function addLoungeReaction_(quoteId, reaction, undo) {
   quoteId = String(quoteId || '').trim();
   reaction = String(reaction || '').trim().toLowerCase();
@@ -434,6 +457,7 @@ function addLoungeReaction_(quoteId, reaction, undo) {
         const cell = sheet.getRange(i + 2, countCol);
         const next = Math.max(0, (Number(cell.getValue()) || 0) + (undo ? -1 : 1));
         cell.setValue(next);
+        SpreadsheetApp.flush();
         return { ok: true, quote_id: quoteId, reaction: reaction, count: next };
       }
     }

@@ -149,6 +149,13 @@ The site is powered by a unified Google Apps Script (`apps-script/Smore.gs`) bou
 
 *(Note: If your sheet still has the tab spelled `puplished_articles`, the script automatically detects and works with both `published_articles` and `puplished_articles`.)*
 
+Staff Lounge posts entered directly in the Sheet receive a persistent `quote_id`
+when the site feed loads. Existing IDs and counts are preserved. Install the
+updated `apps-script/Smore.gs`, redeploy the existing web app as a **New version**,
+publish `index.html`, and reload before testing reactions. Counts are shared
+through the Sheet; each browser remembers its own selected reactions. Save
+failures show a message and restore the previous count.
+
 ### Heart of MMS directory
 
 The site includes a searchable snapshot of the MMS resource list in
