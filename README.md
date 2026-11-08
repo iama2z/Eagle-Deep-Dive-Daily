@@ -139,7 +139,7 @@ The site is powered by a unified Google Apps Script (`apps-script/Smore.gs`) bou
 | `published_articles` | All main feed articles & playbooks (set `is_live` to `TRUE` or `FALSE`) | `article_id`, `title`, `category`, `summary`, `article_body_text`, `author`, `published_at`, `cover_image_url`, `is_live`, `takeaway`, `try_tomorrow`, `script`, `read_time`, `featured`, `has_video_demo`, `tags` |
 | `quick_wins` | Context-aware Quick Wins banner cards per section (`all`, `Student Engagement`, `Classroom Management`, `Teacher Support`, `Tech & AI`, `saved`, `view-directory`, `view-bulletin`, `view-studio`, `view-academy`) | `tip_id`, `section`, `category_label`, `title`, `tip`, `is_live` |
 | `directory_links` | Heart of MMS Building Directory cards | `resource_id`, `title`, `category`, `description`, `url`, `tags`, `update_status`, `is_live` |
-| `lounge_quotes` | "Overheard at MMS" Staff Lounge quotes in the sidebar | `quote_id`, `quote`, `attribution`, `is_live` |
+| `lounge_quotes` | Staff Lounge forum posts (wins, quotes, questions) shown in the sidebar and the Staff Lounge page; reaction counts are saved here | `quote_id`, `quote`, `attribution`, `is_live`, `post_type` (`win`/`quote`/`question`), `appreciate`, `empathy`, `respect` |
 | `peer_studio` | Published Peer Lesson Studio cards | `studio_id`, `title`, `subject`, `dilemma`, `warm_feedback`, `cool_feedback`, `doc_url`, `is_live` |
 | `tech_tools` | EdTech, AI & Classroom Video Lab software cards | `tool_id`, `badge`, `title`, `link_label`, `url`, `description`, `teacher_workflow`, `student_workflow`, `is_live` |
 | `image_library` | Optional approved images for articles | `image_id`, `category`, `label`, `image_url`, `is_live` |
