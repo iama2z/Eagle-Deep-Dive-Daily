@@ -557,6 +557,7 @@ function publishApprovedSubmissions() {
   setupSiteSheet();
   const now = new Date().toISOString();
   let publishedCount = 0;
+  const statusCounts = {};
 
   ['submissions', 'review_queue'].forEach(tabName => {
     const sheet = ss.getSheetByName(tabName);
@@ -569,6 +570,8 @@ function publishApprovedSubmissions() {
     const rows = smoreReadIssues_(sheet, headers);
     rows.forEach(r => {
       const status = String(r.issue.status || '').toLowerCase();
+      const statusKey = tabName + ': ' + (status || '(blank)');
+      statusCounts[statusKey] = (statusCounts[statusKey] || 0) + 1;
       if (status !== 'approved' && status !== 'publish') return;
 
       const type = String(r.issue.submission_type || 'article').toLowerCase();
@@ -640,7 +643,12 @@ function publishApprovedSubmissions() {
   });
 
   try {
-    SpreadsheetApp.getUi().alert('Published ' + publishedCount + ' approved submission(s).');
+    let msg = 'Published ' + publishedCount + ' approved submission(s).';
+    if (!publishedCount) {
+      const found = Object.keys(statusCounts).map(k => k + ' x' + statusCounts[k]).join('\n');
+      msg += '\n\nOnly rows with status "approved" are published. Rows found:\n' + (found || 'none in submissions or review_queue');
+    }
+    SpreadsheetApp.getUi().alert(msg);
   } catch (err) {
     console.log('Published ' + publishedCount + ' approved submission(s).');
   }
