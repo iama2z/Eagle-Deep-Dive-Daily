@@ -34,8 +34,10 @@ const DIRECTORY_LINK_COLUMNS = [
 ];
 
 const LOUNGE_QUOTE_COLUMNS = [
-  'quote_id', 'quote', 'attribution', 'is_live'
+  'quote_id', 'quote', 'attribution', 'is_live', 'post_type', 'appreciate', 'empathy', 'respect'
 ];
+
+const LOUNGE_REACTIONS = ['appreciate', 'empathy', 'respect'];
 
 const PEER_STUDIO_COLUMNS = [
   'studio_id', 'title', 'subject', 'dilemma', 'warm_feedback', 'cool_feedback', 'doc_url', 'is_live'
@@ -410,6 +412,37 @@ function publicTableItems_(sheetName, columns, requiredKeys, blankIsLive = false
   }))).filter(item => (requiredKeys || []).every(k => item[k]));
 }
 
+function addLoungeReaction_(quoteId, reaction, undo) {
+  quoteId = String(quoteId || '').trim();
+  reaction = String(reaction || '').trim().toLowerCase();
+  if (!quoteId || LOUNGE_REACTIONS.indexOf(reaction) < 0) {
+    return { ok: false, error: 'Invalid reaction.' };
+  }
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('lounge_quotes');
+  if (!sheet) return { ok: false, error: 'Staff Lounge is not set up yet.' };
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const headers = smoreHeaders_(sheet, LOUNGE_QUOTE_COLUMNS, true);
+    const idCol = headers.indexOf('quote_id') + 1;
+    const countCol = headers.indexOf(reaction) + 1;
+    const lastRow = sheet.getLastRow();
+    if (lastRow < 2) return { ok: false, error: 'Post not found.' };
+    const ids = sheet.getRange(2, idCol, lastRow - 1, 1).getValues();
+    for (let i = 0; i < ids.length; i++) {
+      if (String(ids[i][0]).trim() === quoteId) {
+        const cell = sheet.getRange(i + 2, countCol);
+        const next = Math.max(0, (Number(cell.getValue()) || 0) + (undo ? -1 : 1));
+        cell.setValue(next);
+        return { ok: true, quote_id: quoteId, reaction: reaction, count: next };
+      }
+    }
+    return { ok: false, error: 'Post not found.' };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function doPost(e) {
   try {
     let body = {};
@@ -425,6 +458,9 @@ function doPost(e) {
 
     if (body.action === 'sync_smore') {
       return smoreJson_(requestPublicSmoreSync_(body.source_url));
+    }
+    if (body.action === 'react') {
+      return smoreJson_(addLoungeReaction_(body.quote_id, body.reaction, body.undo === 'true'));
     }
     if (body.action) {
       return smoreJson_({ ok: false, error: 'Unknown action' });
@@ -519,8 +555,12 @@ function publishApprovedSubmissions() {
         appendRecordByHeaders_(qSheet, qHeaders, {
           quote_id: id,
           quote: content,
-          attribution: author + (title ? ' (' + title + ')' : ''),
-          is_live: 'TRUE'
+          attribution: author + (title && title !== 'Staff Lounge Post' ? ' (' + title + ')' : ''),
+          is_live: 'TRUE',
+          post_type: ['win', 'quote', 'question'].indexOf(String(category).toLowerCase()) >= 0 ? String(category).toLowerCase() : 'quote',
+          appreciate: 0,
+          empathy: 0,
+          respect: 0
         });
         appendAuditLog_(ss, 'published_quote', tabName, id, title, 'Published to lounge_quotes');
       } else if (type === 'lesson_draft' || type === 'studio') {

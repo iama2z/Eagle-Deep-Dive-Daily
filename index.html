@@ -605,13 +605,14 @@
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <i data-lucide="coffee" class="w-4 h-4 text-red-600"></i>
-                <h3 id="loungeHeadingText" class="font-editorial font-bold text-base text-ink-900">Overheard at MMS</h3>
+                <h3 class="font-editorial font-bold text-base text-ink-900"><button type="button" id="loungeHeadingLink" class="hover:text-red-600 hover:underline text-left" title="Open the Staff Lounge"><span id="loungeHeadingText">Overheard at MMS</span></button></h3>
               </div>
               <span id="loungeBadgeText" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-50 text-rose-700">Staff Lounge</span>
             </div>
 
             <div id="loungeQuotesContainer" class="space-y-3"></div>
 
+            <button id="loungeViewAllBtn" type="button" class="w-full text-xs font-bold text-red-600 hover:text-red-900 text-left">Visit the Staff Lounge &rarr;</button>
             <button id="sidebarAddQuoteBtn" class="w-full py-2 rounded-xl border border-cream-300 hover:bg-cream-100 text-xs font-bold text-ink-800 transition">
               + Post a Classroom Quote or Win
             </button>
@@ -654,6 +655,27 @@
         <p>Some resources require your USD 266 work account.</p>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="hqResourceGrid"></div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW: STAFF LOUNGE (FORUM) -->
+    <!-- ========================================== -->
+    <div id="view-lounge" class="view-section hidden space-y-6">
+      <section class="space-y-3">
+        <h1 class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">Staff Lounge</h1>
+        <p class="text-sm text-ink-600">Share a classroom win, a funny quote, or a question. React to a colleague's post with appreciation, empathy, or respect.</p>
+        <div class="flex flex-wrap items-center gap-3">
+          <button type="button" id="loungeNewPostBtn" class="px-4 py-2 rounded-full bg-ink-900 hover:bg-ink-800 text-white text-xs font-bold">+ New Post</button>
+          <button class="back-to-feed-btn text-xs font-bold text-red-600">Back to Editorial Feed</button>
+        </div>
+        <div role="group" aria-label="Filter posts" class="flex flex-wrap gap-2" id="loungeFilters">
+          <button type="button" data-lounge-filter="all" class="lounge-filter rounded-full px-3 py-1.5 text-xs font-bold bg-ink-900 text-white">All</button>
+          <button type="button" data-lounge-filter="win" class="lounge-filter rounded-full px-3 py-1.5 text-xs font-bold bg-cream-100 text-ink-600">Wins</button>
+          <button type="button" data-lounge-filter="quote" class="lounge-filter rounded-full px-3 py-1.5 text-xs font-bold bg-cream-100 text-ink-600">Quotes</button>
+          <button type="button" data-lounge-filter="question" class="lounge-filter rounded-full px-3 py-1.5 text-xs font-bold bg-cream-100 text-ink-600">Questions</button>
+        </div>
+      </section>
+      <div id="loungeFeed" class="space-y-4 max-w-2xl"></div>
     </div>
 
     <!-- ========================================== -->
@@ -1153,6 +1175,46 @@
           <div class="flex justify-end gap-2 ml-auto">
             <button type="button" id="cancelShareTipBtn" class="px-4 py-2 rounded-full border border-cream-300 text-ink-600 font-bold">Cancel</button>
             <button type="submit" class="px-5 py-2 rounded-full bg-ink-900 hover:bg-ink-800 text-white font-bold">Submit for Review</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: STAFF LOUNGE POST -->
+  <!-- ========================================== -->
+  <div id="loungePostModal" class="fixed inset-0 bg-ink-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl border border-cream-300 max-w-lg w-full p-6 sm:p-8 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-cream-200">
+        <div>
+          <h3 class="font-editorial font-bold text-xl text-ink-900">Post to the Staff Lounge</h3>
+          <p class="text-xs text-ink-600">Share a classroom win, a quote you overheard, or a question. Posts are reviewed before they appear.</p>
+        </div>
+        <button id="closeLoungePostBtn" type="button" aria-label="Close" class="text-ink-400 hover:text-ink-900 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form id="loungePostForm" class="space-y-3.5 text-xs">
+        <div>
+          <label for="loungePostType" class="block font-bold text-ink-800 mb-1">Post type</label>
+          <select id="loungePostType" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 bg-white">
+            <option value="win">Classroom Win</option>
+            <option value="quote">Overheard Quote</option>
+            <option value="question">Question for Colleagues</option>
+          </select>
+        </div>
+        <div>
+          <label for="loungePostText" class="block font-bold text-ink-800 mb-1">What's on your mind?</label>
+          <textarea id="loungePostText" rows="4" maxlength="800" class="w-full p-3.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" required></textarea>
+        </div>
+        <div>
+          <label for="loungePostAuthor" class="block font-bold text-ink-800 mb-1">Your name / department</label>
+          <input id="loungePostAuthor" type="text" placeholder="e.g., 8th Grade Science" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" required />
+        </div>
+        <div class="pt-2 flex items-center justify-between gap-2">
+          <p id="loungePostStatus" class="text-xs" role="status" aria-live="polite"></p>
+          <div class="flex justify-end gap-2 ml-auto">
+            <button type="button" id="cancelLoungePostBtn" class="px-4 py-2 rounded-full border border-cream-300 text-ink-600 font-bold">Cancel</button>
+            <button type="submit" class="px-5 py-2 rounded-full bg-ink-900 hover:bg-ink-800 text-white font-bold">Post</button>
           </div>
         </div>
       </form>
@@ -1785,12 +1847,16 @@
         {
           id: "quote-1",
           quote: "Wait… if plants make their own food from air and sunlight, why are we paying for groceries?",
-          attribution: "7th Hour Life Science Debate"
+          attribution: "7th Hour Life Science Debate",
+          type: "quote",
+          reactions: { appreciate: 0, empathy: 0, respect: 0 }
         },
         {
           id: "quote-2",
           quote: "Mr. H, I used the OrbitNote read-aloud voice at 1.5x speed and I actually finished the whole article before the bell.",
-          attribution: "8th Hour Social Studies"
+          attribution: "8th Hour Social Studies",
+          type: "quote",
+          reactions: { appreciate: 0, empathy: 0, respect: 0 }
         }
       ],
       studioItems: [
@@ -2399,6 +2465,73 @@
         `;
         container.appendChild(div);
       });
+      renderLoungeFeed();
+    }
+
+    const LOUNGE_REACTIONS = [
+      { key: 'appreciate', label: 'Appreciate', icon: '🙏' },
+      { key: 'empathy', label: 'Empathy', icon: '💛' },
+      { key: 'respect', label: 'Respect', icon: '👏' }
+    ];
+    const LOUNGE_TYPE_LABELS = { win: 'Win', quote: 'Quote', question: 'Question' };
+    let loungeFilter = 'all';
+
+    function loadMyReactions() {
+      try { return JSON.parse(localStorage.getItem('loungeReactions') || '{}') || {}; } catch { return {}; }
+    }
+
+    function renderLoungeFeed() {
+      const feed = document.getElementById('loungeFeed');
+      if (!feed) return;
+      const mine = loadMyReactions();
+      const posts = (APP_DATA.loungeQuotes || []).filter(q => loungeFilter === 'all' || q.type === loungeFilter);
+      feed.replaceChildren();
+      if (!posts.length) {
+        feed.innerHTML = '<p class="text-sm text-ink-600">No posts here yet. Be the first to share!</p>';
+        return;
+      }
+      posts.forEach(q => {
+        const card = document.createElement('article');
+        card.className = 'bg-white rounded-3xl border border-cream-300 p-5 shadow-sm space-y-3';
+        const buttons = LOUNGE_REACTIONS.map(r => {
+          const on = (mine[q.id] || []).includes(r.key);
+          return `<button type="button" data-react="${r.key}" data-post="${escapeHtml(q.id)}" aria-pressed="${on}" title="${r.label}" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold border ${on ? 'bg-red-50 border-red-300 text-red-700' : 'bg-cream-50 border-cream-300 text-ink-800 hover:bg-cream-100'}"><span aria-hidden="true">${r.icon}</span><span>${r.label}</span><span class="react-count">${q.reactions[r.key] || 0}</span></button>`;
+        }).join('');
+        card.innerHTML = `
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-50 text-rose-700">${escapeHtml(LOUNGE_TYPE_LABELS[q.type] || 'Quote')}</span>
+            <span class="text-[11px] text-ink-600 font-semibold">${escapeHtml(q.attribution)}</span>
+          </div>
+          <p class="text-sm text-ink-900 leading-relaxed whitespace-pre-line ${q.type === 'quote' ? 'italic font-serif' : ''}">${q.type === 'quote' ? '“' + escapeHtml(q.quote) + '”' : escapeHtml(q.quote)}</p>
+          <div class="flex flex-wrap gap-2">${buttons}</div>`;
+        feed.appendChild(card);
+      });
+    }
+
+    async function toggleLoungeReaction(postId, key) {
+      const post = (APP_DATA.loungeQuotes || []).find(q => q.id === postId);
+      if (!post) return;
+      const mine = loadMyReactions();
+      const list = mine[postId] || [];
+      const undo = list.includes(key);
+      mine[postId] = undo ? list.filter(k => k !== key) : [...list, key];
+      post.reactions[key] = Math.max(0, (post.reactions[key] || 0) + (undo ? -1 : 1));
+      try { localStorage.setItem('loungeReactions', JSON.stringify(mine)); } catch {}
+      renderLoungeFeed();
+      try {
+        const res = await fetch(SUBMISSION_API_URL, {
+          method: 'POST',
+          body: new URLSearchParams({ action: 'react', quote_id: postId, reaction: key, undo: String(undo) })
+        });
+        const result = await res.json();
+        if (!result?.ok) throw new Error(result?.error || 'failed');
+      } catch {
+        // Roll back so the shown count matches what was actually saved.
+        post.reactions[key] = Math.max(0, (post.reactions[key] || 0) + (undo ? 1 : -1));
+        mine[postId] = undo ? [...(mine[postId] || []), key] : (mine[postId] || []).filter(k => k !== key);
+        try { localStorage.setItem('loungeReactions', JSON.stringify(mine)); } catch {}
+        renderLoungeFeed();
+      }
     }
 
     function renderStudioItems() {
@@ -3102,7 +3235,13 @@
           const quotes = data.quotes.map((q, i) => ({
             id: String(q.quote_id || `quote-${i + 1}`).trim(),
             quote: String(q.quote || '').trim(),
-            attribution: String(q.attribution || 'MMS Classroom').trim()
+            attribution: String(q.attribution || 'MMS Classroom').trim(),
+            type: ['win', 'quote', 'question'].includes(String(q.post_type || '').trim().toLowerCase()) ? String(q.post_type).trim().toLowerCase() : 'quote',
+            reactions: {
+              appreciate: parseInt(q.appreciate, 10) || 0,
+              empathy: parseInt(q.empathy, 10) || 0,
+              respect: parseInt(q.respect, 10) || 0
+            }
           })).filter(q => q.quote);
           if (quotes.length) {
             APP_DATA.loungeQuotes = quotes;
@@ -3475,10 +3614,77 @@
         document.getElementById('tipType').value = 'article';
         tipModal.classList.remove('hidden');
       });
-      document.getElementById('sidebarAddQuoteBtn')?.addEventListener('click', () => {
-        resetTipStatus();
-        document.getElementById('tipType').value = 'quote';
-        tipModal.classList.remove('hidden');
+      const loungeModal = document.getElementById('loungePostModal');
+      const loungeStatus = document.getElementById('loungePostStatus');
+      const openLoungeModal = () => {
+        loungeStatus.textContent = '';
+        loungeModal.classList.remove('hidden');
+      };
+      const closeLoungeModal = () => loungeModal.classList.add('hidden');
+      document.getElementById('sidebarAddQuoteBtn')?.addEventListener('click', openLoungeModal);
+      document.getElementById('loungeNewPostBtn')?.addEventListener('click', openLoungeModal);
+      document.getElementById('closeLoungePostBtn')?.addEventListener('click', closeLoungeModal);
+      document.getElementById('cancelLoungePostBtn')?.addEventListener('click', closeLoungeModal);
+      ['loungeHeadingLink', 'loungeViewAllBtn'].forEach(id =>
+        document.getElementById(id)?.addEventListener('click', () => switchView('view-lounge')));
+      document.getElementById('loungeFilters')?.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-lounge-filter]');
+        if (!btn) return;
+        loungeFilter = btn.dataset.loungeFilter;
+        document.querySelectorAll('.lounge-filter').forEach(b => {
+          const active = b === btn;
+          b.classList.toggle('bg-ink-900', active);
+          b.classList.toggle('text-white', active);
+          b.classList.toggle('bg-cream-100', !active);
+          b.classList.toggle('text-ink-600', !active);
+        });
+        renderLoungeFeed();
+      });
+      document.getElementById('loungeFeed')?.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-react]');
+        if (btn) toggleLoungeReaction(btn.dataset.post, btn.dataset.react);
+      });
+      document.getElementById('loungePostForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const form = e.currentTarget;
+        const submitButton = form.querySelector('button[type="submit"]');
+        if (submitButton.disabled) return;
+        const type = document.getElementById('loungePostType').value;
+        const text = document.getElementById('loungePostText').value.trim();
+        const author = document.getElementById('loungePostAuthor').value.trim();
+        const setStatus = (msg, isError = false) => {
+          loungeStatus.textContent = msg;
+          loungeStatus.className = `text-xs ${isError ? 'text-red-700' : 'text-emerald-700'}`;
+        };
+        if (!text || !author) {
+          setStatus('Please enter your name / department and your post.', true);
+          return;
+        }
+        submitButton.disabled = true;
+        setStatus('Saving your post for review…');
+        try {
+          const response = await fetch(SUBMISSION_API_URL, {
+            method: 'POST',
+            body: new URLSearchParams({
+              submitter_name: author,
+              submission_type: 'quote',
+              category: type,
+              title: 'Staff Lounge Post',
+              content: text
+            })
+          });
+          if (!response.ok) throw new Error(`Request failed (${response.status}).`);
+          const result = await response.json();
+          if (!result?.ok) throw new Error(result?.error || 'The post could not be saved.');
+          const keepAuthor = author;
+          form.reset();
+          document.getElementById('loungePostAuthor').value = keepAuthor;
+          setStatus('Thanks! Your post is pending review and will appear once approved.');
+        } catch (error) {
+          setStatus(error instanceof TypeError ? 'Could not connect. Please try again.' : error.message || 'Could not post. Please try again.', true);
+        } finally {
+          submitButton.disabled = false;
+        }
       });
       document.getElementById('closeShareTipModalBtn')?.addEventListener('click', () => tipModal.classList.add('hidden'));
       document.getElementById('cancelShareTipBtn')?.addEventListener('click', () => tipModal.classList.add('hidden'));
