@@ -675,6 +675,7 @@
           <button type="button" data-lounge-filter="question" class="lounge-filter rounded-full px-3 py-1.5 text-xs font-bold bg-cream-100 text-ink-600">Questions</button>
         </div>
       </section>
+      <p id="loungeReactionStatus" class="text-sm text-red-700" role="status" aria-live="polite"></p>
       <div id="loungeFeed" class="space-y-4 max-w-2xl"></div>
     </div>
 
@@ -2475,6 +2476,7 @@
     ];
     const LOUNGE_TYPE_LABELS = { win: 'Win', quote: 'Quote', question: 'Question' };
     let loungeFilter = 'all';
+    const pendingLoungeReactions = new Set();
 
     function loadMyReactions() {
       try { return JSON.parse(localStorage.getItem('loungeReactions') || '{}') || {}; } catch { return {}; }
@@ -2495,7 +2497,7 @@
         card.className = 'bg-white rounded-3xl border border-cream-300 p-5 shadow-sm space-y-3';
         const buttons = LOUNGE_REACTIONS.map(r => {
           const on = (mine[q.id] || []).includes(r.key);
-          return `<button type="button" data-react="${r.key}" data-post="${escapeHtml(q.id)}" aria-pressed="${on}" title="${r.label}" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold border ${on ? 'bg-red-50 border-red-300 text-red-700' : 'bg-cream-50 border-cream-300 text-ink-800 hover:bg-cream-100'}"><span aria-hidden="true">${r.icon}</span><span>${r.label}</span><span class="react-count">${q.reactions[r.key] || 0}</span></button>`;
+          return `<button type="button" data-react="${r.key}" data-post="${escapeHtml(q.id)}" aria-pressed="${on}" ${pendingLoungeReactions.has(q.id) ? 'disabled' : ''} title="${r.label}" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold border ${on ? 'bg-red-50 border-red-300 text-red-700' : 'bg-cream-50 border-cream-300 text-ink-800 hover:bg-cream-100'}"><span aria-hidden="true">${r.icon}</span><span>${r.label}</span><span class="react-count">${q.reactions[r.key] || 0}</span></button>`;
         }).join('');
         card.innerHTML = `
           <div class="flex items-center justify-between gap-2">
@@ -2510,10 +2512,14 @@
 
     async function toggleLoungeReaction(postId, key) {
       const post = (APP_DATA.loungeQuotes || []).find(q => q.id === postId);
-      if (!post) return;
+      if (!post || pendingLoungeReactions.has(postId)) return;
+      const status = document.getElementById('loungeReactionStatus');
+      if (status) status.textContent = '';
+      pendingLoungeReactions.add(postId);
       const mine = loadMyReactions();
       const list = mine[postId] || [];
       const undo = list.includes(key);
+      const previousCount = post.reactions[key] || 0;
       mine[postId] = undo ? list.filter(k => k !== key) : [...list, key];
       post.reactions[key] = Math.max(0, (post.reactions[key] || 0) + (undo ? -1 : 1));
       try { localStorage.setItem('loungeReactions', JSON.stringify(mine)); } catch {}
@@ -2523,13 +2529,21 @@
           method: 'POST',
           body: new URLSearchParams({ action: 'react', quote_id: postId, reaction: key, undo: String(undo) })
         });
+        if (!res.ok) throw new Error(`Request failed (${res.status}).`);
         const result = await res.json();
-        if (!result?.ok) throw new Error(result?.error || 'failed');
-      } catch {
+        if (!result?.ok) throw new Error(result?.error || 'The server could not save this reaction. Redeploy the updated Apps Script and reload.');
+        if (!Number.isInteger(result.count) || result.count < 0) throw new Error('Invalid reaction response. Reload to check the saved count.');
+        post.reactions[key] = result.count;
+      } catch (error) {
         // Roll back so the shown count matches what was actually saved.
-        post.reactions[key] = Math.max(0, (post.reactions[key] || 0) + (undo ? 1 : -1));
-        mine[postId] = undo ? [...(mine[postId] || []), key] : (mine[postId] || []).filter(k => k !== key);
-        try { localStorage.setItem('loungeReactions', JSON.stringify(mine)); } catch {}
+        post.reactions[key] = previousCount;
+        const currentMine = loadMyReactions();
+        currentMine[postId] = list;
+        try { localStorage.setItem('loungeReactions', JSON.stringify(currentMine)); } catch {}
+        console.warn('Staff Lounge reaction could not be saved.', error);
+        if (status) status.textContent = error instanceof TypeError ? 'Could not connect to save your reaction. Reload to check the saved count before trying again.' : error.message || 'Could not save your reaction. Please reload and try again.';
+      } finally {
+        pendingLoungeReactions.delete(postId);
         renderLoungeFeed();
       }
     }
