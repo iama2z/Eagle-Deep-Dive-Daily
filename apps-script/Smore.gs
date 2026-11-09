@@ -735,6 +735,20 @@ function adminLoad_() {
   return out;
 }
 
+const SITE_CATEGORIES = ['Student Engagement', 'Classroom Management', 'Teacher Support', 'Tech & AI'];
+
+// Maps typed topics such as "student engagement" or "Tech and AI" to the site's topic names.
+function canonicalCategory_(value) {
+  const key = String(value || '').toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '');
+  const map = {
+    studentengagement: 'Student Engagement', engagement: 'Student Engagement',
+    classroommanagement: 'Classroom Management', management: 'Classroom Management',
+    teachersupport: 'Teacher Support', teachersupportandwellbeing: 'Teacher Support', wellbeing: 'Teacher Support',
+    techandai: 'Tech & AI', techai: 'Tech & AI', techandaitips: 'Tech & AI', tech: 'Tech & AI', ai: 'Tech & AI'
+  };
+  return map[key] || String(value || '').trim();
+}
+
 function adminSafeCell_(value) {
   const text = String(value == null ? '' : value);
   return /^[=+@-]/.test(text) ? "'" + text : text;
@@ -766,6 +780,7 @@ function adminSaveRow_(ss, name, id, fields, isNew) {
   if (isNew) {
     const record = {};
     editable.forEach(c => { if (fields[c] !== undefined) record[c] = fields[c]; });
+    if (name === 'articles' && record.category !== undefined) record.category = canonicalCategory_(record.category);
     if (record.is_live === undefined && t.cfg.columns.indexOf('is_live') >= 0) record.is_live = 'TRUE';
     // Sections and videos are referenced by other tabs, so the admin may choose their ID.
     const wanted = t.cfg.customId ? String(fields[t.cfg.idKey] || '').trim().replace(/[^A-Za-z0-9_-]/g, '-') : '';
@@ -779,6 +794,7 @@ function adminSaveRow_(ss, name, id, fields, isNew) {
   }
   const matches = liveRowsById_({ sheet: t.sheet, headers: t.headers, idKey: t.cfg.idKey }, String(id || ''));
   if (!matches.length) throw new Error('That item no longer exists. Reload the panel.');
+  if (name === 'articles' && fields.category !== undefined) fields.category = canonicalCategory_(fields.category);
   matches.forEach(m => {
     editable.forEach(c => {
       if (fields[c] === undefined) return;
@@ -893,7 +909,7 @@ function publishApprovedSubmissions() {
       const title = r.issue.title || 'Staff Contribution';
       const content = r.issue.content || '';
       const author = r.issue.submitter_name || 'MMS Staff';
-      const category = r.issue.category || 'Teacher Support';
+      const category = canonicalCategory_(r.issue.category) || 'Teacher Support';
       const links = r.issue.links || '';
 
       if (type === 'quote' || type === 'lounge_quote') {

@@ -2475,7 +2475,7 @@
       if (!bodyText) return null;
       const rawId = text('article_id');
       const title = text('title');
-      const category = text('category');
+      const category = canonicalCategory(text('category'));
       const rawImage = text('cover_image_url') || text('image_url');
       const rawTags = text('tags')
         ? text('tags').split(',').map(t => t.trim()).filter(Boolean)
@@ -2509,6 +2509,18 @@
       initFuse();
       renderArticlesGrid(activeCategory);
       document.getElementById('globalSearchInput')?.dispatchEvent(new Event('input'));
+    }
+
+    // Matches typed categories ("student engagement", "Tech and AI") to the site's topic names.
+    function canonicalCategory(value) {
+      const key = String(value ?? '').toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '');
+      const map = {
+        studentengagement: 'Student Engagement', engagement: 'Student Engagement',
+        classroommanagement: 'Classroom Management', management: 'Classroom Management',
+        teachersupport: 'Teacher Support', teachersupportandwellbeing: 'Teacher Support', wellbeing: 'Teacher Support',
+        techandai: 'Tech & AI', techai: 'Tech & AI', techandaitips: 'Tech & AI', tech: 'Tech & AI', ai: 'Tech & AI'
+      };
+      return map[key] || String(value ?? '').trim();
     }
 
     function normalizeSmoreIssue(item) {
@@ -3548,6 +3560,22 @@
         videos: ['section_id', 'badge', 'title', 'description', 'url', 'link_label', 'sort_order', 'is_live'],
         video_chapters: ['video_id', 'title', 'description', 'start_time', 'sort_order', 'is_live']
       };
+      const CATEGORIES = ['Student Engagement', 'Classroom Management', 'Teacher Support', 'Tech & AI'];
+      const CATEGORY_LABELS = { 'Teacher Support': 'Teacher Support & Wellbeing' };
+      const ADVANCED = {
+        articles: ['published_at', 'takeaway', 'try_tomorrow', 'script', 'read_time', 'featured', 'has_video_demo', 'tags'],
+        directory: ['tags', 'update_status'],
+        studio: ['warm_feedback', 'cool_feedback'],
+        tech_tools: ['badge', 'link_label', 'teacher_workflow', 'student_workflow'],
+        page_sections: ['badge', 'layout'],
+        content_blocks: ['description', 'url', 'link_label'],
+        videos: ['badge', 'link_label', 'description']
+      };
+      const GROUP_BY = { articles: 'category', directory: 'category', quick_wins: 'section', quotes: 'post_type', image_library: 'category', content_blocks: 'section_id', video_chapters: 'video_id' };
+      const TABLE_CHOICES = { articles: { category: CATEGORIES }, quotes: { post_type: ['quote', 'win', 'question'] } };
+      const choicesFor = (table, key) => (table && TABLE_CHOICES[table]?.[key]) || CHOICES[key];
+      const openState = new Set();
+      const filters = {};
       const CUSTOM_ID_TABLES = new Set(['page_sections', 'videos']);
       const CHOICES = {
         kind: ['blocks', 'videos', 'tools'],
@@ -3561,6 +3589,8 @@
         video_id: 'Pick the video this belongs to.',
         start_time: 'm:ss, h:mm:ss or seconds.',
         sort_order: 'Lower numbers appear first.',
+        featured: 'Only used when no Cover Story is chosen on the Articles page.',
+        category: 'Choose the topic page this article appears on.',
         is_live: 'Live items show on the site; hidden items stay only in the sheet.'
       };
       const ID_KEYS = { articles: 'article_id', quick_wins: 'tip_id', directory: 'resource_id', quotes: 'quote_id', studio: 'studio_id', tech_tools: 'tool_id', image_library: 'image_id', page_sections: 'section_id', content_blocks: 'block_id', videos: 'video_id', video_chapters: 'chapter_id' };
@@ -3644,7 +3674,7 @@
         return (data?.submissions || []).filter(s => String(s.status).toLowerCase() === 'pending').length;
       }
 
-      function show(next) { view = next; render(); consoleEl.scrollTo({ top: 0 }); }
+      function show(next) { view = next; openState.clear(); render(); consoleEl.scrollTo({ top: 0 }); }
 
       function render() {
         bodyEl.replaceChildren();
@@ -3683,7 +3713,8 @@
       }
 
       let listCounter = 0;
-      function field(key, value, onInput, long, isId) {
+      function field(key, value, onInput, long, isId, table) {
+        const choices = choicesFor(table, key);
         const wrap = el('label', 'block');
         wrap.appendChild(el('span', 'block font-semibold text-ink-800 mb-1', label(key)));
         let input;
@@ -3691,11 +3722,12 @@
           input = el('select', 'w-full border border-cream-300 rounded-lg px-2.5 py-2 bg-white');
           ['TRUE', 'FALSE'].forEach(v => { const o = el('option', '', key === 'is_live' ? (v === 'TRUE' ? 'Live' : 'Hidden') : (v === 'TRUE' ? 'Yes' : 'No')); o.value = v; input.appendChild(o); });
           input.value = String(value).toUpperCase() === 'TRUE' ? 'TRUE' : 'FALSE';
-        } else if (CHOICES[key]) {
+        } else if (choices) {
           input = el('select', 'w-full border border-cream-300 rounded-lg px-2.5 py-2 bg-white');
-          const opts = CHOICES[key].includes(value) || !value ? CHOICES[key] : [value, ...CHOICES[key]];
-          opts.forEach(v => { const o = el('option', '', v); o.value = v; input.appendChild(o); });
-          input.value = value || CHOICES[key][0];
+          const shown = key === 'category' ? canonicalCategory(value) : value;
+          const opts = choices.includes(shown) || !shown ? choices : [shown, ...choices];
+          opts.forEach(v => { const o = el('option', '', CATEGORY_LABELS[v] && key === 'category' ? CATEGORY_LABELS[v] : v); o.value = v; input.appendChild(o); });
+          input.value = (key === 'category' ? canonicalCategory(value) : value) || choices[0];
         } else if (long || LONG.has(key)) {
           input = el('textarea', 'w-full border border-cream-300 rounded-lg px-2.5 py-2 min-h-[5rem]');
           input.rows = 4; input.value = value;
@@ -3731,8 +3763,10 @@
           await fn();
           toast(success);
           if (rerender) {
+            const top = consoleEl.scrollTop;
             await loadData();
             render();
+            consoleEl.scrollTop = top;
           }
           return true;
         } catch (err) {
@@ -3741,14 +3775,79 @@
         }
       }
 
+      function chipBar(chips, onPick, active) {
+        const bar = el('div', 'sticky top-[58px] z-[5] -mx-1 px-1 py-2 mb-3 bg-cream-50/95 backdrop-blur flex flex-wrap gap-1.5');
+        chips.forEach(([key, text]) => {
+          const on = key === active;
+          const b = el('button', `px-3 py-1 rounded-full text-[11px] font-bold border transition ${on ? 'bg-ink-900 text-white border-ink-900' : 'bg-white text-ink-700 border-cream-300 hover:border-ink-900'}`, text);
+          b.type = 'button';
+          b.addEventListener('click', () => onPick(key, b));
+          bar.appendChild(b);
+        });
+        return bar;
+      }
+
+      function collapsible(key, summaryNodes, cls) {
+        const det = el('details', cls || 'bg-white border border-cream-300 rounded-2xl');
+        det.dataset.key = key;
+        if (openState.has(key)) det.open = true;
+        det.addEventListener('toggle', () => { det.open ? openState.add(key) : openState.delete(key); });
+        const sum = el('summary', 'px-4 py-3 cursor-pointer flex items-center justify-between gap-3 font-semibold text-ink-900 select-none');
+        summaryNodes.forEach(n => sum.appendChild(n));
+        det.appendChild(sum);
+        return det;
+      }
+
+      function pill(text, cls) {
+        return el('span', `shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full ${cls}`, text);
+      }
+
+      function coverStoryBox() {
+        const setting = data.settings.find(s => s.key === 'hero_article_id');
+        const live = (data.tables.articles || []).filter(a => String(a.is_live).trim().toUpperCase() === 'TRUE');
+        let current = setting ? setting.value : '';
+        const box = el('div', 'bg-white border border-cream-300 rounded-2xl p-4 mb-4 space-y-2');
+        box.appendChild(el('h3', 'font-bold text-sm text-ink-900', 'Cover Story'));
+        box.appendChild(el('p', 'text-ink-600', 'The large featured article at the top of the home page. Only live articles can be chosen.'));
+        const select = el('select', 'w-full border border-cream-300 rounded-lg px-2.5 py-2 bg-white');
+        const auto = el('option', '', 'Automatic (first article marked Featured, otherwise the first article)');
+        auto.value = '';
+        select.appendChild(auto);
+        if (current && !live.some(a => a.article_id === current)) {
+          const o = el('option', '', `${current} (not live or not found)`); o.value = current; select.appendChild(o);
+        }
+        live.forEach(a => { const o = el('option', '', `${a.title} — ${a.category}`); o.value = a.article_id; select.appendChild(o); });
+        select.value = current;
+        const save = actionBtn('Set cover story', 'primary', async () => {
+          const value = select.value;
+          const ok = await run(() => api('admin_save_setting', { key: 'hero_article_id', value }), 'Cover story saved.', SAVE_MESSAGES, false);
+          if (ok) { current = value; if (setting) setting.value = value; save.disabled = true; }
+        });
+        save.disabled = true;
+        select.addEventListener('change', () => { save.disabled = select.value === current; });
+        box.appendChild(select);
+        box.appendChild(save);
+        return box;
+      }
+
       function renderSettings() {
-        bodyEl.appendChild(el('p', 'text-ink-600 mb-4', 'Each box is a text field on the site. Edit and press Save on that box.'));
+        bodyEl.appendChild(el('p', 'text-ink-600 mb-3', 'Pick a group to jump to it. Each field saves on its own.'));
         const groups = {};
         data.settings.forEach(s => { (groups[s.key.split('_')[0]] ||= []).push(s); });
-        const grid = el('div', 'grid grid-cols-1 lg:grid-cols-2 gap-4');
-        Object.keys(groups).forEach(g => {
-          const box = el('div', 'bg-white border border-cream-300 rounded-2xl p-4 space-y-3');
-          box.appendChild(el('h3', 'font-bold text-sm text-ink-900 capitalize', g));
+        const names = Object.keys(groups);
+        const list = el('div', 'space-y-2');
+        const boxes = {};
+        bodyEl.appendChild(chipBar(names.map(g => [g, label(g)]), key => {
+          const det = boxes[key];
+          det.open = true;
+          det.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }));
+        bodyEl.appendChild(list);
+        names.forEach(g => {
+          const det = collapsible(`settings:${g}`, [el('span', '', label(g)), pill(`${groups[g].length} field${groups[g].length === 1 ? '' : 's'}`, 'bg-cream-100 text-ink-600')]);
+          det.className += ' scroll-mt-28';
+          boxes[g] = det;
+          const body = el('div', 'px-4 pb-4 pt-3 border-t border-cream-200 grid grid-cols-1 lg:grid-cols-2 gap-4');
           groups[g].forEach(s => {
             const row = el('div', 'space-y-1');
             let current = s.value;
@@ -3757,15 +3856,15 @@
               if (ok) { s.value = current; save.disabled = true; }
             });
             save.disabled = true;
-            const f = field(s.key, s.value, e => { current = e.target.value; save.disabled = current === s.value; }, s.value.length > 60);
+            const f = field(s.key, s.value, e => { current = e.target.value; save.disabled = current === s.value; }, s.value.length > 60 || s.key === 'loading_messages');
             row.appendChild(f.wrap);
             if (s.description) row.appendChild(el('p', 'text-ink-400 text-[11px]', s.description));
             row.appendChild(save);
-            box.appendChild(row);
+            body.appendChild(row);
           });
-          grid.appendChild(box);
+          det.appendChild(body);
+          list.appendChild(det);
         });
-        bodyEl.appendChild(grid);
       }
 
       function itemTitle(sec, item) {
@@ -3774,56 +3873,104 @@
 
       function renderTable(name) {
         const sec = SECTIONS.find(s => s.id === name);
-        const fields = TABLE_FIELDS[name];
+        const allFields = TABLE_FIELDS[name];
+        const more = ADVANCED[name] || [];
+        const primary = allFields.filter(k => !more.includes(k));
         const items = data.tables[name] || [];
-        const head = el('div', 'flex items-center justify-between mb-4');
-        head.appendChild(el('p', 'text-ink-600', `${items.length} item${items.length === 1 ? '' : 's'}. Hidden items stay in the sheet but are not shown on the site.`));
-        head.appendChild(actionBtn('+ Add new', 'primary', () => openEditor(null)));
-        bodyEl.appendChild(head);
-        const list = el('div', 'space-y-3');
-        bodyEl.appendChild(list);
-        items.forEach(item => list.appendChild(editorBox(item)));
+        const groupKey = GROUP_BY[name];
+        const state = filters[name] ||= { q: '', group: '' };
 
-        function openEditor(item) {
-          const box = editorBox(item);
+        if (name === 'articles') bodyEl.appendChild(coverStoryBox());
+
+        const head = el('div', 'flex flex-wrap items-center justify-between gap-2 mb-3');
+        head.appendChild(el('p', 'text-ink-600', `${items.length} item${items.length === 1 ? '' : 's'}. Hidden items stay in the sheet but are not shown on the site.`));
+        head.appendChild(actionBtn('+ Add new', 'primary', () => openEditor()));
+        bodyEl.appendChild(head);
+
+        const search = el('input', 'w-full border border-cream-300 rounded-full px-4 py-2 bg-white mb-2');
+        search.type = 'search'; search.placeholder = 'Search this list…'; search.value = state.q;
+        bodyEl.appendChild(search);
+
+        const chipHost = el('div');
+        bodyEl.appendChild(chipHost);
+        const list = el('div', 'space-y-2');
+        bodyEl.appendChild(list);
+        const empty = el('p', 'text-ink-600 text-center py-6 hidden', 'Nothing matches.');
+        bodyEl.appendChild(empty);
+
+        const rows = items.map(item => ({ item, node: editorBox(item) }));
+        rows.forEach(r => list.appendChild(r.node));
+
+        function apply() {
+          let shown = 0;
+          rows.forEach(({ item, node }) => {
+            const hay = Object.values(item).join(' ').toLowerCase();
+            const ok = (!state.q || hay.includes(state.q.toLowerCase())) && (!state.group || String(item[groupKey] || '(none)') === state.group);
+            node.classList.toggle('hidden', !ok);
+            if (ok) shown++;
+          });
+          empty.classList.toggle('hidden', shown > 0 || !rows.length);
+        }
+        function drawChips() {
+          chipHost.replaceChildren();
+          if (!groupKey) return;
+          const counts = {};
+          items.forEach(i => { const g = String(i[groupKey] || '(none)'); counts[g] = (counts[g] || 0) + 1; });
+          const keys = Object.keys(counts);
+          if (keys.length < 2) return;
+          chipHost.appendChild(chipBar([['', `All (${items.length})`], ...keys.map(g => [g, `${g} (${counts[g]})`])], key => { state.group = key; drawChips(); apply(); }, state.group));
+        }
+        search.addEventListener('input', () => { state.q = search.value; apply(); });
+        drawChips();
+        apply();
+
+        function openEditor() {
+          const box = editorBox(null);
           list.prepend(box);
-          box.querySelector('summary')?.click();
+          box.open = true;
           box.scrollIntoView({ block: 'center' });
         }
 
         function editorBox(item) {
           const isNew = !item;
+          const id = isNew ? '__new__' : item[ID_KEYS[name]];
           const values = {};
-          fields.forEach(k => { values[k] = item ? (item[k] ?? '') : (BOOL.has(k) ? 'TRUE' : (CHOICES[k] ? CHOICES[k][0] : '')); });
+          allFields.forEach(k => { values[k] = item ? (item[k] ?? '') : (BOOL.has(k) ? 'TRUE' : (choicesFor(name, k) ? choicesFor(name, k)[0] : '')); });
           if (isNew && CUSTOM_ID_TABLES.has(name)) values[ID_KEYS[name]] = '';
           const dirty = new Set();
-          const det = el('details', 'bg-white border border-cream-300 rounded-2xl');
-          const sum = el('summary', 'px-4 py-3 cursor-pointer flex items-center justify-between gap-3 font-semibold text-ink-900');
-          sum.appendChild(el('span', 'truncate', isNew ? 'New item' : itemTitle(sec, item)));
+          const summary = [el('span', 'truncate', isNew ? 'New item' : itemTitle(sec, item))];
+          if (item && groupKey && item[groupKey]) summary.push(el('span', 'hidden sm:inline text-ink-400 font-normal truncate ml-auto', item[groupKey]));
           if (item && 'is_live' in item) {
             const live = String(item.is_live).trim().toUpperCase() === 'TRUE';
-            sum.appendChild(el('span', `shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full ${live ? 'bg-emerald-100 text-emerald-800' : 'bg-cream-100 text-ink-600'}`, live ? 'Live' : 'Hidden'));
+            summary.push(pill(live ? 'Live' : 'Hidden', live ? 'bg-emerald-100 text-emerald-800' : 'bg-cream-100 text-ink-600'));
           }
-          det.appendChild(sum);
+          const det = collapsible(`${name}:${id}`, summary);
           const form = el('div', 'px-4 pb-4 grid grid-cols-1 md:grid-cols-2 gap-3 border-t border-cream-200 pt-3');
           const save = actionBtn(isNew ? 'Create' : 'Save', 'primary', async () => {
             const changed = isNew ? { ...values } : Object.fromEntries([...dirty].map(k => [k, values[k]]));
-            const params = isNew ? { table: name, fields: JSON.stringify(changed) } : { table: name, id: item[ID_KEYS[name]], fields: JSON.stringify(changed) };
+            const params = isNew ? { table: name, fields: JSON.stringify(changed) } : { table: name, id, fields: JSON.stringify(changed) };
             await run(() => api(isNew ? 'admin_add_row' : 'admin_save_row', params), isNew ? 'Item created.' : 'Changes saved.');
           });
           save.disabled = !isNew;
-          const shownFields = isNew && CUSTOM_ID_TABLES.has(name) ? [ID_KEYS[name], ...fields] : fields;
-          shownFields.forEach(k => {
-            const f = field(k, values[k], e => { values[k] = e.target.value; dirty.add(k); save.disabled = false; }, false, k === ID_KEYS[name]);
+          const addField = (host, k) => {
+            const f = field(k, values[k], e => { values[k] = e.target.value; dirty.add(k); save.disabled = false; }, false, k === ID_KEYS[name], name);
             if (LONG.has(k)) f.wrap.className += ' md:col-span-2';
-            form.appendChild(f.wrap);
-          });
+            host.appendChild(f.wrap);
+          };
+          (isNew && CUSTOM_ID_TABLES.has(name) ? [ID_KEYS[name], ...primary] : primary).forEach(k => addField(form, k));
+          if (more.length) {
+            const extra = collapsible(`${name}:${id}:more`, [el('span', 'text-ink-600', 'More options')], 'md:col-span-2 border border-cream-200 rounded-xl');
+            const extraBody = el('div', 'px-4 pb-4 pt-3 grid grid-cols-1 md:grid-cols-2 gap-3 border-t border-cream-200');
+            more.forEach(k => addField(extraBody, k));
+            extra.appendChild(extraBody);
+            form.appendChild(extra);
+          }
           const actions = el('div', 'md:col-span-2 flex items-center gap-2');
           actions.appendChild(save);
           if (!isNew) {
             actions.appendChild(actionBtn('Delete', 'danger', async () => {
               if (!confirm('Delete this item from the sheet? This cannot be undone.')) return;
-              await run(() => api('admin_delete_row', { table: name, id: item[ID_KEYS[name]] }), 'Item deleted.');
+              await run(() => api('admin_delete_row', { table: name, id }), 'Item deleted.');
             }));
           } else {
             actions.appendChild(actionBtn('Cancel', 'plain', () => det.remove()));
@@ -3836,23 +3983,28 @@
 
       function renderSubmissions() {
         const subs = data.submissions || [];
-        bodyEl.appendChild(el('p', 'text-ink-600 mb-4', 'Approve to publish a post to the site, move it back to pending to hide it, or delete it. Publishing can take several seconds.'));
+        bodyEl.appendChild(el('p', 'text-ink-600 mb-3', 'Open a submission to read it. Approve to publish it, move it back to pending to hide it, or delete it. Publishing can take several seconds.'));
         if (!subs.length) { bodyEl.appendChild(el('div', 'bg-white border border-dashed border-cream-300 rounded-2xl p-8 text-center text-ink-600', 'No submissions yet.')); return; }
-        const list = el('div', 'space-y-3');
-        subs.forEach(sub => {
-          const status = String(sub.status || 'pending').toLowerCase();
-          const box = el('div', 'bg-white border border-cream-300 rounded-2xl p-4 space-y-2');
-          const top = el('div', 'flex items-start justify-between gap-3');
-          const left = el('div', 'min-w-0');
-          left.appendChild(el('p', 'font-bold text-sm text-ink-900', sub.title || '(untitled)'));
+        const statusOf = s => String(s.status || 'pending').toLowerCase();
+        const counts = {};
+        subs.forEach(s => { counts[statusOf(s)] = (counts[statusOf(s)] || 0) + 1; });
+        const state = filters.submissions ||= { group: counts.pending ? 'pending' : '' };
+        const chipHost = el('div');
+        const list = el('div', 'space-y-2');
+        const empty = el('p', 'text-ink-600 text-center py-6 hidden', 'Nothing in this status.');
+        bodyEl.append(chipHost, list, empty);
+        const colors = { pending: 'bg-amber-100 text-amber-800', approved: 'bg-sky-100 text-sky-800', published: 'bg-emerald-100 text-emerald-800' };
+        const rows = subs.map(sub => {
+          const status = statusOf(sub);
           const when = sub.submitted_at ? new Date(sub.submitted_at) : null;
-          left.appendChild(el('p', 'text-ink-600', [sub.submission_type, sub.submitter_name || 'Anonymous', when && !isNaN(when) ? when.toLocaleString() : ''].filter(Boolean).join(' • ')));
-          top.appendChild(left);
-          const colors = { pending: 'bg-amber-100 text-amber-800', approved: 'bg-sky-100 text-sky-800', published: 'bg-emerald-100 text-emerald-800' };
-          top.appendChild(el('span', `shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full ${colors[status] || 'bg-cream-100 text-ink-600'}`, status));
-          box.appendChild(top);
-          const content = el('p', 'text-ink-800 whitespace-pre-wrap', String(sub.content || '').slice(0, 400) + (String(sub.content || '').length > 400 ? '…' : ''));
-          box.appendChild(content);
+          const det = collapsible(`submissions:${sub.tab}:${sub.id}`, [
+            el('span', 'truncate', sub.title || '(untitled)'),
+            el('span', 'hidden sm:inline text-ink-400 font-normal truncate ml-auto', [sub.submission_type, sub.category].filter(Boolean).join(' • ')),
+            pill(status, colors[status] || 'bg-cream-100 text-ink-600')
+          ]);
+          const box = el('div', 'px-4 pb-4 pt-3 border-t border-cream-200 space-y-2');
+          box.appendChild(el('p', 'text-ink-600', [sub.submitter_name || 'Anonymous', when && !isNaN(when) ? when.toLocaleString() : ''].filter(Boolean).join(' • ')));
+          box.appendChild(el('p', 'text-ink-800 whitespace-pre-wrap', String(sub.content || '')));
           if (sub.links) box.appendChild(el('p', 'text-ink-600 break-all', sub.links));
           const set = (s, msg) => () => run(() => api('admin_set_status', { tab: sub.tab, id: sub.id, status: s }, ['Updating the sheet…', 'Publishing to the site…', 'Almost there…']), msg);
           const actions = el('div', 'flex flex-wrap gap-2 pt-1');
@@ -3860,9 +4012,20 @@
           if (status !== 'pending') actions.appendChild(actionBtn('Back to pending', 'plain', set('pending', 'Moved back to pending.')));
           actions.appendChild(actionBtn('Delete', 'danger', () => { if (confirm('Delete this submission and remove it from the site?')) set('delete', 'Submission deleted.')(); }));
           box.appendChild(actions);
-          list.appendChild(box);
+          det.appendChild(box);
+          list.appendChild(det);
+          return { status, det };
         });
-        bodyEl.appendChild(list);
+        function apply() {
+          let shown = 0;
+          rows.forEach(r => { const ok = !state.group || r.status === state.group; r.det.classList.toggle('hidden', !ok); if (ok) shown++; });
+          empty.classList.toggle('hidden', shown > 0);
+        }
+        function drawChips() {
+          chipHost.replaceChildren(chipBar([['', `All (${subs.length})`], ...Object.keys(counts).map(k => [k, `${label(k)} (${counts[k]})`])], key => { state.group = key; drawChips(); apply(); }, state.group));
+        }
+        drawChips();
+        apply();
       }
 
       async function openConsole() {
