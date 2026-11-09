@@ -174,11 +174,12 @@
         radial-gradient(50rem 40rem at 100% 30%, rgba(15, 23, 42, 0.06), transparent 60%);
       background-attachment: fixed;
     }
+    html, body { overflow-x: clip; max-width: 100%; overscroll-behavior-x: none; }
     @media (min-width: 1024px) { body { padding-left: 3.5rem; } }
     body > header.sheet-region { display: none; }
     body.mini-on { padding-top: 3.5rem; }
 
-    .landing-hero { position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+    .landing-hero { position: relative; overflow-x: clip; overflow-y: visible; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
     .landing-blobs { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
     .hero-search { position: relative; z-index: 5; display: flex; justify-content: center; margin-top: 1.25rem; }
     .hero-search > div { width: 100%; max-width: 36rem; }
@@ -191,7 +192,7 @@
     .landing-blob-b { width: 28rem; height: 28rem; background: #cbd5e1; bottom: -8rem; right: -6rem; }
 
     .stack-wrap { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1.25rem; }
-    .stack-scene { position: relative; flex: 1; max-width: 62rem; height: 22rem; perspective: 1400px; outline: none; touch-action: pan-y; user-select: none; }
+    .stack-scene { position: relative; flex: 1; max-width: 62rem; height: 22rem; perspective: 1400px; outline: none; touch-action: pan-y pinch-zoom; user-select: none; overflow: visible; }
     .stack-scene:focus-visible { box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.5); border-radius: 1.5rem; }
     .stack-card {
       position: absolute; top: 50%; left: 50%; width: 13rem; height: 17rem; margin: -8.5rem 0 0 -6.5rem;
@@ -230,6 +231,7 @@
     #siteRail .rail-item { display: flex; align-items: center; justify-content: center; flex: none; width: 2.6rem; height: 2.6rem; border-radius: 0.8rem; color: #27272a; transition: background .15s ease, transform .15s ease; }
     #siteRail .rail-item:hover, #siteRail .rail-item:focus-visible { background: #fee2e2; transform: scale(1.08); }
     #siteRail .rail-item svg { width: 1.25rem; height: 1.25rem; color: #dc2626; flex: none; }
+    #siteRail .rail-logo { width: 2.2rem; height: 2.2rem; object-fit: contain; }
     #siteRail .rail-item span { display: none; }
     #siteRail .rail-sep { width: 1.6rem; height: 1px; background: #e2e8f0; margin: 0.35rem 0; flex: none; }
     #railTip { position: fixed; z-index: 60; pointer-events: none; background: #09090B; color: #fff; font-size: 0.75rem; font-weight: 700; padding: 0.4rem 0.7rem; border-radius: 0.6rem; white-space: nowrap; box-shadow: 0 8px 20px rgba(0,0,0,.3); opacity: 0; transform: translateX(-6px); transition: opacity .15s ease, transform .15s ease; }
@@ -253,6 +255,15 @@
     #miniSearchHost { flex: 1; display: flex; justify-content: flex-end; }
     #miniSearchHost > div { width: 100%; max-width: 28rem; }
     @media (max-width: 1023px) { #miniBar { left: 0; padding-left: 4rem; } #miniTitle { display: none; } #miniSearchHost { justify-content: stretch; } }
+
+    /* Persistent Contribute button */
+    #contributeFab { position: fixed; top: 0.75rem; right: 0.75rem; z-index: 46; height: 2.75rem; min-width: 2.75rem; display: flex; align-items: center; justify-content: center; gap: 0; padding: 0 0.7rem; border-radius: 9999px; background: #dc2626; color: #fff; font-weight: 800; font-size: 0.85rem; white-space: nowrap; overflow: hidden; box-shadow: 0 8px 20px rgba(220,38,38,.4), 0 2px 4px rgba(15,23,42,.2); transition: background .2s ease, box-shadow .2s ease, gap .25s ease; }
+    #contributeFab svg { width: 1.3rem; height: 1.3rem; flex: none; }
+    #contributeFab .fab-label { max-width: 0; opacity: 0; overflow: hidden; transition: max-width .3s ease, opacity .2s ease; }
+    #contributeFab:hover, #contributeFab:focus-visible { background: #b91c1c; gap: 0.45rem; box-shadow: 0 12px 28px rgba(220,38,38,.5), 0 2px 4px rgba(15,23,42,.2); }
+    #contributeFab:hover .fab-label, #contributeFab:focus-visible .fab-label { max-width: 6rem; opacity: 1; }
+    #miniBar { padding-right: 4.5rem; }
+    @media (prefers-reduced-motion: reduce) { #contributeFab, #contributeFab .fab-label { transition: none; } }
 
     /* Popups */
     #sitePopup { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; padding: 1rem; background: rgba(9,9,11,.55); backdrop-filter: blur(6px); }
@@ -323,12 +334,12 @@
             </div>
 
             <div class="py-1 space-y-0.5">
-              <button class="menu-nav-item w-full text-left px-3 py-2.5 rounded-xl hover:bg-cream-100 flex items-start gap-3 transition" data-view="view-directory">
+              <button class="menu-nav-item w-full text-left px-3 py-2.5 rounded-xl hover:bg-cream-100 flex items-start gap-3 transition" data-view="view-directory" data-tip="menu_directory_tip" title="The Heart of MMS">
                 <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center shrink-0 mt-0.5">
                   <i data-lucide="folder-heart" class="w-4 h-4"></i>
                 </div>
                 <div>
-                  <div data-text="menu_directory_title" class="text-xs font-bold text-ink-900">Heart of MMS Directory</div>
+                  <div data-text="menu_directory_title" class="text-xs font-bold text-ink-900">Directory</div>
                   <div data-text="menu_directory_desc" class="text-[11px] text-ink-600">Clean, searchable building links &amp; forms</div>
                 </div>
               </button>
@@ -358,7 +369,7 @@
                   <i data-lucide="users" class="w-4 h-4"></i>
                 </div>
                 <div>
-                  <div data-text="menu_studio_title" class="text-xs font-bold text-ink-900">The Peer Lesson Studio</div>
+                  <div data-text="menu_studio_title" class="text-xs font-bold text-ink-900">Peer Feedback Forum</div>
                   <div data-text="menu_studio_desc" class="text-[11px] text-ink-600">Warm &amp; Cool feedback lab for lesson drafts</div>
                 </div>
               </button>
@@ -383,7 +394,7 @@
               </button>
               <button class="topleft-editorial-item text-left px-2.5 py-1.5 rounded-lg hover:bg-cream-100 text-[11px] font-semibold text-ink-800 flex items-center gap-1.5" data-category="Tech & AI">
                 <span class="w-2 h-2 rounded-full bg-red-600 shrink-0"></span>
-                <span data-text="menu_topic_tech" class="truncate">Tech &amp; AI</span>
+                <span data-text="menu_topic_tech" class="truncate">Tech</span>
               </button>
             </div>
 
@@ -462,7 +473,7 @@
           </button>
           <button class="topic-pill font-semibold text-ink-600 hover:text-ink-900 hover:bg-cream-200 px-3.5 py-1.5 rounded-full transition whitespace-nowrap flex items-center gap-1.5" data-category="Tech & AI">
             <span class="w-2 h-2 rounded-full bg-red-600"></span>
-            <span data-text="topbar_tech">Tech &amp; AI Tips</span>
+            <span data-text="topbar_tech">Tech Talk</span>
           </button>
           <button class="topic-pill font-semibold text-ink-600 hover:text-ink-900 hover:bg-cream-200 px-3.5 py-1.5 rounded-full transition whitespace-nowrap flex items-center gap-1.5" data-category="saved">
             <i data-lucide="bookmark" class="w-3.5 h-3.5 text-red-600"></i>
@@ -729,7 +740,7 @@
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <i data-lucide="coffee" class="w-4 h-4 text-red-600"></i>
-                <h3 class="font-editorial font-bold text-base text-ink-900"><button type="button" id="loungeHeadingLink" class="hover:text-red-600 hover:underline text-left" title="Open the Staff Lounge"><span id="loungeHeadingText">Overheard at MMS</span></button></h3>
+                <h3 class="font-editorial font-bold text-base text-ink-900"><button type="button" id="loungeHeadingLink" class="hover:text-red-600 hover:underline text-left" title="Open the Staff Lounge"><span id="loungeHeadingText">Shout Outs</span></button></h3>
               </div>
               <span id="loungeBadgeText" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-50 text-rose-700">Staff Lounge</span>
             </div>
@@ -760,12 +771,12 @@
             <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
             <span data-text="back_to_feed_label">Back to Editorial Feed</span>
           </button>
-          <h1 id="directoryHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">Heart of MMS: Clean Building Directory</h1>
+          <h1 id="directoryHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">The Heart of MMS</h1>
           <p id="directorySubtitleText" class="text-sm text-ink-600">Streamlined, color-coded access to internal USD 266 forms, maps, and operational links.</p>
         </div>
 
         <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
-          <label class="sr-only" for="directorySearch">Search Heart of MMS resources</label>
+          <label class="sr-only" for="directorySearch">Search The Heart of MMS</label>
           <input id="directorySearch" type="search" placeholder="Search resources..." class="w-full sm:w-64 rounded-xl border border-cream-300 bg-white px-3 py-2 text-sm text-ink-900 placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-red-500" />
           <label class="sr-only" for="directoryCategory">Filter by category</label>
           <select id="directoryCategory" class="w-full sm:w-56 rounded-xl border border-cream-300 bg-white px-3 py-2 text-sm font-semibold text-ink-800 focus:outline-none focus:ring-2 focus:ring-red-500">
@@ -890,7 +901,7 @@
           <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
           <span data-text="back_to_feed_label">Back to Editorial Feed</span>
         </button>
-        <h1 id="studioHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">The Peer Lesson Studio</h1>
+        <h1 id="studioHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">Peer Feedback Forum</h1>
         <p id="studioSubtitleText" class="text-sm text-ink-600">Share a draft lab, CER prompt, or activity for low-stakes Warm &amp; Cool feedback from colleagues.</p>
       </div>
 
@@ -1262,7 +1273,7 @@
   </div>
 
   <!-- FOOTER -->
-  <footer data-sheet-region class="sheet-region bg-white border-t border-cream-300 py-8 mt-16 text-xs text-ink-600">
+  <footer data-sheet-region class="sheet-region relative bg-white border-t border-cream-300 py-8 mt-16 text-xs text-ink-600">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-2.5">
         <span id="footerTitleText" class="font-editorial font-bold text-ink-900 text-sm">Eagle Deep Dive Daily</span>
@@ -1275,7 +1286,47 @@
         <span>GitHub Pages Zero-Build Edition</span>
       </div>
     </div>
+  <button type="button" id="bugReportBtn" aria-label="Report a bug" title="Report a bug" class="absolute right-4 bottom-3 p-2 rounded-full text-ink-400 hover:text-ink-900 hover:bg-cream-300 transition-colors">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 2 1.88 1.88M14.12 3.88 16 2M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6M12 20v-9M6.53 9C4.6 8.8 3 7.1 3 5M6 13H2M3 21c0-2.1 1.7-3.9 3.8-4M20.97 5c0 2.1-1.6 3.8-3.5 4M22 13h-4M17.2 17c2.1.1 3.8 1.9 3.8 4"/></svg>
+  </button>
   </footer>
+
+  <!-- REPORT A BUG DIALOG -->
+  <div id="bugReportModal" class="hidden fixed inset-0 z-[90] bg-black/50 items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="bugReportTitle">
+    <form id="bugReportForm" class="bg-white rounded-lg shadow-xl w-full max-w-md p-5 text-sm text-ink-900">
+      <h2 id="bugReportTitle" class="font-editorial font-bold text-lg mb-3">Report a Bug</h2>
+      <label for="bugArea" class="block font-semibold mb-1">Where did you find it?</label>
+      <select id="bugArea" class="w-full border border-cream-300 rounded px-2 py-1.5 mb-3">
+        <option>Home Page</option><option>Category Tabs</option><option>Search</option><option>Articles</option><option>Flight Wire</option><option>Lounge</option><option>Submissions</option><option>Images</option><option>Mobile Layout</option><option>Other</option>
+      </select>
+      <label for="bugText" class="block font-semibold mb-1">What went wrong?</label>
+      <textarea id="bugText" rows="6" required class="w-full border border-cream-300 rounded px-2 py-1.5" placeholder="Please explain the issue you found. Adding your name is optional, but it helps if I have follow-up questions."></textarea>
+      <div class="flex justify-end gap-2 mt-4">
+        <button type="button" id="bugCancel" class="px-3 py-1.5 rounded border border-cream-300">Cancel</button>
+        <button type="submit" class="px-3 py-1.5 rounded bg-ink-900 text-white font-semibold">Send Email</button>
+      </div>
+    </form>
+  </div>
+  <script>
+    (() => {
+      const modal = document.getElementById('bugReportModal');
+      const close = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); };
+      document.getElementById('bugReportBtn').addEventListener('click', () => {
+        modal.classList.remove('hidden'); modal.classList.add('flex');
+        document.getElementById('bugText').focus();
+      });
+      document.getElementById('bugCancel').addEventListener('click', close);
+      modal.addEventListener('click', e => { if (e.target === modal) close(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+      document.getElementById('bugReportForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const subject = document.getElementById('bugArea').value + ' bug';
+        const body = document.getElementById('bugText').value;
+        window.location.href = 'mailto:anhogan@usd266.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+        close();
+      });
+    })();
+  </script>
 
   <!-- APPLICATION LOGIC -->
   <script>
@@ -1393,9 +1444,9 @@
           items: []
         },
         "Tech & AI": {
-          heading: "Tech & AI Quick Wins: Practical Classroom Tools",
+          heading: "Tech Talk Quick Wins: Practical Classroom Tools",
           subtitle: "Zero-fluff workflows for NotebookLM, OrbitNote PDF markup, and classroom video creation",
-          badge: "Tech & AI Focus",
+          badge: "Tech Talk Focus",
           icon: "cpu",
           accentClass: "bg-red-600 text-white",
           items: []
@@ -1409,7 +1460,7 @@
           items: []
         },
         "view-directory": {
-          heading: "Directory Quick Wins: Fastest Building Shortcuts",
+          heading: "The Heart of MMS Quick Wins: Fastest Building Shortcuts",
           subtitle: "Time-saving tips for navigating USD 266 forms, referrals, and daily operations",
           badge: "Heart of MMS Shortcuts",
           icon: "folder-heart",
@@ -1419,23 +1470,23 @@
         "view-bulletin": {
           heading: "School Updates Quick Wins: Never Dig Through Gmail Again",
           subtitle: "How to get the most out of the automated Smore administrative newsletter archive",
-          badge: "Admin Wire Tips",
+          badge: "School Updates Tips",
           icon: "newspaper",
           accentClass: "bg-red-600 text-white",
           items: []
         },
         "view-studio": {
-          heading: "Lesson Studio Quick Wins: High-Trust Peer Feedback",
+          heading: "Peer Feedback Forum Quick Wins: High-Trust Peer Feedback",
           subtitle: "Norms for fast, supportive Warm & Cool lesson tuning with MMS colleagues",
-          badge: "Peer Studio Norms",
+          badge: "Peer Feedback Norms",
           icon: "users",
           accentClass: "bg-red-600 text-white",
           items: []
         },
         "view-academy": {
-          heading: "EdTech, AI & Video Lab Quick Wins: Save 45 Minutes This Prep Hour",
-          subtitle: "Best practices for NotebookLM in Google Classroom, OrbitNote PDFs, and classroom video creation",
-          badge: "Tech, AI & Video Lab",
+          heading: "Video Lab Quick Wins: Learn It Fast With a Short Tutorial",
+          subtitle: "Short tutorial videos for NotebookLM in Google Classroom, OrbitNote PDFs, and classroom video creation",
+          badge: "Tutorial Library",
           icon: "graduation-cap",
           accentClass: "bg-red-600 text-white",
           items: []
@@ -1520,7 +1571,7 @@
 
       APP_DATA.resources.forEach(r => {
         items.push({
-          type: 'Directory Link',
+          type: 'Heart of MMS',
           id: r.id,
           title: r.title,
           category: r.category,
@@ -1532,7 +1583,7 @@
 
       (APP_DATA.techTools || []).forEach(t => {
         items.push({
-          type: 'EdTech Tool',
+          type: 'Video Lab',
           id: t.id,
           title: t.title,
           category: t.badge || 'Tech & AI',
@@ -1608,9 +1659,11 @@
         return;
       }
 
-      headingEl.textContent = config.heading;
-      subtitleEl.textContent = config.subtitle;
-      pillEl.textContent = config.badge;
+      const tipSlug = { 'Student Engagement': 'engagement', 'Classroom Management': 'management', 'Teacher Support': 'support', 'Tech & AI': 'tech' }[sectionKey] || sectionKey;
+      const tipText = (part, fallback) => String(siteSettings[`quicktips_${tipSlug}_${part}`] ?? '').trim() || fallback;
+      headingEl.textContent = tipText('heading', config.heading);
+      subtitleEl.textContent = tipText('subtitle', config.subtitle);
+      pillEl.textContent = tipText('badge', config.badge);
       iconBoxEl.className = `w-9 h-9 rounded-xl ${config.accentClass} flex items-center justify-center font-bold shrink-0 shadow-xs`;
       iconBoxEl.innerHTML = `<i data-lucide="${config.icon}" class="w-4 h-4"></i>`;
 
@@ -1756,7 +1809,7 @@
       } else if (category === 'Tech & AI') {
         hero?.classList.add('hidden');
         techBanner?.classList.remove('hidden');
-        heading.textContent = 'Tech & AI Playbooks';
+        heading.textContent = String(siteSettings.topic_tech_heading ?? '').trim() || 'Tech Talk';
       } else {
         hero?.classList.add('hidden');
         techBanner?.classList.add('hidden');
@@ -2430,8 +2483,14 @@
         if (val) node.textContent = val;
       });
 
+      document.querySelectorAll('[data-tip]').forEach(node => {
+        const val = String(siteSettings[node.dataset.tip] ?? '').trim();
+        if (val) node.title = val;
+      });
+
       renderHeroFeature();
       renderHeroFeature();
+      window.refreshLanding?.();
     }
 
     // --- LIVE SMORE BULLETIN FEED (GOOGLE APPS SCRIPT) ---
@@ -2675,7 +2734,7 @@
       image.classList.toggle('hidden', !issue.cover_image_url);
       if (issue.cover_image_url) setArticleImage(image, issue.cover_image_url);
       else image.removeAttribute('src');
-      document.getElementById('readerCategoryBadge').textContent = 'School Updates';
+      document.getElementById('readerCategoryBadge').textContent = String(siteSettings.reader_updates_badge ?? '').trim() || 'School Updates';
       document.getElementById('readerAuthor').textContent = 'Smore Newsletter';
       document.getElementById('readerReadTime').textContent = issue.article_body_text
         ? `${Math.max(1, Math.ceil(issue.article_body_text.split(/\s+/).length / 200))} min read` : '';
@@ -3724,15 +3783,15 @@
         { id: 'settings', label: 'Site Text', hint: 'Headings, badges, subtitles, footer', icon: 'type' },
         { id: 'articles', label: 'Articles', hint: 'Published articles & playbooks', icon: 'newspaper', title: 'title', table: true },
         { id: 'quick_wins', label: 'Quick Wins', hint: 'Short classroom tips', icon: 'zap', title: 'title', table: true },
-        { id: 'directory', label: 'Directory Links', hint: 'Forms, maps, and operational links', icon: 'link', title: 'title', table: true },
-        { id: 'quotes', label: 'Lounge Posts', hint: 'Overheard at MMS posts', icon: 'message-square', title: 'quote', table: true },
-        { id: 'studio', label: 'Peer Lesson Studio', hint: 'Lesson drafts for feedback', icon: 'users', title: 'title', table: true },
-        { id: 'tech_tools', label: 'AI & Tech Tools', hint: 'EdTech Lab tool cards', icon: 'cpu', title: 'title', table: true },
+        { id: 'directory', label: 'Heart of MMS Links', hint: 'Forms, maps, and operational links', icon: 'link', title: 'title', table: true },
+        { id: 'quotes', label: 'Lounge Posts', hint: 'Shout Outs and staff lounge posts', icon: 'message-square', title: 'quote', table: true },
+        { id: 'studio', label: 'Peer Feedback Forum', hint: 'Lesson drafts for feedback', icon: 'users', title: 'title', table: true },
+        { id: 'tech_tools', label: 'AI & Tech Tools', hint: 'Tool cards on the Video Lab page', icon: 'cpu', title: 'title', table: true },
         { id: 'image_library', label: 'Image Library', hint: 'Approved cover images', icon: 'image', title: 'label', table: true },
-        { id: 'page_sections', label: 'Tech Page: Sections', hint: 'Section headings, intros and order', icon: 'layout-list', title: 'title', table: true },
-        { id: 'content_blocks', label: 'Tech Page: Content Blocks', hint: 'Text, lists, callouts and prompts', icon: 'text', title: 'title', table: true },
-        { id: 'videos', label: 'Tech Page: Videos', hint: 'Walkthrough videos', icon: 'video', title: 'title', table: true },
-        { id: 'video_chapters', label: 'Tech Page: Video Chapters', hint: 'Timestamps inside a video', icon: 'list-video', title: 'title', table: true }
+        { id: 'page_sections', label: 'Video Lab: Sections', hint: 'Section headings, intros and order', icon: 'layout-list', title: 'title', table: true },
+        { id: 'content_blocks', label: 'Video Lab: Content Blocks', hint: 'Text, lists, callouts and prompts', icon: 'text', title: 'title', table: true },
+        { id: 'videos', label: 'Video Lab: Videos', hint: 'Walkthrough videos', icon: 'video', title: 'title', table: true },
+        { id: 'video_chapters', label: 'Video Lab: Video Chapters', hint: 'Timestamps inside a video', icon: 'list-video', title: 'title', table: true }
       ];
       const TABLE_FIELDS = {
         articles: ['title', 'category', 'summary', 'article_body_text', 'author', 'published_at', 'cover_image_url', 'is_live', 'takeaway', 'try_tomorrow', 'script', 'read_time', 'featured', 'has_video_demo', 'tags'],
@@ -4019,14 +4078,16 @@
 
       const SETTING_GROUPS = [
         ['Header, Footer & Loading', ['site', 'topbar', 'search', 'footer', 'back', 'loading']],
+        ['Landing Page & Side Toolbar', ['nav', 'landing']],
         ['Menu', ['menu']],
-        ['Home Page & Cover Story', ['hero', 'feed', 'article']],
+        ['Home Page & Cover Story', ['hero', 'feed', 'article', 'topic']],
+        ['Quick Wins Banners', ['quicktips']],
         ['Article Reader', ['reader']],
-        ['Staff Lounge', ['lounge']],
+        ['Staff Lounge & Shout Outs', ['lounge']],
         ['School Updates', ['flight', 'bulletin', 'smore']],
-        ['Heart of MMS Directory', ['directory']],
-        ['Peer Lesson Studio', ['studio']],
-        ['Tech & AI Page', ['academy']],
+        ['The Heart of MMS', ['directory']],
+        ['Peer Feedback Forum', ['studio']],
+        ['Video Lab', ['academy']],
         ['Forms & Pop-ups', ['tip']]
       ];
       const settingGroup = key => {
@@ -4036,36 +4097,42 @@
       };
 
       const GROUP_INFO = {
+        'Landing Page & Side Toolbar': 'Names, hints and hover labels for the landing-page card stack and the icon toolbar, plus the rotating tips.',
         'Header, Footer & Loading': 'Text in the site header, the footer, the search button and the loading screen.',
         'Menu': 'Titles and descriptions inside the slide-out navigation menu.',
         'Home Page & Cover Story': 'The cover story card, the article feed heading and the article search page.',
         'Article Reader': 'Labels shown while reading a single article.',
-        'Staff Lounge': 'The Staff Lounge preview on the home page, the Lounge page and its post pop-up.',
-        'School Updates': 'The school updates page, its tabs and section headings.',
-        'Heart of MMS Directory': 'The building directory page.',
-        'Peer Lesson Studio': 'The Peer Lesson Studio page and its submission form.',
-        'Tech & AI Page': 'The EdTech, AI & Video Lab page and its menu entry.',
+        'Staff Lounge & Shout Outs': 'The Shout Outs widget, the Staff Lounge page and its post pop-up.',
+        'Quick Wins Banners': 'The heading, subtitle and badge on the Quick Wins banner for each topic and page.',
+        'School Updates': 'The School Updates page, its tabs and section headings.',
+        'The Heart of MMS': 'The Heart of MMS directory page.',
+        'Peer Feedback Forum': 'The Peer Feedback Forum page and its submission form.',
+        'Video Lab': 'The Video Lab tutorial library page and its menu entry.',
         'Forms & Pop-ups': 'The Share a Tip pop-up.',
         'Other Settings': 'Settings that do not belong to a specific page.'
       };
       const SETTING_AREA = {
         site: 'the site header', topbar: 'the category tabs under the header', search: 'the header search', footer: 'the footer',
         back: 'article and page back links', loading: 'the loading screen', menu: 'the navigation menu', hero: 'the cover story card',
-        feed: 'the home page feed', article: 'the article search and reader', reader: 'the article reader', lounge: 'the Staff Lounge',
-        flight: 'the School Updates page', bulletin: 'the School Updates card in the menu or home page', smore: 'the Smore archive',
-        directory: 'the Directory page', studio: 'the Peer Lesson Studio', academy: 'the Tech & AI page', tip: 'the Share a Tip pop-up',
+        feed: 'the home page feed', article: 'the article search and reader', reader: 'the article reader', lounge: 'the Staff Lounge and Shout Outs',
+        flight: 'the School Updates page', bulletin: 'the School Updates page', smore: 'the Smore archive', nav: 'the landing page cards and side toolbar', landing: 'the landing page', quicktips: 'the Quick Wins banner', topic: 'a topic page',
+        directory: 'the Heart of MMS page', studio: 'the Peer Feedback Forum', academy: 'the Video Lab page', tip: 'the Share a Tip pop-up',
         page: 'pages with no content'
       };
       const SETTING_KIND = [
         ['heading', 'The heading'], ['title', 'The title'], ['subtitle', 'The subtitle under the heading'], ['desc', 'The short description'],
         ['badge', 'The small badge label'], ['button', 'The button text'], ['label', 'The label'], ['note', 'The small note'],
-        ['intro', 'The intro text'], ['message', 'The message'], ['tagline', 'The tagline'], ['tab', 'The tab name'], ['filter', 'The filter button']
+        ['hint', 'The small hint under the name'], ['tip', 'The hover label'], ['intro', 'The intro text'], ['message', 'The message'], ['tagline', 'The tagline'], ['tab', 'The tab name'], ['filter', 'The filter button']
       ];
       const SETTING_NOTES = {
         hero_article_id: 'Which article is the cover story. Easier to change from the Articles page.',
         loading_messages: 'Messages that rotate on the loading screen, one per line. Visitors see changes on their next visit.',
         smore_source_url: 'The Smore newsletter link the School Updates archive is built from.',
-        academy_nav_desc: 'The line under the Tech & AI page in the menu.',
+        academy_nav_desc: 'The line under Video Lab in the menu.',
+        landing_tips: 'Tips that rotate under the landing page title, one per line.',
+        topic_tech_heading: 'The heading on the Tech topic page (Tech Talk).',
+        reader_updates_badge: 'The badge shown when reading a Smore newsletter.',
+        menu_directory_tip: 'The hover text on the Directory menu item (The Heart of MMS).',
         page_empty_message: 'Shown on a page that has no live content yet.',
         reader_video_note: 'A note shown next to an article’s companion video.',
         menu_settings: 'The Settings entry at the bottom of the menu.',
@@ -4369,6 +4436,7 @@
   <div id="railBackdrop"></div>
   <nav id="siteRail" aria-label="Site menu"></nav>
   <div id="railTip" role="presentation"></div>
+  <button type="button" id="contributeFab" aria-label="Contribute"><i data-lucide="plus"></i><span class="fab-label">Contribute</span></button>
   <div id="miniBar"><button type="button" id="miniTitle" class="font-editorial font-extrabold text-lg text-ink-900 whitespace-nowrap hover:text-red-600"></button><div id="miniSearchHost"></div></div>
   <button type="button" id="railMobileBtn" aria-label="Open site menu" aria-controls="siteRail"><i data-lucide="menu" class="w-5 h-5"></i></button>
   <div id="sitePopup" role="dialog" aria-modal="true" aria-label="Site tool">
@@ -4380,26 +4448,34 @@
 (function () {
   const $ = id => document.getElementById(id);
   const click = sel => document.querySelector(sel)?.click();
-  const academyTitle = () => $('academyNavTitleText')?.textContent.trim() || 'Academy';
+  const academyTitle = () => $('academyNavTitleText')?.textContent.trim() || 'Video Lab';
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  const S = (key, fallback) => {
+    const v = typeof siteSettings === 'object' && siteSettings ? String(siteSettings[key] ?? '').trim() : '';
+    return v || fallback;
+  };
+
   // Each entry proxies a click to the site's existing control so current behavior is preserved.
+  // Text comes from the nav_<key>_label / _hint / _tip settings so the admin console can edit it.
   const ITEMS = [
-    { label: 'Find an Article', hint: 'Search by keyword', icon: 'search', popup: 'finderWidget' },
-    { label: 'Overheard at MMS', hint: 'Quotes & classroom wins', icon: 'coffee', popup: 'loungeWidget' },
-    { label: 'Directory', hint: 'Heart of MMS', icon: 'map-pin', run: () => click('.menu-nav-item[data-view="view-directory"]') },
-    { label: 'School Updates', hint: 'School updates', icon: 'newspaper', run: () => click('.menu-nav-item[data-view="view-bulletin"]') },
-    { label: () => academyTitle(), hint: 'Learn & grow', icon: 'graduation-cap', run: () => click('.menu-nav-item[data-view="view-academy"]') },
-    { label: 'Peer Lesson Studio', hint: 'Warm & cool feedback', icon: 'users', run: () => click('.menu-nav-item[data-view="view-studio"]') },
-    { label: 'Staff Lounge', hint: 'Hang out & share', icon: 'message-square', run: () => window.switchView('view-lounge') },
-    { label: 'Student Engagement', hint: 'Articles', icon: 'sparkles', run: () => click('.topleft-editorial-item[data-category="Student Engagement"]') },
-    { label: 'Classroom Management', hint: 'Articles', icon: 'layout-dashboard', run: () => click('.topleft-editorial-item[data-category="Classroom Management"]') },
-    { label: 'Teacher Support', hint: 'Articles', icon: 'heart-handshake', run: () => click('.topleft-editorial-item[data-category="Teacher Support"]') },
-    { label: 'Tech & AI', hint: 'Articles', icon: 'cpu', run: () => click('.topleft-editorial-item[data-category="Tech & AI"]') },
-    { label: 'Saved Reading List', hint: 'Your bookmarks', icon: 'bookmark', run: () => click('.topic-pill[data-category="saved"]') },
-    { label: 'Share a Tip', hint: 'Submit for review', icon: 'lightbulb', run: () => click('#openShareTipModalBtn') }
+    { key: 'nav_find', label: 'Find an Article', hint: 'Search by keyword', icon: 'search', popup: 'finderWidget' },
+    { key: 'nav_shoutouts', label: 'Shout Outs', hint: 'Quotes & classroom wins', icon: 'coffee', popup: 'loungeWidget' },
+    { key: 'nav_directory', label: 'Directory', hint: 'The Heart of MMS', tip: 'The Heart of MMS', icon: 'map-pin', run: () => click('.menu-nav-item[data-view="view-directory"]') },
+    { key: 'nav_updates', label: 'School Updates', hint: 'News, social & newsletters', icon: 'newspaper', run: () => click('.menu-nav-item[data-view="view-bulletin"]') },
+    { key: 'nav_academy', label: () => academyTitle(), hint: 'Tutorial video library', icon: 'graduation-cap', run: () => click('.menu-nav-item[data-view="view-academy"]') },
+    { key: 'nav_studio', label: 'Peer Feedback Forum', hint: 'Warm & cool feedback', icon: 'users', run: () => click('.menu-nav-item[data-view="view-studio"]') },
+    { key: 'nav_lounge', label: 'Staff Lounge', hint: 'Hang out & share', icon: 'message-square', run: () => window.switchView('view-lounge') },
+    { key: 'nav_engagement', label: 'Student Engagement', hint: 'Articles', icon: 'sparkles', run: () => click('.topleft-editorial-item[data-category="Student Engagement"]') },
+    { key: 'nav_management', label: 'Classroom Management', hint: 'Articles', icon: 'layout-dashboard', run: () => click('.topleft-editorial-item[data-category="Classroom Management"]') },
+    { key: 'nav_support', label: 'Teacher Support', hint: 'Articles', icon: 'heart-handshake', run: () => click('.topleft-editorial-item[data-category="Teacher Support"]') },
+    { key: 'nav_tech', label: 'Tech', hint: 'Tech Talk articles', icon: 'cpu', run: () => click('.topleft-editorial-item[data-category="Tech & AI"]') },
+    { key: 'nav_saved', label: 'Saved Reading List', hint: 'Your bookmarks', icon: 'bookmark', run: () => click('.topic-pill[data-category="saved"]') },
+    { key: 'nav_share_tip', label: 'Share a Tip', hint: 'Submit for review', icon: 'lightbulb', run: () => click('#openShareTipModalBtn') }
   ];
-  const labelOf = it => typeof it.label === 'function' ? it.label() : it.label;
+  const labelOf = it => S(it.key + '_label', typeof it.label === 'function' ? it.label() : it.label);
+  const hintOf = it => S(it.key + '_hint', it.hint || '');
+  const tipOf = it => S(it.key + '_tip', it.tip || labelOf(it));
 
   // ---- Popups: move the existing widgets in and back out so their listeners and IDs are untouched ----
   const popup = $('sitePopup'), popupBody = $('sitePopupBody'), store = $('popupWidgetStore');
@@ -4436,7 +4512,7 @@
     b.type = 'button';
     b.className = 'stack-card';
     b.innerHTML = '<span class="stack-icon"><i data-lucide="' + it.icon + '"></i></span><span class="stack-title"></span><span class="stack-hint"></span>';
-    b.querySelector('.stack-hint').textContent = it.hint;
+    b.querySelector('.stack-hint').textContent = hintOf(it);
     b.addEventListener('click', () => {
       if (swiped) return;
       if (i === active) activate(it); else go(offset(i));
@@ -4451,6 +4527,7 @@
     cards.forEach((c, i) => {
       const d = offset(i), a = Math.abs(d);
       c.querySelector('.stack-title').textContent = labelOf(ITEMS[i]);
+      c.querySelector('.stack-hint').textContent = hintOf(ITEMS[i]);
       c.dataset.hidden = a > 2 ? 'true' : 'false';
       c.classList.toggle('is-active', d === 0);
       c.tabIndex = d === 0 ? 0 : -1;
@@ -4491,12 +4568,12 @@
 
   // ---- Icon toolbar (desktop: always visible, floating labels; mobile: drawer) ----
   const rail = $('siteRail'), tip = $('railTip'), backdrop = $('railBackdrop');
-  const homeItem = { label: 'Home', icon: 'home', run: () => click('.topleft-editorial-item[data-category="all"]') };
-  const searchItem = { label: 'Search', icon: 'search', run: () => {
+  const homeItem = { key: 'nav_home', label: 'Home', icon: 'home', logo: 'eagle-logo.svg', run: () => click('.topleft-editorial-item[data-category="all"]') };
+  const searchItem = { key: 'nav_search', label: 'Search', icon: 'search', run: () => {
     if (scrollY > 0) scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
     setTimeout(() => $('globalSearchInput')?.focus(), 150);
   } };
-  const settingsItem = { label: 'Settings', icon: 'settings', run: () => click('#openSettingsModalBtn') };
+  const settingsItem = { key: 'nav_settings', label: 'Settings', icon: 'settings', run: () => click('#openSettingsModalBtn') };
   const railEntries = [homeItem, searchItem, 'sep', ...ITEMS, 'sep', settingsItem];
   const railButtons = [];
   railEntries.forEach(it => {
@@ -4504,11 +4581,11 @@
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'rail-item';
-    b.innerHTML = '<i data-lucide="' + it.icon + '"></i><span></span>';
+    b.innerHTML = (it.logo ? '<img src="' + it.logo + '" alt="" class="rail-logo">' : '<i data-lucide="' + it.icon + '"></i>') + '<span></span>';
     b.addEventListener('click', () => { tip.classList.remove('show'); if (it.run && !it.popup) { closeRail(); it.run(); } else activate(it); });
     const show = () => {
       if (innerWidth < 1024) return;
-      tip.textContent = labelOf(it);
+      tip.textContent = tipOf(it);
       const r = b.getBoundingClientRect();
       tip.style.left = (r.right + 10) + 'px';
       tip.style.top = (r.top + r.height / 2 - tip.offsetHeight / 2) + 'px';
@@ -4530,6 +4607,8 @@
   $('railMobileBtn').addEventListener('click', () => rail.classList.contains('open') ? closeRail() : openRail());
   backdrop.addEventListener('click', closeRail);
 
+  $('contributeFab').addEventListener('click', () => { closeRail(); click('#openShareTipModalBtn'); });
+
   // ---- Title, rotating tips, and search placement ----
   const siteTitle = $('siteTitleText');
   const syncTitle = () => {
@@ -4541,19 +4620,24 @@
   if (siteTitle) new MutationObserver(syncTitle).observe(siteTitle, { childList: true, characterData: true, subtree: true });
   $('miniTitle').addEventListener('click', () => homeItem.run());
 
-  const TIPS = [
+  const DEFAULT_TIPS = [
     'What do you want to explore?',
     'Swipe left or right to rotate through the stack.',
-    'You can search for posted articles, school updates, or the Heart of MMS.',
+    'You can search for posted articles, school updates, or The Heart of MMS.',
     'Save any article by clicking the "save to reading list" icon.'
   ];
+  const tipList = () => {
+    const custom = S('landing_tips', '').split(/\r?\n/).map(t => t.trim()).filter(Boolean);
+    return custom.length ? custom : DEFAULT_TIPS;
+  };
   const sub = $('landingSubtitle');
   let tipIndex = 0;
   setInterval(() => {
     sub.classList.add('fading');
     setTimeout(() => {
-      tipIndex = (tipIndex + 1) % TIPS.length;
-      sub.textContent = TIPS[tipIndex];
+      const tips = tipList();
+      tipIndex = (tipIndex + 1) % tips.length;
+      sub.textContent = tips[tipIndex];
       sub.classList.remove('fading');
     }, reduceMotion ? 0 : 800);
   }, 5500);
@@ -4613,6 +4697,7 @@
   placeSearch(true);
   layout();
   refreshRailLabels();
+  window.refreshLanding = () => { layout(); refreshRailLabels(); const tips = tipList(); if (!tips.includes(sub.textContent)) { tipIndex = 0; sub.textContent = tips[0]; } };
   new MutationObserver(() => { layout(); refreshRailLabels(); }).observe($('academyNavTitleText') || document.body, { childList: true, characterData: true, subtree: true });
   if (window.lucide) lucide.createIcons();
 })();
