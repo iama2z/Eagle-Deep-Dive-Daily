@@ -3851,6 +3851,52 @@
         return hit ? hit[0] : 'Other Settings';
       };
 
+      const GROUP_INFO = {
+        'Header, Footer & Loading': 'Text in the site header, the footer, the search button and the loading screen.',
+        'Menu': 'Titles and descriptions inside the slide-out navigation menu.',
+        'Home Page & Cover Story': 'The cover story card, the article feed heading and the article search page.',
+        'Article Reader': 'Labels shown while reading a single article.',
+        'Staff Lounge': 'The Staff Lounge preview on the home page, the Lounge page and its post pop-up.',
+        'Flight Wire': 'The school updates page, its tabs and section headings.',
+        'Heart of MMS Directory': 'The building directory page.',
+        'Peer Lesson Studio': 'The Peer Lesson Studio page and its submission form.',
+        'Tech & AI Page': 'The EdTech, AI & Video Lab page and its menu entry.',
+        'Forms & Pop-ups': 'The Share a Tip pop-up.',
+        'Other Settings': 'Settings that do not belong to a specific page.'
+      };
+      const SETTING_AREA = {
+        site: 'the site header', topbar: 'the category tabs under the header', search: 'the header search', footer: 'the footer',
+        back: 'article and page back links', loading: 'the loading screen', menu: 'the navigation menu', hero: 'the cover story card',
+        feed: 'the home page feed', article: 'the article search and reader', reader: 'the article reader', lounge: 'the Staff Lounge',
+        flight: 'the Flight Wire page', bulletin: 'the Flight Wire card in the menu or home page', smore: 'the Smore archive',
+        directory: 'the Directory page', studio: 'the Peer Lesson Studio', academy: 'the Tech & AI page', tip: 'the Share a Tip pop-up',
+        page: 'pages with no content'
+      };
+      const SETTING_KIND = [
+        ['heading', 'The heading'], ['title', 'The title'], ['subtitle', 'The subtitle under the heading'], ['desc', 'The short description'],
+        ['badge', 'The small badge label'], ['button', 'The button text'], ['label', 'The label'], ['note', 'The small note'],
+        ['intro', 'The intro text'], ['message', 'The message'], ['tagline', 'The tagline'], ['tab', 'The tab name'], ['filter', 'The filter button']
+      ];
+      const SETTING_NOTES = {
+        hero_article_id: 'Which article is the cover story. Easier to change from the Articles page.',
+        loading_messages: 'Messages that rotate on the loading screen, one per line. Visitors see changes on their next visit.',
+        smore_source_url: 'The Smore newsletter link the Flight Wire archive is built from.',
+        academy_nav_desc: 'The line under the Tech & AI page in the menu.',
+        page_empty_message: 'Shown on a page that has no live content yet.',
+        reader_video_note: 'A note shown next to an article’s companion video.',
+        menu_settings: 'The Settings entry at the bottom of the menu.',
+        menu_share_tip: 'The Share a Tip entry in the menu.'
+      };
+      function settingHint(s) {
+        if (s.description) return s.description;
+        if (SETTING_NOTES[s.key]) return SETTING_NOTES[s.key];
+        const parts = s.key.split('_');
+        const kind = SETTING_KIND.find(([k]) => parts.includes(k));
+        const area = SETTING_AREA[parts[0]];
+        if (kind && area) return `${kind[1]} on ${area}.`;
+        return area ? `Text used on ${area}.` : 'Text shown on the site.';
+      }
+
       function renderSettings() {
         bodyEl.appendChild(el('p', 'text-ink-600 mb-3', 'Choose a page below to jump to its text, or search for a field. Each field saves on its own.'));
         const groups = {};
@@ -3872,10 +3918,12 @@
         names.forEach(g => {
           const det = collapsible(`settings:${g}`, [el('span', '', g), pill(`${groups[g].length} field${groups[g].length === 1 ? '' : 's'}`, 'bg-cream-100 text-ink-600')]);
           det.className += ' scroll-mt-28';
+          det.querySelector('summary').title = GROUP_INFO[g] || '';
           boxes[g] = det;
           const body = el('div', 'px-4 pb-4 pt-3 border-t border-cream-200 grid grid-cols-1 lg:grid-cols-2 gap-4');
           groups[g].forEach(s => {
             const row = el('div', 'space-y-1');
+            row.title = settingHint(s);
             let current = s.value;
             const save = actionBtn('Save', 'primary', async () => {
               const ok = await run(() => api('admin_save_setting', { key: s.key, value: current }), `Saved “${label(s.key)}”.`, SAVE_MESSAGES, false);
@@ -3883,6 +3931,7 @@
             });
             save.disabled = true;
             const f = field(s.key, s.value, e => { current = e.target.value; save.disabled = current === s.value; }, s.value.length > 60 || s.key === 'loading_messages');
+            f.input.title = row.title;
             row.appendChild(f.wrap);
             if (s.description) row.appendChild(el('p', 'text-ink-400 text-[11px]', s.description));
             row.appendChild(save);
