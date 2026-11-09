@@ -20,7 +20,7 @@ const SMORE_RESERVED_PATHS = /^(?:about|account|app|blog|business|careers|contac
 const PUBLISHED_ARTICLE_COLUMNS = [
   'article_id', 'title', 'category', 'summary', 'article_body_text',
   'author', 'published_at', 'cover_image_url', 'is_live',
-  'takeaway', 'try_tomorrow', 'script', 'read_time', 'featured', 'has_video_demo', 'tags'
+  'takeaway', 'try_tomorrow', 'script', 'read_time', 'featured', 'has_video_demo', 'tags', 'links'
 ];
 
 const QUICK_WINS_COLUMNS = [
@@ -959,7 +959,7 @@ function publishApprovedSubmissions() {
           article_body_text: content,
           author: author,
           published_at: now,
-          cover_image_url: r.issue.cover_image_url || '',
+          cover_image_url: hostSubmissionImage_(r.issue.cover_image_url, id),
           is_live: 'TRUE',
           takeaway: content.slice(0, 220),
           try_tomorrow: content,
@@ -967,7 +967,8 @@ function publishApprovedSubmissions() {
           read_time: '2 min read',
           featured: 'FALSE',
           has_video_demo: 'FALSE',
-          tags: category.toLowerCase() + ', staff tip'
+          tags: category.toLowerCase() + ', staff tip',
+          links: links
         });
         appendAuditLog_(ss, 'published_article', tabName, id, title, 'Published to published_articles');
       }
@@ -992,6 +993,29 @@ function publishApprovedSubmissions() {
     SpreadsheetApp.getUi().alert(msg);
   } catch (err) {
     console.log('Published ' + publishedCount + ' approved submission(s).');
+  }
+}
+
+// Copies a submitted image into a public Drive folder so it stays available;
+// falls back to the original URL if it can't be fetched or isn't an image.
+function hostSubmissionImage_(url, id) {
+  url = String(url || '').trim();
+  if (!url || /^https?:\/\/(?:drive\.google\.com|lh3\.googleusercontent\.com)\//i.test(url)) return url;
+  try {
+    const response = UrlFetchApp.fetch(url, { muteHttpExceptions: true, followRedirects: true });
+    const blob = response.getBlob();
+    const type = String(blob.getContentType() || '').toLowerCase();
+    if (response.getResponseCode() !== 200 || !/^image\/(?:png|jpe?g|gif|webp)$/.test(type) || blob.getBytes().length > 8 * 1024 * 1024) {
+      return url;
+    }
+    const folders = DriveApp.getFoldersByName('MMS Submitted Images');
+    const folder = folders.hasNext() ? folders.next() : DriveApp.createFolder('MMS Submitted Images');
+    const file = folder.createFile(blob.setName(String(id).replace(/[^\w-]/g, '') + '.' + type.split('/')[1].replace('jpeg', 'jpg')));
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    return 'https://lh3.googleusercontent.com/d/' + file.getId();
+  } catch (err) {
+    console.log('Image hosting failed for ' + id + ': ' + err);
+    return url;
   }
 }
 
