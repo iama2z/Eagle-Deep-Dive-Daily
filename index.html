@@ -3833,21 +3833,44 @@
         return box;
       }
 
+      const SETTING_GROUPS = [
+        ['Header, Footer & Loading', ['site', 'topbar', 'search', 'footer', 'back', 'loading']],
+        ['Menu', ['menu']],
+        ['Home Page & Cover Story', ['hero', 'feed', 'article']],
+        ['Article Reader', ['reader']],
+        ['Staff Lounge', ['lounge']],
+        ['Flight Wire', ['flight', 'bulletin', 'smore']],
+        ['Heart of MMS Directory', ['directory']],
+        ['Peer Lesson Studio', ['studio']],
+        ['Tech & AI Page', ['academy']],
+        ['Forms & Pop-ups', ['tip']]
+      ];
+      const settingGroup = key => {
+        const prefix = key.split('_')[0];
+        const hit = SETTING_GROUPS.find(([, prefixes]) => prefixes.includes(prefix));
+        return hit ? hit[0] : 'Other Settings';
+      };
+
       function renderSettings() {
-        bodyEl.appendChild(el('p', 'text-ink-600 mb-3', 'Pick a group to jump to it. Each field saves on its own.'));
+        bodyEl.appendChild(el('p', 'text-ink-600 mb-3', 'Choose a page below to jump to its text, or search for a field. Each field saves on its own.'));
         const groups = {};
-        data.settings.forEach(s => { (groups[s.key.split('_')[0]] ||= []).push(s); });
-        const names = Object.keys(groups);
+        data.settings.forEach(s => { (groups[settingGroup(s.key)] ||= []).push(s); });
+        const names = [...SETTING_GROUPS.map(g => g[0]), 'Other Settings'].filter(n => groups[n]);
+        const search = el('input', 'w-full border border-cream-300 rounded-full px-4 py-2 bg-white mb-2');
+        search.type = 'search'; search.placeholder = 'Search site text…';
+        bodyEl.appendChild(search);
         const list = el('div', 'space-y-2');
         const boxes = {};
-        bodyEl.appendChild(chipBar(names.map(g => [g, label(g)]), key => {
+        const rows = [];
+        bodyEl.appendChild(chipBar(names.map(g => [g, g]), key => {
+          search.value = ''; applySearch();
           const det = boxes[key];
           det.open = true;
           det.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }));
         bodyEl.appendChild(list);
         names.forEach(g => {
-          const det = collapsible(`settings:${g}`, [el('span', '', label(g)), pill(`${groups[g].length} field${groups[g].length === 1 ? '' : 's'}`, 'bg-cream-100 text-ink-600')]);
+          const det = collapsible(`settings:${g}`, [el('span', '', g), pill(`${groups[g].length} field${groups[g].length === 1 ? '' : 's'}`, 'bg-cream-100 text-ink-600')]);
           det.className += ' scroll-mt-28';
           boxes[g] = det;
           const body = el('div', 'px-4 pb-4 pt-3 border-t border-cream-200 grid grid-cols-1 lg:grid-cols-2 gap-4');
@@ -3864,10 +3887,22 @@
             if (s.description) row.appendChild(el('p', 'text-ink-400 text-[11px]', s.description));
             row.appendChild(save);
             body.appendChild(row);
+            rows.push({ row, det, hay: `${s.key} ${s.value} ${s.description}`.toLowerCase() });
           });
           det.appendChild(body);
           list.appendChild(det);
         });
+        function applySearch() {
+          const q = search.value.trim().toLowerCase();
+          const open = new Set();
+          rows.forEach(r => { const ok = !q || r.hay.includes(q); r.row.classList.toggle('hidden', !ok); if (ok && q) open.add(r.det); });
+          Object.values(boxes).forEach(det => {
+            const hasHit = !q || open.has(det);
+            det.classList.toggle('hidden', !hasHit);
+            if (q && hasHit) det.open = true;
+          });
+        }
+        search.addEventListener('input', applySearch);
       }
 
       function itemTitle(sec, item) {
