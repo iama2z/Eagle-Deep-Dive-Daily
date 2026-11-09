@@ -2565,16 +2565,60 @@
       const paragraphs = document.getElementById('readerParagraphs');
       paragraphs.replaceChildren();
       const body = issue.article_body_text || 'Full newsletter content is not available yet. Open the original Smore below.';
-      body.split(/\n\s*\n/).forEach(text => {
-        const p = document.createElement('p');
-        p.className = 'whitespace-pre-line break-words';
-        p.textContent = text;
-        paragraphs.appendChild(p);
-      });
+      paragraphs.append(...renderSmoreBody(body));
       const original = document.getElementById('readerOriginalSmore');
       original.href = issue.issue_url;
       original.classList.remove('hidden');
       document.getElementById('articleReaderModal').classList.remove('hidden');
+    }
+
+    function appendLinkedText(el, text) {
+      let last = 0;
+      for (const m of text.matchAll(/https?:\/\/[^\s<>"')]+/g)) {
+        el.append(text.slice(last, m.index));
+        const url = sanitizeHttpUrl(m[0].replace(/[.,;:!?]+$/, ''));
+        const a = document.createElement('a');
+        a.href = url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.className = 'text-red-600 underline break-all';
+        a.textContent = url ? url.replace(/^https?:\/\/(www\.)?/, '') : m[0];
+        el.append(a);
+        last = m.index + m[0].length;
+      }
+      el.append(text.slice(last));
+    }
+
+    function renderSmoreBody(body) {
+      const nodes = [];
+      let list = null;
+      const flushList = () => { list = null; };
+      body.replace(/\r\n?/g, '\n').split('\n').forEach(raw => {
+        const line = raw.trim();
+        if (!line) { flushList(); return; }
+        const bullet = line.match(/^[•\-*]\s+(.*)$/);
+        if (bullet) {
+          if (!list) {
+            list = document.createElement('ul');
+            list.className = 'list-disc pl-6 space-y-1.5 marker:text-red-600';
+            nodes.push(list);
+          }
+          const li = document.createElement('li');
+          appendLinkedText(li, bullet[1]);
+          list.appendChild(li);
+          return;
+        }
+        flushList();
+        const isHeading = line.length <= 80 && !/[.!?,;]$/.test(line) && !/https?:\/\//.test(line) &&
+          (/:$/.test(line) || line.split(/\s+/).length <= 10);
+        const el = document.createElement(isHeading ? 'h3' : 'p');
+        el.className = isHeading
+          ? 'font-serif text-xl font-bold text-ink-900 pt-4 break-words'
+          : 'break-words leading-relaxed';
+        appendLinkedText(el, line);
+        nodes.push(el);
+      });
+      return nodes;
     }
 
     function escapeHtml(value) {
