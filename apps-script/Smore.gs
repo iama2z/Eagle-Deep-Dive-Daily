@@ -1393,10 +1393,10 @@ function seedDefaultSettings_(settingsSheet) {
     directory_heading: ['Heart of MMS: Clean Building Directory'],
     bulletin_heading: ['The Flight Wire (Smore Bulletin Archive)'],
     studio_heading: ['The Peer Lesson Studio'],
-    academy_heading: ['EdTech, AI & Classroom Video Lab'],
+    academy_heading: ['EdTech, AI & Classroom Video Lab', 'EdTech, AI & Video Lab'],
     academy_badge: ['Field Toolkit'],
     academy_subtitle: ['NotebookLM in Google Classroom, missing-student slide/video catch-up, content video creation, OrbitNote & essential software.'],
-    academy_nav_title: ['EdTech, AI & Video Lab'],
+    academy_nav_title: ['EdTech, AI & Video Lab', 'EdTech, AI & Classroom Video Lab'],
     academy_nav_desc: [''],
     menu_topic_tech: ['Tech & AI'],
     topbar_tech: ['Tech & AI Tips'],
@@ -1410,7 +1410,8 @@ function seedDefaultSettings_(settingsSheet) {
     const key = String(row[0] || '').trim();
     const old = legacyDefaults[key];
     const fresh = defaults.find(d => d[0] === key);
-    if (old && fresh && old.includes(String(row[1] === undefined ? '' : row[1]).trim())) {
+    const norm = v => String(v === undefined ? '' : v).replace(/&/g, 'and').replace(/\s+/g, ' ').trim().toLowerCase();
+    if (old && fresh && old.some(v => norm(v) === norm(row[1]))) {
       settingsSheet.getRange(i + 1, 2).setValue(fresh[1]);
       if (settingsSheet.getLastColumn() >= 3) settingsSheet.getRange(i + 1, 3).setValue(fresh[2]);
     }
