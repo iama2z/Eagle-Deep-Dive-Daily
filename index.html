@@ -2261,6 +2261,11 @@
       renderHeroFeature();
     }
 
+    // --- LIVE SMORE BULLETIN FEED (GOOGLE APPS SCRIPT) ---
+    const SMORE_FEED_API_URL = SUBMISSION_API_URL;
+    let smoreIssues = [];
+    let schoolUpdates = [];
+
     function schoolUpdateAudience(item) {
       return /^(?:MMS News|MMS|Maize Middle School)$/i.test(String(item.source || '').trim())
         ? 'mms' : 'district';
