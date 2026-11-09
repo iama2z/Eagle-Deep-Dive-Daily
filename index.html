@@ -1087,12 +1087,48 @@
       <div class="space-y-3">
         <p class="text-ink-600">Bookmarks are saved in this browser. Article search runs locally and needs no API configuration.</p>
 
+        <form id="adminLoginForm" class="pt-3 border-t border-cream-200 space-y-2" autocomplete="off">
+          <label for="adminPasscodeInput" class="block font-bold text-ink-900">Admin access</label>
+          <div class="flex gap-2">
+            <input id="adminPasscodeInput" type="password" autocomplete="off" placeholder="Passcode" class="flex-1 min-w-0 border border-cream-300 rounded-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ink-900">
+            <button id="adminLoginBtn" type="submit" class="px-4 py-2 rounded-full bg-red-600 text-white font-bold disabled:opacity-60">Unlock</button>
+          </div>
+          <p id="adminLoginStatus" class="text-ink-600 min-h-[1rem]" role="status" aria-live="polite"></p>
+        </form>
+
         <div class="pt-3 border-t border-cream-200 flex items-center justify-between">
           <button id="clearStorageBtn" class="text-rose-600 hover:underline font-bold">Reset Saved Bookmarks</button>
           <button id="saveSettingsBtn" class="px-4 py-2 rounded-full bg-ink-900 text-white font-bold">Done</button>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- ADMIN CONSOLE -->
+  <!-- ========================================== -->
+  <div id="adminConsole" class="fixed inset-0 z-[60] hidden bg-cream-50 overflow-y-auto text-xs" role="dialog" aria-modal="true" aria-labelledby="adminTitle">
+    <div class="sticky top-0 z-10 bg-white border-b border-cream-300">
+      <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2 min-w-0">
+          <button id="adminBackBtn" class="hidden p-1.5 rounded-full hover:bg-cream-100" aria-label="Back to sections"><i data-lucide="arrow-left" class="w-4 h-4"></i></button>
+          <h2 id="adminTitle" class="font-editorial font-bold text-lg text-ink-900 truncate">Admin Console</h2>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button id="adminReloadBtn" class="px-3 py-1.5 rounded-full border border-cream-300 hover:bg-cream-100 font-semibold flex items-center gap-1.5"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i><span>Reload</span></button>
+          <button id="adminLockBtn" class="px-3 py-1.5 rounded-full bg-ink-900 text-white font-semibold flex items-center gap-1.5"><i data-lucide="lock" class="w-3.5 h-3.5"></i><span>Lock &amp; Close</span></button>
+        </div>
+      </div>
+      <div id="adminBusyBar" class="h-0.5 bg-red-600 origin-left scale-x-0 transition-transform duration-500"></div>
+    </div>
+    <div id="adminBody" class="max-w-5xl mx-auto px-4 py-6"></div>
+    <div id="adminBusy" class="hidden fixed inset-0 z-[70] bg-white/70 backdrop-blur-[2px] flex items-center justify-center" role="status" aria-live="polite">
+      <div class="bg-white border border-cream-300 rounded-2xl shadow-xl px-6 py-5 flex items-center gap-3 max-w-xs">
+        <span class="w-5 h-5 rounded-full border-2 border-cream-300 border-t-red-600 animate-spin shrink-0"></span>
+        <div><p id="adminBusyTitle" class="font-bold text-ink-900"></p><p id="adminBusyHint" class="text-ink-600 mt-0.5">Syncing with the Google Sheet. This can take a few seconds.</p></div>
+      </div>
+    </div>
+    <div id="adminToast" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-[80] px-4 py-2 rounded-full text-white font-semibold shadow-lg" role="status" aria-live="polite"></div>
   </div>
 
   <!-- FOOTER -->
@@ -3462,6 +3498,376 @@
 
       lucide.createIcons();
     });
+  </script>
+  <!-- ADMIN CONSOLE LOGIC -->
+  <script>
+    (() => {
+      const API_URL = SUBMISSION_API_URL;
+      const SECTIONS = [
+        { id: 'submissions', label: 'Submissions', hint: 'Approve, hold, or delete staff posts', icon: 'inbox' },
+        { id: 'settings', label: 'Site Text', hint: 'Headings, badges, subtitles, footer', icon: 'type' },
+        { id: 'articles', label: 'Articles', hint: 'Published articles & playbooks', icon: 'newspaper', title: 'title', table: true },
+        { id: 'quick_wins', label: 'Quick Wins', hint: 'Short classroom tips', icon: 'zap', title: 'title', table: true },
+        { id: 'directory', label: 'Directory Links', hint: 'Forms, maps, and operational links', icon: 'link', title: 'title', table: true },
+        { id: 'quotes', label: 'Lounge Posts', hint: 'Overheard at MMS posts', icon: 'message-square', title: 'quote', table: true },
+        { id: 'studio', label: 'Peer Lesson Studio', hint: 'Lesson drafts for feedback', icon: 'users', title: 'title', table: true },
+        { id: 'tech_tools', label: 'AI & Tech Tools', hint: 'EdTech Lab tool cards', icon: 'cpu', title: 'title', table: true },
+        { id: 'image_library', label: 'Image Library', hint: 'Approved cover images', icon: 'image', title: 'label', table: true }
+      ];
+      const TABLE_FIELDS = {
+        articles: ['title', 'category', 'summary', 'article_body_text', 'author', 'published_at', 'cover_image_url', 'is_live', 'takeaway', 'try_tomorrow', 'script', 'read_time', 'featured', 'has_video_demo', 'tags'],
+        quick_wins: ['section', 'category_label', 'title', 'tip', 'is_live'],
+        directory: ['title', 'category', 'description', 'url', 'tags', 'update_status', 'is_live'],
+        quotes: ['quote', 'attribution', 'post_type', 'is_live'],
+        studio: ['title', 'subject', 'dilemma', 'warm_feedback', 'cool_feedback', 'doc_url', 'is_live'],
+        tech_tools: ['badge', 'title', 'link_label', 'url', 'description', 'teacher_workflow', 'student_workflow', 'is_live'],
+        image_library: ['category', 'label', 'image_url', 'is_live']
+      };
+      const ID_KEYS = { articles: 'article_id', quick_wins: 'tip_id', directory: 'resource_id', quotes: 'quote_id', studio: 'studio_id', tech_tools: 'tool_id', image_library: 'image_id' };
+      const LONG = new Set(['summary', 'article_body_text', 'takeaway', 'try_tomorrow', 'script', 'tip', 'description', 'quote', 'dilemma', 'warm_feedback', 'cool_feedback', 'teacher_workflow', 'student_workflow', 'content']);
+      const BOOL = new Set(['is_live', 'featured', 'has_video_demo']);
+      const SAVE_MESSAGES = ['Writing to the Google Sheet…', 'Saving your changes…', 'Almost there…'];
+      const LOAD_MESSAGES = ['Opening the Google Sheet…', 'Reading submissions…', 'Gathering site content…', 'Almost there…'];
+
+      const $ = id => document.getElementById(id);
+      const consoleEl = $('adminConsole'), bodyEl = $('adminBody'), titleEl = $('adminTitle'), backBtn = $('adminBackBtn');
+      let passcode = '';
+      let data = null;
+      let view = 'home';
+      let busyCount = 0, busyTimer = null, toastTimer = null;
+
+      function el(tag, cls, text) {
+        const node = document.createElement(tag);
+        if (cls) node.className = cls;
+        if (text != null) node.textContent = text;
+        return node;
+      }
+      function icons() { if (window.lucide) lucide.createIcons(); }
+      function label(key) { return key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()); }
+
+      function toast(message, isError) {
+        const t = $('adminToast');
+        t.textContent = message;
+        t.className = `fixed bottom-4 left-1/2 -translate-x-1/2 z-[80] px-4 py-2 rounded-full text-white font-semibold shadow-lg ${isError ? 'bg-rose-600' : 'bg-ink-900'}`;
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => t.classList.add('hidden'), isError ? 6000 : 2500);
+      }
+
+      function setBusy(on, messages) {
+        busyCount = Math.max(0, busyCount + (on ? 1 : -1));
+        const overlay = $('adminBusy'), bar = $('adminBusyBar');
+        if (busyCount > 0) {
+          if (!on) return;
+          overlay.classList.remove('hidden');
+          bar.classList.remove('scale-x-0');
+          let i = 0;
+          const list = messages || SAVE_MESSAGES;
+          $('adminBusyTitle').textContent = list[0];
+          clearInterval(busyTimer);
+          busyTimer = setInterval(() => { i = Math.min(i + 1, list.length - 1); $('adminBusyTitle').textContent = list[i]; }, 2500);
+        } else {
+          clearInterval(busyTimer);
+          overlay.classList.add('hidden');
+          bar.classList.add('scale-x-0');
+        }
+      }
+
+      async function api(action, params, messages) {
+        setBusy(true, messages);
+        try {
+          const body = new URLSearchParams({ action, passcode, ...params });
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), 60000);
+          let res;
+          try { res = await fetch(API_URL, { method: 'POST', body, signal: controller.signal }); }
+          finally { clearTimeout(timer); }
+          if (!res.ok) throw new Error(`Request failed (${res.status}).`);
+          let result;
+          try { result = await res.json(); } catch { throw new Error('The server returned an unreadable response. Redeploy the updated Apps Script as a new version.'); }
+          if (!result?.ok) throw new Error(result?.error || 'The request could not be completed.');
+          return result;
+        } catch (err) {
+          throw new Error(err.name === 'AbortError' ? 'The sheet took too long to respond. Try again.' : err.message);
+        } finally {
+          setBusy(false);
+        }
+      }
+
+      async function loadData() {
+        data = await api('admin_load', {}, LOAD_MESSAGES);
+      }
+
+      function pendingCount() {
+        return (data?.submissions || []).filter(s => String(s.status).toLowerCase() === 'pending').length;
+      }
+
+      function show(next) { view = next; render(); consoleEl.scrollTo({ top: 0 }); }
+
+      function render() {
+        bodyEl.replaceChildren();
+        const section = SECTIONS.find(s => s.id === view);
+        titleEl.textContent = section ? section.label : 'Admin Console';
+        backBtn.classList.toggle('hidden', !section);
+        if (!data) return;
+        if (!section) renderHome();
+        else if (view === 'submissions') renderSubmissions();
+        else if (view === 'settings') renderSettings();
+        else renderTable(view);
+        icons();
+      }
+
+      function renderHome() {
+        bodyEl.appendChild(el('p', 'text-ink-600 mb-4', 'Choose a section to edit. Changes save to the Google Sheet and appear on the site after a refresh.'));
+        const grid = el('div', 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4');
+        SECTIONS.forEach(sec => {
+          const btn = el('button', 'text-left bg-white border border-cream-300 rounded-2xl p-4 hover:border-ink-900 hover:shadow-md transition flex flex-col gap-2');
+          const top = el('div', 'flex items-center justify-between');
+          const ic = document.createElement('i'); ic.setAttribute('data-lucide', sec.icon); ic.className = 'w-5 h-5 text-ink-900';
+          top.appendChild(ic);
+          let count;
+          if (sec.id === 'submissions') count = `${pendingCount()} pending`;
+          else if (sec.id === 'settings') count = `${data.settings.length} fields`;
+          else count = `${(data.tables[sec.id] || []).length} items`;
+          const badge = el('span', 'text-[10px] font-bold px-2 py-0.5 rounded-full ' + (sec.id === 'submissions' && pendingCount() ? 'bg-red-600 text-white' : 'bg-cream-100 text-ink-600'), count);
+          top.appendChild(badge);
+          btn.appendChild(top);
+          btn.appendChild(el('span', 'font-bold text-sm text-ink-900', sec.label));
+          btn.appendChild(el('span', 'text-ink-600', sec.hint));
+          btn.addEventListener('click', () => show(sec.id));
+          grid.appendChild(btn);
+        });
+        bodyEl.appendChild(grid);
+      }
+
+      function field(key, value, onInput, long) {
+        const wrap = el('label', 'block');
+        wrap.appendChild(el('span', 'block font-semibold text-ink-800 mb-1', label(key)));
+        let input;
+        if (BOOL.has(key)) {
+          input = el('select', 'w-full border border-cream-300 rounded-lg px-2.5 py-2 bg-white');
+          ['TRUE', 'FALSE'].forEach(v => { const o = el('option', '', v === 'TRUE' ? 'Yes (shown)' : 'No (hidden)'); o.value = v; input.appendChild(o); });
+          input.value = String(value).toUpperCase() === 'TRUE' ? 'TRUE' : 'FALSE';
+        } else if (long || LONG.has(key)) {
+          input = el('textarea', 'w-full border border-cream-300 rounded-lg px-2.5 py-2 min-h-[5rem]');
+          input.rows = 4; input.value = value;
+        } else {
+          input = el('input', 'w-full border border-cream-300 rounded-lg px-2.5 py-2');
+          input.type = 'text'; input.value = value;
+        }
+        input.addEventListener('input', onInput);
+        input.addEventListener('change', onInput);
+        wrap.appendChild(input);
+        return { wrap, input };
+      }
+
+      function actionBtn(text, kind, onClick) {
+        const cls = { primary: 'bg-ink-900 text-white', good: 'bg-emerald-600 text-white', danger: 'bg-rose-50 text-rose-700 border border-rose-200', plain: 'border border-cream-300 hover:bg-cream-100' }[kind];
+        const b = el('button', `px-3 py-1.5 rounded-full font-bold disabled:opacity-40 ${cls}`, text);
+        b.type = 'button';
+        b.addEventListener('click', onClick);
+        return b;
+      }
+
+      async function run(fn, success, messages, rerender = true) {
+        try {
+          await fn();
+          toast(success);
+          if (rerender) {
+            await loadData();
+            render();
+          }
+          return true;
+        } catch (err) {
+          toast(err.message, true);
+          return false;
+        }
+      }
+
+      function renderSettings() {
+        bodyEl.appendChild(el('p', 'text-ink-600 mb-4', 'Each box is a text field on the site. Edit and press Save on that box.'));
+        const groups = {};
+        data.settings.forEach(s => { (groups[s.key.split('_')[0]] ||= []).push(s); });
+        const grid = el('div', 'grid grid-cols-1 lg:grid-cols-2 gap-4');
+        Object.keys(groups).forEach(g => {
+          const box = el('div', 'bg-white border border-cream-300 rounded-2xl p-4 space-y-3');
+          box.appendChild(el('h3', 'font-bold text-sm text-ink-900 capitalize', g));
+          groups[g].forEach(s => {
+            const row = el('div', 'space-y-1');
+            let current = s.value;
+            const save = actionBtn('Save', 'primary', async () => {
+              const ok = await run(() => api('admin_save_setting', { key: s.key, value: current }), `Saved “${label(s.key)}”.`, SAVE_MESSAGES, false);
+              if (ok) { s.value = current; save.disabled = true; }
+            });
+            save.disabled = true;
+            const f = field(s.key, s.value, e => { current = e.target.value; save.disabled = current === s.value; }, s.value.length > 60);
+            row.appendChild(f.wrap);
+            if (s.description) row.appendChild(el('p', 'text-ink-400 text-[11px]', s.description));
+            row.appendChild(save);
+            box.appendChild(row);
+          });
+          grid.appendChild(box);
+        });
+        bodyEl.appendChild(grid);
+      }
+
+      function itemTitle(sec, item) {
+        return item[sec.title] || item[ID_KEYS[sec.id]] || '(untitled)';
+      }
+
+      function renderTable(name) {
+        const sec = SECTIONS.find(s => s.id === name);
+        const fields = TABLE_FIELDS[name];
+        const items = data.tables[name] || [];
+        const head = el('div', 'flex items-center justify-between mb-4');
+        head.appendChild(el('p', 'text-ink-600', `${items.length} item${items.length === 1 ? '' : 's'}. Hidden items stay in the sheet but are not shown on the site.`));
+        head.appendChild(actionBtn('+ Add new', 'primary', () => openEditor(null)));
+        bodyEl.appendChild(head);
+        const list = el('div', 'space-y-3');
+        bodyEl.appendChild(list);
+        items.forEach(item => list.appendChild(editorBox(item)));
+
+        function openEditor(item) {
+          const box = editorBox(item);
+          list.prepend(box);
+          box.querySelector('summary')?.click();
+          box.scrollIntoView({ block: 'center' });
+        }
+
+        function editorBox(item) {
+          const isNew = !item;
+          const values = {};
+          fields.forEach(k => { values[k] = item ? (item[k] ?? '') : (BOOL.has(k) ? 'TRUE' : ''); });
+          const dirty = new Set();
+          const det = el('details', 'bg-white border border-cream-300 rounded-2xl');
+          const sum = el('summary', 'px-4 py-3 cursor-pointer flex items-center justify-between gap-3 font-semibold text-ink-900');
+          sum.appendChild(el('span', 'truncate', isNew ? 'New item' : itemTitle(sec, item)));
+          if (item && 'is_live' in item && String(item.is_live).toUpperCase() !== 'TRUE') sum.appendChild(el('span', 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-cream-100 text-ink-600', 'Hidden'));
+          det.appendChild(sum);
+          const form = el('div', 'px-4 pb-4 grid grid-cols-1 md:grid-cols-2 gap-3 border-t border-cream-200 pt-3');
+          const save = actionBtn(isNew ? 'Create' : 'Save', 'primary', async () => {
+            const changed = isNew ? { ...values } : Object.fromEntries([...dirty].map(k => [k, values[k]]));
+            const params = isNew ? { table: name, fields: JSON.stringify(changed) } : { table: name, id: item[ID_KEYS[name]], fields: JSON.stringify(changed) };
+            await run(() => api(isNew ? 'admin_add_row' : 'admin_save_row', params), isNew ? 'Item created.' : 'Changes saved.');
+          });
+          save.disabled = !isNew;
+          fields.forEach(k => {
+            const f = field(k, values[k], e => { values[k] = e.target.value; dirty.add(k); save.disabled = false; });
+            if (LONG.has(k)) f.wrap.className += ' md:col-span-2';
+            form.appendChild(f.wrap);
+          });
+          const actions = el('div', 'md:col-span-2 flex items-center gap-2');
+          actions.appendChild(save);
+          if (!isNew) {
+            actions.appendChild(actionBtn('Delete', 'danger', async () => {
+              if (!confirm('Delete this item from the sheet? This cannot be undone.')) return;
+              await run(() => api('admin_delete_row', { table: name, id: item[ID_KEYS[name]] }), 'Item deleted.');
+            }));
+          } else {
+            actions.appendChild(actionBtn('Cancel', 'plain', () => det.remove()));
+          }
+          form.appendChild(actions);
+          det.appendChild(form);
+          return det;
+        }
+      }
+
+      function renderSubmissions() {
+        const subs = data.submissions || [];
+        bodyEl.appendChild(el('p', 'text-ink-600 mb-4', 'Approve to publish a post to the site, move it back to pending to hide it, or delete it. Publishing can take several seconds.'));
+        if (!subs.length) { bodyEl.appendChild(el('div', 'bg-white border border-dashed border-cream-300 rounded-2xl p-8 text-center text-ink-600', 'No submissions yet.')); return; }
+        const list = el('div', 'space-y-3');
+        subs.forEach(sub => {
+          const status = String(sub.status || 'pending').toLowerCase();
+          const box = el('div', 'bg-white border border-cream-300 rounded-2xl p-4 space-y-2');
+          const top = el('div', 'flex items-start justify-between gap-3');
+          const left = el('div', 'min-w-0');
+          left.appendChild(el('p', 'font-bold text-sm text-ink-900', sub.title || '(untitled)'));
+          const when = sub.submitted_at ? new Date(sub.submitted_at) : null;
+          left.appendChild(el('p', 'text-ink-600', [sub.submission_type, sub.submitter_name || 'Anonymous', when && !isNaN(when) ? when.toLocaleString() : ''].filter(Boolean).join(' • ')));
+          top.appendChild(left);
+          const colors = { pending: 'bg-amber-100 text-amber-800', approved: 'bg-sky-100 text-sky-800', published: 'bg-emerald-100 text-emerald-800' };
+          top.appendChild(el('span', `shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full ${colors[status] || 'bg-cream-100 text-ink-600'}`, status));
+          box.appendChild(top);
+          const content = el('p', 'text-ink-800 whitespace-pre-wrap', String(sub.content || '').slice(0, 400) + (String(sub.content || '').length > 400 ? '…' : ''));
+          box.appendChild(content);
+          if (sub.links) box.appendChild(el('p', 'text-ink-600 break-all', sub.links));
+          const set = (s, msg) => () => run(() => api('admin_set_status', { tab: sub.tab, id: sub.id, status: s }, ['Updating the sheet…', 'Publishing to the site…', 'Almost there…']), msg);
+          const actions = el('div', 'flex flex-wrap gap-2 pt-1');
+          if (status !== 'published' && status !== 'approved') actions.appendChild(actionBtn('Approve & publish', 'good', set('approved', 'Approved and published.')));
+          if (status !== 'pending') actions.appendChild(actionBtn('Back to pending', 'plain', set('pending', 'Moved back to pending.')));
+          actions.appendChild(actionBtn('Delete', 'danger', () => { if (confirm('Delete this submission and remove it from the site?')) set('delete', 'Submission deleted.')(); }));
+          box.appendChild(actions);
+          list.appendChild(box);
+        });
+        bodyEl.appendChild(list);
+      }
+
+      async function openConsole() {
+        consoleEl.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+        view = 'home';
+        if (!data) {
+          try { await loadData(); }
+          catch (err) { toast(err.message, true); }
+        }
+        render();
+      }
+
+      function lock() {
+        passcode = '';
+        data = null;
+        consoleEl.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+        bodyEl.replaceChildren();
+      }
+
+      backBtn.addEventListener('click', () => show('home'));
+      $('adminLockBtn').addEventListener('click', lock);
+      $('adminReloadBtn').addEventListener('click', async () => {
+        try { await loadData(); toast('Reloaded from the sheet.'); } catch (err) { toast(err.message, true); }
+        render();
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && !consoleEl.classList.contains('hidden') && view !== 'home') show('home');
+      });
+
+      const form = $('adminLoginForm'), input = $('adminPasscodeInput'), status = $('adminLoginStatus'), loginBtn = $('adminLoginBtn');
+      form?.addEventListener('submit', async e => {
+        e.preventDefault();
+        const attempt = input.value;
+        if (!attempt) { status.textContent = 'Enter the passcode.'; return; }
+        loginBtn.disabled = true;
+        const messages = ['Checking passcode…', 'Contacting the Google Sheet…', 'Still working — the sheet can be slow…'];
+        let i = 0;
+        status.textContent = messages[0];
+        const timer = setInterval(() => { i = Math.min(i + 1, messages.length - 1); status.textContent = messages[i]; }, 2500);
+        passcode = attempt;
+        try {
+          await api('admin_login', {}, messages);
+          status.textContent = '';
+          input.value = '';
+          $('settingsModal')?.classList.add('hidden');
+          openConsole();
+        } catch (err) {
+          passcode = '';
+          status.textContent = err.message;
+        } finally {
+          clearInterval(timer);
+          loginBtn.disabled = false;
+        }
+      });
+
+      // The page's own handler opens the settings modal first; skip the passcode step once unlocked.
+      $('openSettingsModalBtn')?.addEventListener('click', () => {
+        if (passcode) {
+          $('settingsModal')?.classList.add('hidden');
+          openConsole();
+        } else {
+          status.textContent = '';
+          setTimeout(() => input?.focus(), 0);
+        }
+      });
+    })();
   </script>
 </body>
 </html>

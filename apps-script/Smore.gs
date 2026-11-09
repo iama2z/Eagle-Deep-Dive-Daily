@@ -573,6 +573,9 @@ function doPost(e) {
     if (body.action === 'react') {
       return smoreJson_(addLoungeReaction_(body.quote_id, body.reaction, body.undo === 'true'));
     }
+    if (String(body.action || '').indexOf('admin_') === 0) {
+      return smoreJson_(handleAdminAction_(body));
+    }
     if (body.action) {
       return smoreJson_({ ok: false, error: 'Unknown action' });
     }
@@ -623,6 +626,187 @@ function doPost(e) {
   } catch (err) {
     return smoreJson_({ ok: false, error: String(err.message || err) });
   }
+}
+
+// ---------------------------------------------------------------
+// Admin panel API (doPost actions beginning with `admin_`).
+// Set the passcode in Project Settings → Script properties as ADMIN_PASSCODE.
+// ---------------------------------------------------------------
+
+const ADMIN_TABLES = {
+  articles: { sheet: 'published_articles', columns: PUBLISHED_ARTICLE_COLUMNS, idKey: 'article_id', prefix: 'art' },
+  quick_wins: { sheet: 'quick_wins', columns: QUICK_WINS_COLUMNS, idKey: 'tip_id', prefix: 'tip' },
+  directory: { sheet: 'directory_links', columns: DIRECTORY_LINK_COLUMNS, idKey: 'resource_id', prefix: 'res' },
+  quotes: { sheet: 'lounge_quotes', columns: LOUNGE_QUOTE_COLUMNS, idKey: 'quote_id', prefix: 'quote' },
+  studio: { sheet: 'peer_studio', columns: PEER_STUDIO_COLUMNS, idKey: 'studio_id', prefix: 'studio' },
+  tech_tools: { sheet: 'tech_tools', columns: TECH_TOOL_COLUMNS, idKey: 'tool_id', prefix: 'tool' },
+  image_library: { sheet: 'image_library', columns: IMAGE_LIBRARY_COLUMNS, idKey: 'image_id', prefix: 'img' }
+};
+
+const ADMIN_MAX_FAILURES = 5;
+const ADMIN_LOCKOUT_SECONDS = 15 * 60;
+
+function adminCheckPasscode_(passcode) {
+  const expected = PropertiesService.getScriptProperties().getProperty('ADMIN_PASSCODE');
+  if (!expected) throw new Error('Admin access is not set up. Add an ADMIN_PASSCODE script property.');
+  const cache = CacheService.getScriptCache();
+  const failures = Number(cache.get('admin_failures') || 0);
+  if (failures >= ADMIN_MAX_FAILURES) throw new Error('Too many incorrect passcodes. Try again in 15 minutes.');
+  const given = String(passcode || '');
+  let diff = given.length === expected.length ? 0 : 1;
+  for (let i = 0; i < expected.length; i++) diff |= (given.charCodeAt(i) || 0) ^ expected.charCodeAt(i);
+  if (diff) {
+    cache.put('admin_failures', String(failures + 1), ADMIN_LOCKOUT_SECONDS);
+    throw new Error('Incorrect passcode.');
+  }
+  cache.remove('admin_failures');
+}
+
+function handleAdminAction_(body) {
+  try {
+    adminCheckPasscode_(body.passcode);
+    const action = String(body.action);
+    if (action === 'admin_login') return { ok: true };
+    if (action === 'admin_load') return adminLoad_();
+
+    const lock = LockService.getScriptLock();
+    if (!lock.tryLock(20000)) throw new Error('The sheet is busy. Please try again.');
+    try {
+      const ss = SpreadsheetApp.getActiveSpreadsheet();
+      if (action === 'admin_save_setting') return adminSaveSetting_(ss, body.key, body.value);
+      if (action === 'admin_save_row') return adminSaveRow_(ss, body.table, body.id, JSON.parse(body.fields || '{}'), false);
+      if (action === 'admin_add_row') return adminSaveRow_(ss, body.table, '', JSON.parse(body.fields || '{}'), true);
+      if (action === 'admin_delete_row') return adminDeleteRow_(ss, body.table, body.id);
+      if (action === 'admin_set_status') return adminSetStatus_(ss, body.tab, body.id, body.status);
+    } finally {
+      lock.releaseLock();
+    }
+    return { ok: false, error: 'Unknown admin action' };
+  } catch (err) {
+    return { ok: false, error: String(err.message || err) };
+  }
+}
+
+function adminLoad_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const out = { ok: true, settings: [], tables: {}, submissions: [] };
+
+  const settings = ss.getSheetByName('settings');
+  if (settings && settings.getLastRow() > 1) {
+    const rows = settings.getDataRange().getValues();
+    const descIdx = String(rows[0][2] || '').trim().toLowerCase() === 'description' ? 2 : -1;
+    for (let r = 1; r < rows.length; r++) {
+      const key = String(rows[r][0] || '').trim();
+      if (!key) continue;
+      const val = rows[r][1];
+      out.settings.push({
+        key,
+        value: val instanceof Date ? val.toISOString() : String(val == null ? '' : val),
+        description: descIdx >= 0 ? String(rows[r][descIdx] || '') : ''
+      });
+    }
+  }
+
+  Object.keys(ADMIN_TABLES).forEach(name => {
+    const cfg = ADMIN_TABLES[name];
+    const sheet = name === 'articles' ? getPublishedArticlesSheet_(ss) : ss.getSheetByName(cfg.sheet);
+    out.tables[name] = sheet ? smoreReadIssues_(sheet, smoreHeaders_(sheet, cfg.columns, true)).map(r => {
+      const item = {};
+      cfg.columns.forEach(c => { item[c] = r.issue[c]; });
+      return item;
+    }) : [];
+  });
+
+  ['submissions', 'review_queue'].forEach(tab => {
+    const sheet = ss.getSheetByName(tab);
+    if (!sheet) return;
+    smoreReadIssues_(sheet, smoreHeaders_(sheet, SUBMISSION_COLUMNS, true)).forEach(r => {
+      const item = { tab };
+      SUBMISSION_COLUMNS.forEach(c => { item[c] = r.issue[c]; });
+      out.submissions.push(item);
+    });
+  });
+  out.submissions.sort((a, b) => String(b.submitted_at).localeCompare(String(a.submitted_at)));
+  return out;
+}
+
+function adminSafeCell_(value) {
+  const text = String(value == null ? '' : value);
+  return /^[=+@-]/.test(text) ? "'" + text : text;
+}
+
+function adminSaveSetting_(ss, key, value) {
+  key = String(key || '').trim();
+  const sheet = ss.getSheetByName('settings');
+  if (!sheet || !key) throw new Error('Unknown setting.');
+  const keys = sheet.getLastRow() ? sheet.getRange(1, 1, sheet.getLastRow(), 1).getValues() : [];
+  const idx = keys.findIndex((row, i) => i > 0 && String(row[0] || '').trim() === key);
+  if (idx < 0) throw new Error('Unknown setting: ' + key);
+  sheet.getRange(idx + 1, 2).setValue(adminSafeCell_(value));
+  appendAuditLog_(ss, 'admin_setting_edit', 'settings', key, key, 'Updated from admin panel');
+  return { ok: true };
+}
+
+function adminTable_(ss, name) {
+  const cfg = ADMIN_TABLES[name];
+  if (!cfg) throw new Error('Unknown section.');
+  const sheet = name === 'articles' ? getPublishedArticlesSheet_(ss) : ss.getSheetByName(cfg.sheet);
+  if (!sheet) throw new Error('Sheet tab "' + cfg.sheet + '" is missing. Run setupSiteSheet.');
+  return { cfg, sheet, headers: smoreHeaders_(sheet, cfg.columns, true) };
+}
+
+function adminSaveRow_(ss, name, id, fields, isNew) {
+  const t = adminTable_(ss, name);
+  const editable = t.cfg.columns.filter(c => c !== t.cfg.idKey);
+  if (isNew) {
+    const record = {};
+    editable.forEach(c => { if (fields[c] !== undefined) record[c] = fields[c]; });
+    if (record.is_live === undefined && t.cfg.columns.indexOf('is_live') >= 0) record.is_live = 'TRUE';
+    record[t.cfg.idKey] = t.cfg.prefix + '_' + Utilities.getUuid().slice(0, 8);
+    appendRecordByHeaders_(t.sheet, t.headers, record);
+    appendAuditLog_(ss, 'admin_add', t.cfg.sheet, record[t.cfg.idKey], record.title || '', 'Added from admin panel');
+    return { ok: true, id: record[t.cfg.idKey] };
+  }
+  const matches = liveRowsById_({ sheet: t.sheet, headers: t.headers, idKey: t.cfg.idKey }, String(id || ''));
+  if (!matches.length) throw new Error('That item no longer exists. Reload the panel.');
+  matches.forEach(m => {
+    editable.forEach(c => {
+      if (fields[c] === undefined) return;
+      const col = t.headers.indexOf(c) + 1;
+      if (col) t.sheet.getRange(m.row, col).setValue(adminSafeCell_(fields[c]));
+    });
+  });
+  appendAuditLog_(ss, 'admin_edit', t.cfg.sheet, id, fields.title || '', 'Edited from admin panel');
+  return { ok: true, id: id };
+}
+
+function adminDeleteRow_(ss, name, id) {
+  const t = adminTable_(ss, name);
+  const matches = liveRowsById_({ sheet: t.sheet, headers: t.headers, idKey: t.cfg.idKey }, String(id || ''));
+  if (!matches.length) throw new Error('That item no longer exists. Reload the panel.');
+  matches.map(m => m.row).sort((a, b) => b - a).forEach(n => t.sheet.deleteRow(n));
+  appendAuditLog_(ss, 'admin_delete', t.cfg.sheet, id, '', 'Deleted from admin panel');
+  return { ok: true };
+}
+
+function adminSetStatus_(ss, tab, id, status) {
+  status = String(status || '').toLowerCase();
+  if (['pending', 'approved', 'delete'].indexOf(status) < 0) throw new Error('Invalid status.');
+  if (['submissions', 'review_queue'].indexOf(tab) < 0) throw new Error('Unknown submissions tab.');
+  const sheet = ss.getSheetByName(tab);
+  if (!sheet) throw new Error('Missing tab: ' + tab);
+  const headers = smoreHeaders_(sheet, SUBMISSION_COLUMNS, true);
+  const matches = smoreReadIssues_(sheet, headers).filter(r => r.issue.id === String(id || ''));
+  if (!matches.length) throw new Error('Submission not found. Reload the panel.');
+  const statusCol = headers.indexOf('status') + 1;
+  const reviewedByCol = headers.indexOf('reviewed_by') + 1;
+  matches.forEach(m => {
+    sheet.getRange(m.row, statusCol).setValue(status);
+    if (reviewedByCol) sheet.getRange(m.row, reviewedByCol).setValue('admin panel');
+  });
+  appendAuditLog_(ss, 'admin_status', tab, id, matches[0].issue.title, 'Status set to ' + status);
+  publishApprovedSubmissions();
+  return { ok: true };
 }
 
 function cleanSubmissionText_(value) {
