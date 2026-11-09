@@ -49,6 +49,29 @@ const TECH_TOOL_COLUMNS = [
 
 const IMAGE_LIBRARY_COLUMNS = ['image_id', 'category', 'label', 'image_url', 'is_live'];
 
+// Page structure tabs. The site code defines the available components (kind, block_type, style);
+// these tabs define which ones appear, their text, order and visibility.
+// kind: blocks | videos | tools.  layout: stack | columns.
+const PAGE_SECTION_COLUMNS = [
+  'section_id', 'page', 'kind', 'layout', 'title', 'intro', 'badge', 'sort_order', 'is_live'
+];
+
+// block_type: text | list | callout | prompt.  style: neutral | red | green (list: bullets | numbered).
+// For list blocks, put one item per line in body. For prompt blocks, body is the copyable text.
+const CONTENT_BLOCK_COLUMNS = [
+  'block_id', 'section_id', 'block_type', 'title', 'body', 'description', 'url', 'link_label',
+  'style', 'sort_order', 'is_live'
+];
+
+const VIDEO_COLUMNS = [
+  'video_id', 'section_id', 'badge', 'title', 'description', 'url', 'link_label', 'sort_order', 'is_live'
+];
+
+// start_time accepts m:ss, h:mm:ss or plain seconds.
+const VIDEO_CHAPTER_COLUMNS = [
+  'chapter_id', 'video_id', 'title', 'description', 'start_time', 'sort_order', 'is_live'
+];
+
 const SUBMISSION_COLUMNS = [
   'id', 'submitted_at', 'submitter_name', 'submitter_email', 'submission_type',
   'title', 'content', 'links', 'status', 'category', 'reviewed_by', 'reviewed_at', 'cover_image_url'
@@ -68,6 +91,8 @@ function onOpen() {
     .addSeparator()
     .addItem('3. Sync Smore Newsletters Now', 'syncSmoreFeed')
     .addItem('4. Sync School News & Social', 'syncSchoolUpdates')
+    .addSeparator()
+    .addItem('5. Unpublish Sample Rows', 'unpublishSampleRows')
     .addToUi();
 }
 
@@ -94,43 +119,55 @@ function setupSiteSheet() {
   const articlesSheetWasEmpty = !articlesSheet.getLastRow();
   const articleHeaders = smoreHeaders_(articlesSheet, PUBLISHED_ARTICLE_COLUMNS, true);
   if (articlesSheetWasEmpty) {
-    seedSheetRows_(articlesSheet, articleHeaders, defaultArticlesSeed_());
+    seedSheetRows_(articlesSheet, articleHeaders, unpublishedSamples_(defaultArticlesSeed_()));
   }
 
   const quickWinsSheet = ss.getSheetByName('quick_wins') || ss.insertSheet('quick_wins');
   const quickWinsSheetWasEmpty = !quickWinsSheet.getLastRow();
   const quickWinsHeaders = smoreHeaders_(quickWinsSheet, QUICK_WINS_COLUMNS, true);
   if (quickWinsSheetWasEmpty) {
-    seedSheetRows_(quickWinsSheet, quickWinsHeaders, defaultQuickWinsSeed_());
+    seedSheetRows_(quickWinsSheet, quickWinsHeaders, unpublishedSamples_(defaultQuickWinsSeed_()));
   }
 
   const directorySheet = ss.getSheetByName('directory_links') || ss.insertSheet('directory_links');
   const directorySheetWasEmpty = !directorySheet.getLastRow();
   const directoryHeaders = smoreHeaders_(directorySheet, DIRECTORY_LINK_COLUMNS, true);
   if (directorySheetWasEmpty) {
-    seedSheetRows_(directorySheet, directoryHeaders, defaultDirectorySeed_());
+    seedSheetRows_(directorySheet, directoryHeaders, unpublishedSamples_(defaultDirectorySeed_()));
   }
 
   const quotesSheet = ss.getSheetByName('lounge_quotes') || ss.insertSheet('lounge_quotes');
   const quotesSheetWasEmpty = !quotesSheet.getLastRow();
   const quotesHeaders = smoreHeaders_(quotesSheet, LOUNGE_QUOTE_COLUMNS, true);
   if (quotesSheetWasEmpty) {
-    seedSheetRows_(quotesSheet, quotesHeaders, defaultQuotesSeed_());
+    seedSheetRows_(quotesSheet, quotesHeaders, unpublishedSamples_(defaultQuotesSeed_()));
   }
 
   const studioSheet = ss.getSheetByName('peer_studio') || ss.insertSheet('peer_studio');
   const studioSheetWasEmpty = !studioSheet.getLastRow();
   const studioHeaders = smoreHeaders_(studioSheet, PEER_STUDIO_COLUMNS, true);
   if (studioSheetWasEmpty) {
-    seedSheetRows_(studioSheet, studioHeaders, defaultStudioSeed_());
+    seedSheetRows_(studioSheet, studioHeaders, unpublishedSamples_(defaultStudioSeed_()));
   }
 
   const techSheet = ss.getSheetByName('tech_tools') || ss.insertSheet('tech_tools');
   const techSheetWasEmpty = !techSheet.getLastRow();
   const techHeaders = smoreHeaders_(techSheet, TECH_TOOL_COLUMNS, true);
   if (techSheetWasEmpty) {
-    seedSheetRows_(techSheet, techHeaders, defaultTechToolsSeed_());
+    seedSheetRows_(techSheet, techHeaders, unpublishedSamples_(defaultTechToolsSeed_()));
   }
+
+  [
+    ['page_sections', PAGE_SECTION_COLUMNS, defaultPageSectionsSeed_()],
+    ['content_blocks', CONTENT_BLOCK_COLUMNS, unpublishedSamples_(defaultContentBlocksSeed_())],
+    ['videos', VIDEO_COLUMNS, unpublishedSamples_(defaultVideosSeed_())],
+    ['video_chapters', VIDEO_CHAPTER_COLUMNS, unpublishedSamples_(defaultVideoChaptersSeed_())]
+  ].forEach(([name, columns, seed]) => {
+    const sheet = ss.getSheetByName(name) || ss.insertSheet(name);
+    const wasEmpty = !sheet.getLastRow();
+    const headers = smoreHeaders_(sheet, columns, true);
+    if (wasEmpty) seedSheetRows_(sheet, headers, seed);
+  });
 
   const imageSheet = ss.getSheetByName('image_library') || ss.insertSheet('image_library');
   smoreHeaders_(imageSheet, IMAGE_LIBRARY_COLUMNS, true);
@@ -353,7 +390,11 @@ function doGet(e) {
         quotes: publicTableItems_('lounge_quotes', LOUNGE_QUOTE_COLUMNS, ['quote']),
         studio: publicTableItems_('peer_studio', PEER_STUDIO_COLUMNS, ['title']),
         tech_tools: publicTableItems_('tech_tools', TECH_TOOL_COLUMNS, ['title']),
-        image_library: publicTableItems_('image_library', IMAGE_LIBRARY_COLUMNS, ['image_url'], true)
+        image_library: publicTableItems_('image_library', IMAGE_LIBRARY_COLUMNS, ['image_url'], true),
+        page_sections: publicTableItems_('page_sections', PAGE_SECTION_COLUMNS, ['section_id'], false, true),
+        content_blocks: publicTableItems_('content_blocks', CONTENT_BLOCK_COLUMNS, ['section_id', 'block_type'], false, true),
+        videos: publicTableItems_('videos', VIDEO_COLUMNS, ['video_id', 'url'], false, true),
+        video_chapters: publicTableItems_('video_chapters', VIDEO_CHAPTER_COLUMNS, ['video_id', 'title'], false, true)
       });
     }
     return smoreJson_({ ok: true, items: publicSmoreItems_(true) });
@@ -432,13 +473,20 @@ function publicSettings_() {
   return out;
 }
 
-function publicTableItems_(sheetName, columns, requiredKeys, blankIsLive = false) {
+// requireTab: a missing tab or is_live header is a setup error (the site shows a load failure),
+// not an intentionally empty list.
+function publicTableItems_(sheetName, columns, requiredKeys, blankIsLive = false, requireTab = false) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
-  if (!sheet || sheet.getLastRow() < 2) return [];
+  if (!sheet) {
+    if (requireTab) throw new Error('Missing tab "' + sheetName + '". Run Setup / Seed Site Tabs.');
+    return [];
+  }
+  if (sheet.getLastRow() < 2) return [];
   const [rawHeaders, ...rows] = sheet.getDataRange().getValues();
   const headers = rawHeaders.map(h => String(h || '').trim());
   if (!headers.length) return [];
   const liveIdx = headers.indexOf('is_live');
+  if (requireTab && liveIdx < 0) throw new Error('Tab "' + sheetName + '" needs an is_live column.');
   return rows.filter(row => {
     if (liveIdx < 0) return true;
     const val = row[liveIdx];
@@ -993,10 +1041,12 @@ function seedDefaultSettings_(settingsSheet) {
     ['academy_heading', 'EdTech, AI & Classroom Video Lab', 'EdTech Lab page main heading'],
     ['academy_badge', 'Field Toolkit', 'EdTech Lab page badge'],
     ['academy_subtitle', 'NotebookLM in Google Classroom, missing-student slide/video catch-up, content video creation, OrbitNote & essential software.', 'EdTech Lab page subtitle'],
-    ['academy_video_url', '', 'Optional YouTube or Google Drive embed URL for the featured walkthrough video'],
-    ['academy_video_badge', 'Staff Walkthrough Video • Andrew Hogan', 'Badge above the featured video player'],
-    ['academy_video_title', 'Demonstrating NotebookLM in Google Classroom & Missing-Student Catch-Up', 'Default title in the video walkthrough box'],
-    ['academy_video_desc', 'Click any chapter timestamp below to preview the workflow steps covered in the walkthrough video.', 'Default description in the video walkthrough box'],
+    ['academy_nav_title', 'EdTech, AI & Video Lab', 'Name of the Tech & AI page in the menu'],
+    ['academy_nav_desc', '', 'Short description under the Tech & AI menu name'],
+    ['page_empty_message', 'Nothing has been published on this page yet.', 'Shown when a page has no published sections. Leave blank to show nothing.'],
+    ['reader_video_badge', 'Companion video', 'Badge on articles marked has_video_demo when a video is published'],
+    ['reader_video_button', 'Open the video page', 'Button on that callout'],
+    ['reader_video_note', '', 'Optional note on that callout'],
     ['footer_left', 'Classroom Craft, Student Engagement, Teacher Support & Tech/AI', 'Footer description text'],
     ['footer_right', 'Maize Middle School (USD 266)', 'Footer school name text']
   ];
@@ -1291,5 +1341,112 @@ function defaultTechToolsSeed_() {
       student_workflow: 'Access core grade-level concepts with scaffolded sentence stems and built-in vocabulary banks.',
       is_live: 'TRUE'
     }
+  ];
+}
+
+function unpublishedSamples_(records) {
+  return records.map(record => Object.assign({}, record, { is_live: 'FALSE' }));
+}
+
+// Built-in demonstration rows were seeded as live in earlier versions. Hide them without deleting.
+function unpublishSampleRows() {
+  const ui = SpreadsheetApp.getUi();
+  const answer = ui.alert(
+    'Unpublish sample rows',
+    'Sets is_live to FALSE on rows that still use the original sample IDs (for example art-1, qw-1, tool-1). ' +
+    'Rows you edited but kept the same ID are hidden too; set is_live back to TRUE to republish them. Continue?',
+    ui.ButtonSet.YES_NO
+  );
+  if (answer !== ui.Button.YES) return;
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const targets = [
+    [getPublishedArticlesSheet_(ss), 'article_id', defaultArticlesSeed_()],
+    [ss.getSheetByName('quick_wins'), 'tip_id', defaultQuickWinsSeed_()],
+    [ss.getSheetByName('directory_links'), 'resource_id', defaultDirectorySeed_()],
+    [ss.getSheetByName('lounge_quotes'), 'quote_id', defaultQuotesSeed_()],
+    [ss.getSheetByName('peer_studio'), 'studio_id', defaultStudioSeed_()],
+    [ss.getSheetByName('tech_tools'), 'tool_id', defaultTechToolsSeed_()]
+  ];
+  const summary = [];
+  targets.forEach(([sheet, idKey, seed]) => {
+    if (!sheet || sheet.getLastRow() < 2) return;
+    const ids = new Set(seed.map(record => String(record[idKey])));
+    const values = sheet.getDataRange().getValues();
+    const headers = values[0].map(h => String(h || '').trim());
+    const idCol = headers.indexOf(idKey);
+    const liveCol = headers.indexOf('is_live');
+    if (idCol < 0 || liveCol < 0) return;
+    let changed = 0;
+    for (let r = 1; r < values.length; r++) {
+      const live = values[r][liveCol];
+      if (ids.has(String(values[r][idCol]).trim()) && (live === true || String(live).trim().toLowerCase() === 'true')) {
+        sheet.getRange(r + 1, liveCol + 1).setValue('FALSE');
+        changed++;
+      }
+    }
+    if (changed) {
+      summary.push(sheet.getName() + ': ' + changed);
+      appendAuditLog_(ss, 'unpublish_samples', sheet.getName(), '', '', changed + ' sample rows set to FALSE');
+    }
+  });
+  ui.alert(summary.length ? 'Unpublished rows\n' + summary.join('\n') : 'No live sample rows found.');
+}
+
+// Tech & AI page structure. Sections are live; they stay invisible until they have published content.
+function defaultPageSectionsSeed_() {
+  return [
+    { section_id: 'tech-video', page: 'tech_ai', kind: 'videos', layout: 'stack', title: '', intro: '', badge: '', sort_order: 10, is_live: 'TRUE' },
+    { section_id: 'tech-prompts', page: 'tech_ai', kind: 'blocks', layout: 'columns', title: 'Copy-Paste NotebookLM Workflows', intro: 'Upload your unit slides, lab sheets, or standards PDF into NotebookLM, then copy a prompt.', badge: 'Prompt Recipes', sort_order: 20, is_live: 'TRUE' },
+    { section_id: 'tech-playbook', page: 'tech_ai', kind: 'blocks', layout: 'columns', title: 'Classroom Video Playbook', intro: 'Ideas for teacher-made and student-created videos.', badge: 'Under 3 Minutes', sort_order: 30, is_live: 'TRUE' },
+    { section_id: 'tech-tools', page: 'tech_ai', kind: 'tools', layout: 'stack', title: 'Essential Classroom Tech Toolkit', intro: 'Tools that work smoothly on school Chromebooks.', badge: '', sort_order: 40, is_live: 'TRUE' }
+  ];
+}
+
+function defaultContentBlocksSeed_() {
+  const prompt = (id, order, title, description, body) => ({
+    block_id: id, section_id: 'tech-prompts', block_type: 'prompt', title: title,
+    description: description, link_label: 'Copy', style: 'neutral', body: body, sort_order: order
+  });
+  return [
+    prompt('prompt-catch-up', 10, 'Missing-Student Catch-Up Slide & Video Script',
+      'Generates a 5-slide summary, 90-sec narration script, and Google Classroom makeup check.',
+      'Using only the uploaded lesson slides and lab handout from today, create a \'What You Missed\' catch-up package for an absent 8th grader: 1) A 5-slide outline they can read in 2 minutes, 2) A 90-second video/audio narration script summarizing the main phenomenon, and 3) Two quick check questions they can submit in Google Classroom for makeup credit.'),
+    prompt('prompt-study-guide', 20, 'Google Classroom Study Guide & FAQ Builder',
+      'Builds a clean unit review doc ready to post to your Google Classroom stream.',
+      'Create a student-friendly Google Classroom Study Guide from our uploaded unit notes. Include: 1) Top 5 Big Ideas in plain middle-school language, 2) A glossary of 6 Tier 3 vocabulary terms with everyday analogies, and 3) 4 common misconceptions students should watch out for on Friday\'s quiz.'),
+    prompt('prompt-tiered-reading', 30, 'Tiered Reading Passages (Lexile 700 / 950 / 1150)',
+      'Differentiates complex texts while keeping the same discussion questions.',
+      'Using only the uploaded unit standards and background article, write 3 versions of an engaging 250-word reading passage explaining this phenomenon at Lexile 700, 950, and 1150, followed by 3 identical discussion questions so all students can join the same table debate.'),
+    prompt('prompt-listening-station', 40, 'Audio Overview Listening Station Sheet',
+      'Pairs with NotebookLM\'s 2-host podcast generator for active listening stations.',
+      'Create a 1-page student station guide with 4 key vocabulary look-fors, 2 diagram sketching boxes, and 3 pause-and-predict questions to accompany the NotebookLM Audio Overview for this unit.'),
+    { block_id: 'playbook-teacher', section_id: 'tech-playbook', block_type: 'list', title: 'Making Short, Content-Focused Videos for Your Students',
+      body: 'The Lab Setup & Safety Loop: record a 90-second walkthrough of equipment setup and post it in Google Classroom.\nThe Worked-Example Replay: record yourself solving one tough problem so students or parents can replay it at home.\nMissing-Student Slide Narration: record a 2-minute voiceover over a catch-up outline for absent students.',
+      description: '', url: '', link_label: '', style: 'numbered', sort_order: 10 },
+    { block_id: 'playbook-student', section_id: 'tech-playbook', block_type: 'list', title: 'Having Students Make Videos to Prove Mastery',
+      body: 'Box 1 (0-15s) The Hook & Claim: state the mystery question and your team\'s claim.\nBox 2 (15-60s) Visual Diagram Proof: point to your model or graph and explain why using 3 unit vocabulary words.\nBox 3 (60-90s) Bust the Myth: explain the #1 common trap and why the evidence disproves it.',
+      description: '', url: '', link_label: '', style: 'bullets', sort_order: 20 },
+    { block_id: 'playbook-tip', section_id: 'tech-playbook', block_type: 'callout', title: 'Pro Tip',
+      body: 'Never re-record over a tiny verbal stumble. Authentic one-take videos feel like real teaching.',
+      description: '', url: '', link_label: '', style: 'green', sort_order: 30 },
+    { block_id: 'playbook-student-rubric', section_id: 'tech-playbook', block_type: 'prompt', title: 'Student Video Directions & 3-Box Rubric',
+      body: 'Student 90-Second Video Rubric & Directions: 1) Complete your 3-Box Paper Storyboard first and get a teacher stamp. 2) Record a 60-90 second One-Take Video (Paper Slide or Chromebook Screencast). 3) Must include: Visual diagram on screen, all 3 target vocabulary words used in context, and 1 busted misconception.',
+      description: '', url: '', link_label: 'Copy directions', style: 'neutral', sort_order: 40 }
+  ];
+}
+
+// Sample video: add a real YouTube/Vimeo/Loom/Drive URL, then set is_live to TRUE on the video and its chapters.
+function defaultVideosSeed_() {
+  return [{
+    video_id: 'sample-video', section_id: 'tech-video', badge: 'Staff Walkthrough Video', title: 'Sample video title',
+    description: 'Replace this row with a real video. With no live video row there is no video panel.',
+    url: '', link_label: '', sort_order: 10
+  }];
+}
+
+function defaultVideoChaptersSeed_() {
+  return [
+    { chapter_id: 'sample-chapter-1', video_id: 'sample-video', title: 'First chapter', description: 'What this part of the video covers.', start_time: '0:00', sort_order: 10 },
+    { chapter_id: 'sample-chapter-2', video_id: 'sample-video', title: 'Second chapter', description: 'Use the real timestamp from the video.', start_time: '1:25', sort_order: 20 }
   ];
 }

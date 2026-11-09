@@ -15,7 +15,6 @@
   <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="mms-directory-data.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -249,8 +248,8 @@
                   <i data-lucide="cpu" class="w-4 h-4"></i>
                 </div>
                 <div>
-                  <div class="text-xs font-bold text-ink-900">EdTech, AI &amp; Video Lab</div>
-                  <div class="text-[11px] text-ink-600">NotebookLM video demo, OrbitNote &amp; video tools</div>
+                  <div id="academyNavTitleText" class="text-xs font-bold text-ink-900"></div>
+                  <div id="academyNavDescText" class="text-[11px] text-ink-600"></div>
                 </div>
               </button>
 
@@ -801,7 +800,7 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- TUCKED-AWAY VIEW 4: EDTECH, AI & VIDEO LAB -->
+    <!-- TUCKED-AWAY VIEW 4: TECH & AI PAGE (ALL CONTENT COMES FROM THE SHEET) -->
     <!-- ========================================== -->
     <div id="view-academy" class="view-section hidden space-y-10">
       <div class="pb-5 border-b border-cream-300 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -811,214 +810,15 @@
             <span>Back to Editorial Feed</span>
           </button>
           <div class="flex items-center gap-2.5 flex-wrap">
-            <h1 id="academyHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">EdTech, AI &amp; Classroom Video Lab</h1>
-            <span id="academyBadgeText" class="px-3 py-0.5 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-red-100 text-ink-900">
-              Field Toolkit
-            </span>
+            <h1 id="academyHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900"></h1>
+            <span id="academyBadgeText" class="px-3 py-0.5 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-red-100 text-ink-900"></span>
           </div>
-          <p id="academySubtitleText" class="text-sm text-ink-600 mt-1">NotebookLM in Google Classroom, missing-student slide/video catch-up, content video creation, OrbitNote &amp; essential software.</p>
+          <p id="academySubtitleText" class="text-sm text-ink-600 mt-1"></p>
         </div>
       </div>
 
-      <!-- PART 1: FEATURED STAFF VIDEO WALKTHROUGH (ANDREW'S NOTEBOOKLM DEMO) -->
-      <section class="bg-white rounded-3xl border border-cream-300 overflow-hidden shadow-sm">
-        <div class="grid grid-cols-1 lg:grid-cols-12">
-          <!-- INTERACTIVE VIDEO PLAYER -->
-          <div class="lg:col-span-7 bg-ink-900 p-6 sm:p-8 flex flex-col justify-between relative min-h-[300px] text-white">
-            <div class="flex items-center justify-between gap-2 z-10">
-              <span class="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-red-600 text-white flex items-center gap-1.5">
-                <i data-lucide="video" class="w-3.5 h-3.5"></i>
-                <span id="academyVideoBadgeText">Staff Walkthrough Video • Andrew Hogan</span>
-              </span>
-              <span id="academyVideoStatusLabel" class="text-xs font-mono text-ink-400">Interactive Chapter Guide</span>
-            </div>
-
-            <div id="academyVideoEmbedWrapper" class="hidden my-4 rounded-2xl overflow-hidden border border-ink-600/50 aspect-video bg-black z-10">
-              <iframe id="academyVideoIframe" class="w-full h-full" src="" title="Staff Walkthrough Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-
-            <div class="my-6 p-6 rounded-2xl bg-ink-800/90 border border-ink-600/50 space-y-3 z-10" id="videoChapterPreviewBox">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-red-600 text-white flex items-center justify-center shrink-0 shadow-md">
-                  <i data-lucide="play" class="w-6 h-6 fill-ink-900"></i>
-                </div>
-                <div>
-                  <span id="activeVideoChapterBadge" class="text-[10px] font-extrabold uppercase tracking-widest text-red-400">Chapter 1 • 0:00 — Google Classroom Setup</span>
-                  <h3 id="activeVideoChapterTitle" class="font-editorial font-bold text-lg text-white">Demonstrating NotebookLM in Google Classroom &amp; Missing-Student Catch-Up</h3>
-                </div>
-              </div>
-              <p id="activeVideoChapterDesc" class="text-xs text-cream-200 leading-relaxed">
-                Click any chapter timestamp below to preview the workflow steps covered in the walkthrough video.
-              </p>
-            </div>
-
-            <!-- INTERACTIVE CHAPTER PILLS -->
-            <div class="space-y-1.5 z-10">
-              <span class="text-[10px] font-extrabold uppercase tracking-widest text-ink-400 block">Click a Walkthrough Chapter to Preview:</span>
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                <button class="video-chapter-btn text-left p-2.5 rounded-xl bg-red-600/30 border border-red-500 text-xs transition" data-badge="Chapter 1 • 0:00" data-title="NotebookLM + Google Classroom Setup" data-desc="How to build a master unit notebook from your Google Drive slides/docs and post student-ready study guides and FAQs directly into Google Classroom.">
-                  <div class="font-bold text-red-300 text-[11px]">0:00 • Part 1</div>
-                  <div class="font-semibold text-white truncate">Google Classroom Hub</div>
-                </button>
-                <button class="video-chapter-btn text-left p-2.5 rounded-xl bg-ink-800 hover:bg-ink-700 border border-ink-600 text-xs transition" data-badge="Chapter 2 • 1:25" data-title="Fast Curriculum & Unit Planning" data-desc="Uploading Kansas standards and unit PDFs to map daily bellringers, spot Tier 2/3 vocabulary bottlenecks, and level articles for different reading tiers.">
-                  <div class="font-bold text-red-300 text-[11px]">1:25 • Part 2</div>
-                  <div class="font-semibold text-white truncate">Curriculum Planning</div>
-                </button>
-                <button class="video-chapter-btn text-left p-2.5 rounded-xl bg-ink-800 hover:bg-ink-700 border border-ink-600 text-xs transition" data-badge="Chapter 3 • 2:45" data-title="Slides & Audio/Video for Missing Students" data-desc="Generating a 5-slide 'What You Missed' summary outline and conversational AI Audio/Video Overview so absent students can catch up in 5 minutes.">
-                  <div class="font-bold text-red-300 text-[11px]">2:45 • Part 3</div>
-                  <div class="font-semibold text-white truncate">Missing Student Slides/Video</div>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- RIGHT 5 COLUMNS: COPY-PASTEABLE NOTEBOOKLM RECIPES -->
-          <div class="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between space-y-5 bg-gradient-to-b from-white to-cream-50 text-xs">
-            <div class="space-y-2">
-              <span class="text-[10px] font-extrabold uppercase tracking-widest text-red-700">Companion Prompt Recipes</span>
-              <h2 class="font-editorial font-bold text-xl text-ink-900">4 Copy-Paste NotebookLM Workflows</h2>
-              <p class="text-ink-600 leading-relaxed">
-                Upload your unit slides, lab sheets, or standards PDF into <a href="https://notebooklm.google.com/" target="_blank" class="font-bold text-red-700 underline">NotebookLM</a>, then copy any prompt below:
-              </p>
-            </div>
-
-            <div class="space-y-2.5">
-              <div class="p-3.5 rounded-2xl bg-red-50/60 border border-red-200 space-y-1.5">
-                <div class="flex items-center justify-between">
-                  <span class="font-bold text-ink-900">1. Missing-Student Catch-Up Slide &amp; Video Script</span>
-                  <button class="copy-prompt-btn text-[11px] font-bold px-2.5 py-1 rounded-lg bg-ink-900 text-white hover:bg-ink-800 flex items-center gap-1" data-prompt="Using only the uploaded lesson slides and lab handout from today, create a 'What You Missed' catch-up package for an absent 8th grader: 1) A 5-slide outline they can read in 2 minutes, 2) A 90-second video/audio narration script summarizing the main phenomenon, and 3) Two quick check questions they can submit in Google Classroom for makeup credit.">
-                    <i data-lucide="copy" class="w-3 h-3 text-red-400"></i><span>Copy</span>
-                  </button>
-                </div>
-                <p class="text-[11px] text-ink-600">Generates a 5-slide summary, 90-sec narration script, and Google Classroom makeup check.</p>
-              </div>
-
-              <div class="p-3.5 rounded-2xl bg-cream-100 border border-cream-300 space-y-1.5">
-                <div class="flex items-center justify-between">
-                  <span class="font-bold text-ink-900">2. Google Classroom Study Guide &amp; FAQ Builder</span>
-                  <button class="copy-prompt-btn text-[11px] font-bold px-2.5 py-1 rounded-lg bg-ink-900 text-white hover:bg-ink-800 flex items-center gap-1" data-prompt="Create a student-friendly Google Classroom Study Guide from our uploaded unit notes. Include: 1) Top 5 Big Ideas in plain middle-school language, 2) A glossary of 6 Tier 3 vocabulary terms with everyday analogies, and 3) 4 common misconceptions students should watch out for on Friday's quiz.">
-                    <i data-lucide="copy" class="w-3 h-3 text-red-400"></i><span>Copy</span>
-                  </button>
-                </div>
-                <p class="text-[11px] text-ink-600">Builds a clean unit review doc ready to post directly to your Google Classroom stream.</p>
-              </div>
-
-              <div class="p-3.5 rounded-2xl bg-cream-100 border border-cream-300 space-y-1.5">
-                <div class="flex items-center justify-between">
-                  <span class="font-bold text-ink-900">3. Tiered Reading Passages (Lexile 700 / 950 / 1150)</span>
-                  <button class="copy-prompt-btn text-[11px] font-bold px-2.5 py-1 rounded-lg bg-ink-900 text-white hover:bg-ink-800 flex items-center gap-1" data-prompt="Using only the uploaded unit standards and background article, write 3 versions of an engaging 250-word reading passage explaining this phenomenon at Lexile 700, 950, and 1150, followed by 3 identical discussion questions so all students can join the same table debate.">
-                    <i data-lucide="copy" class="w-3 h-3 text-red-400"></i><span>Copy</span>
-                  </button>
-                </div>
-                <p class="text-[11px] text-ink-600">Differentiates complex science or social studies texts while keeping the same discussion questions.</p>
-              </div>
-
-              <div class="p-3.5 rounded-2xl bg-cream-100 border border-cream-300 space-y-1.5">
-                <div class="flex items-center justify-between">
-                  <span class="font-bold text-ink-900">4. Audio Overview Listening Station Sheet</span>
-                  <button class="copy-prompt-btn text-[11px] font-bold px-2.5 py-1 rounded-lg bg-ink-900 text-white hover:bg-ink-800 flex items-center gap-1" data-prompt="Create a 1-page student station guide with 4 key vocabulary look-fors, 2 diagram sketching boxes, and 3 pause-and-predict questions to accompany the NotebookLM Audio Overview for this unit.">
-                    <i data-lucide="copy" class="w-3 h-3 text-red-400"></i><span>Copy</span>
-                  </button>
-                </div>
-                <p class="text-[11px] text-ink-600">Pairs with NotebookLM's 2-host podcast generator for active listening stations.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- PART 2: DUAL-TRACK VIDEO PLAYBOOK (TEACHER VIDEOS VS. STUDENT VIDEOS) -->
-      <section class="space-y-4">
-        <div class="border-b border-cream-300 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <h2 class="font-editorial font-bold text-xl text-ink-900">Classroom Video Playbook: Teacher-Made &amp; Student-Created Videos</h2>
-            <p class="text-xs text-ink-600">Practical ideas from our staff meeting on making content-focused videos for students—and having students create their own.</p>
-          </div>
-          <span class="text-[11px] font-bold px-3 py-1 rounded-full bg-red-100 text-red-900">Under 3 Minutes Rule</span>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 text-xs">
-          <!-- TRACK A: TEACHER-CREATED CONTENT VIDEOS -->
-          <div class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-4 flex flex-col justify-between">
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-red-100 text-ink-900">Track A • Teacher-Created Videos</span>
-                <span class="text-ink-400 font-semibold">Screencastify / Canva / Loom</span>
-              </div>
-              <h3 class="font-editorial font-bold text-lg text-ink-900">Making Short, Content-Focused Videos for Your Students</h3>
-              <p class="text-ink-600 leading-relaxed">
-                Students engage far more with a 2-minute video featuring <strong>your voice and your slides</strong> than a 15-minute stranger on YouTube. Use quick, unedited one-take recordings to clone yourself:
-              </p>
-              <ul class="space-y-2 text-ink-800">
-                <li class="flex items-start gap-2">
-                  <span class="font-bold text-red-600">1.</span>
-                  <span><strong>The ‘Lab Setup &amp; Safety’ Loop:</strong> Record a 90-second walkthrough of equipment setup and post it in Google Classroom so groups can re-watch at their lab tables instead of raising hands.</span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <span class="font-bold text-red-600">2.</span>
-                  <span><strong>The Worked-Example Replay:</strong> Record yourself solving one tough math problem or annotating one CER paragraph in OrbitNote so struggling students or parents can replay it at home.</span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <span class="font-bold text-red-600">3.</span>
-                  <span><strong>Missing-Student Slide Narration:</strong> Export your NotebookLM 5-slide catch-up outline into Canva or Google Slides and record a 2-minute voiceover for absent kids.</span>
-                </li>
-              </ul>
-            </div>
-            <div class="p-3.5 rounded-2xl bg-cream-100 border border-cream-200 text-[11px] text-ink-800">
-              <strong class="text-ink-900">Pro Tip:</strong> Never re-record over a tiny verbal stumble—authentic, conversational one-take videos feel like real teaching and take 3 minutes total to produce.
-            </div>
-          </div>
-
-          <!-- TRACK B: STUDENT-CREATED EXPLAINER VIDEOS -->
-          <div class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-4 flex flex-col justify-between">
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-900">Track B • Student-Created Videos</span>
-                <span class="text-ink-400 font-semibold">90-Second ‘One-Take’ Protocol</span>
-              </div>
-              <h3 class="font-editorial font-bold text-lg text-ink-900">Having Students Make Videos to Prove Mastery</h3>
-              <p class="text-ink-600 leading-relaxed">
-                When middle schoolers have to explain a phenomenon on camera in 60–90 seconds, they process vocabulary and cause-and-effect at a much deeper level. Keep it structured with the <strong>3-Box Paper Storyboard</strong> before they touch a camera:
-              </p>
-              <div class="grid grid-cols-3 gap-2.5 pt-1">
-                <div class="p-3 rounded-2xl bg-cream-50 border border-cream-300">
-                  <div class="font-extrabold text-[10px] uppercase text-emerald-800">Box 1 (0–15s)</div>
-                  <div class="font-bold text-ink-900 mt-0.5">The Hook &amp; Claim</div>
-                  <p class="text-[11px] text-ink-600 mt-1">State the mystery question and your team's claim in one clear sentence.</p>
-                </div>
-                <div class="p-3 rounded-2xl bg-cream-50 border border-cream-300">
-                  <div class="font-extrabold text-[10px] uppercase text-emerald-800">Box 2 (15–60s)</div>
-                  <div class="font-bold text-ink-900 mt-0.5">Visual Diagram Proof</div>
-                  <p class="text-[11px] text-ink-600 mt-1">Point to your drawn model or lab graph and explain <em>why</em> using 3 unit vocab words.</p>
-                </div>
-                <div class="p-3 rounded-2xl bg-cream-50 border border-cream-300">
-                  <div class="font-extrabold text-[10px] uppercase text-emerald-800">Box 3 (60–90s)</div>
-                  <div class="font-bold text-ink-900 mt-0.5">Bust the Myth</div>
-                  <p class="text-[11px] text-ink-600 mt-1">Explain the #1 common trap people fall for and why the evidence disproves it.</p>
-                </div>
-              </div>
-            </div>
-            <button class="copy-prompt-btn w-full py-2.5 px-4 rounded-xl bg-ink-900 hover:bg-ink-800 text-white font-bold flex items-center justify-center gap-2 transition" data-prompt="Student 90-Second Video Rubric & Directions: 1) Complete your 3-Box Paper Storyboard first and get a teacher stamp. 2) Record a 60-90 second One-Take Video (Paper Slide or Chromebook Screencast). 3) Must include: Visual diagram on screen, all 3 target vocabulary words used in context, and 1 busted misconception.">
-              <i data-lucide="copy" class="w-3.5 h-3.5 text-red-400"></i>
-              <span>Copy Student Video Directions &amp; 3-Box Rubric</span>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- PART 3: ESSENTIAL CLASSROOM TECH & SOFTWARE DIRECTORY (ORBITNOTE & MORE) -->
-      <section class="space-y-4">
-        <div class="border-b border-cream-300 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <h2 class="font-editorial font-bold text-xl text-ink-900">Essential Classroom Tech Toolkit (OrbitNote &amp; Software)</h2>
-            <p class="text-xs text-ink-600">High-utility software tools that work smoothly on school Chromebooks.</p>
-          </div>
-        </div>
-
-        <div id="techToolsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-xs">
-          <!-- Dynamically populated from APP_DATA.techTools / Google Sheet tech_tools tab -->
-        </div>
-      </section>
+      <p id="academyStatus" role="status" class="hidden rounded-2xl border p-4 text-sm"></p>
+      <div id="academySections" class="space-y-10"></div>
     </div>
 
   </main>
@@ -1056,20 +856,16 @@
           <p id="readerSubtitle" class="text-sm sm:text-base text-ink-600 mt-2 leading-relaxed"></p>
         </div>
 
-        <!-- OPTIONAL VIDEO WALKTHROUGH CALLOUT (SHOWN ON ANDREW'S NOTEBOOKLM ARTICLE) -->
+        <!-- OPTIONAL COMPANION VIDEO CALLOUT (ARTICLES WITH has_video_demo AND A PUBLISHED VIDEO) -->
         <div id="readerVideoDemoBox" class="hidden p-5 rounded-2xl bg-ink-900 text-white border border-red-500/40 space-y-3">
           <div class="flex items-center justify-between gap-2 flex-wrap">
-            <span class="text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-red-600/30 text-red-300">
-              🎬 Companion Video Walkthrough • Andrew Hogan
-            </span>
+            <span id="readerVideoDemoBadge" class="text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-red-600/30 text-red-300"></span>
             <button id="jumpToVideoLabFromReaderBtn" class="text-xs font-bold text-red-300 hover:underline flex items-center gap-1">
-              <span>Open Full Video &amp; Prompt Lab</span>
+              <span id="readerVideoDemoButton"></span>
               <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
             </button>
           </div>
-          <p class="text-xs text-cream-200 leading-relaxed">
-            <strong>Video Demo Chapters:</strong> (0:00) Using NotebookLM inside Google Classroom • (1:25) Unit &amp; Curriculum Planning • (2:45) Generating Catch-Up Slides &amp; Audio/Video Overviews for Missing Students.
-          </p>
+          <p id="readerVideoDemoNote" class="text-xs text-cream-200 leading-relaxed"></p>
         </div>
 
         <!-- TRY THIS TOMORROW HIGHLIGHT -->
@@ -1395,192 +1191,7 @@
     ];
 
     const APP_DATA = {
-      articles: [
-        {
-          id: "art-1",
-          title: "The ‘Low-Floor, High-Ceiling’ Hook: Getting Every 8th Grader Talking in the First 4 Minutes",
-          subtitle: "How replacing traditional glossary bellringers with visual phenomena controversies and 90-second table debates transforms passive classes into active investigators.",
-          category: "Student Engagement",
-          author: "Science & STEM Team",
-          readTime: "4 min read",
-          date: "Oct 21, 2026",
-          featured: true,
-          image: IMG_ENGAGEMENT,
-          takeaway: "Students shut down when a warm-up feels like a pop quiz. Opening with a counter-intuitive visual mystery where everyone can hazard a guess gets 100% of voices active before formal vocabulary hits the board.",
-          tryTomorrow: "Put up a split image or a 'Which One Doesn't Belong?' prompt with zero academic jargon. Give tables 60 seconds to agree on a defense, then call a table spokesperson to share what their group debated.",
-          body: [
-            "The first four minutes of class set the metabolic rate for the entire period. When students walk in and see 'Define photosynthesis in your notebook,' half the room stalls because they are afraid of being wrong, and the other half copies a glossary line without thinking.",
-            "Instead, shift to a 'Low-Floor, High-Ceiling' phenomenon hook. A low floor means any student—regardless of reading level or yesterday's attendance—can make an immediate observation. A high ceiling means the prompt naturally pushes advanced thinkers toward deeper conceptual connections.",
-            "For example, in 8th grade science, project two contrasting photos: a massive oak tree and a tiny packet of soil. Ask: 'Where did the 4,000 pounds of wood actually come from—the dirt, the water, or the thin air?' Don't grade it. Give tables 90 seconds to argue and lock in a table vote."
-          ],
-          script: "Take 30 seconds of silent look-time at the screen. You don't need any textbook words yet—just notice what seems weird or surprising. Now, turn to your shoulder partner: Person A, you have 45 seconds to convince Person B of your hunch.",
-          tags: ["bellringers", "engagement", "discussion", "science", "inquiry", "warm-ups"]
-        },
-        {
-          id: "art-7",
-          title: "NotebookLM in Google Classroom: Curriculum Planning & Catch-Up Slides/Videos for Missing Students",
-          subtitle: "How to use NotebookLM to map units, organize Google Classroom resources, and generate rapid slide decks and audio/video overviews so absent students never fall behind.",
-          category: "Tech & AI",
-          author: "Andrew Hogan & EdTech Lab",
-          readTime: "4 min read + Video Demo",
-          date: "Oct 21, 2026",
-          featured: false,
-          hasVideoDemo: true,
-          image: IMG_TECH_AI,
-          takeaway: "Catching up absent students shouldn't eat up 20 minutes of your plan hour. By keeping a unit NotebookLM loaded with your slides, lab docs, and standards, you can generate a 5-slide catch-up outline and a 3-minute audio/video overview to post straight into Google Classroom.",
-          tryTomorrow: "Create one 'Unit Master Notebook' in NotebookLM and upload this week's slides and guided notes. Generate a 'Missing Student Catch-Up Guide' and post it under a pinned 'Absent? Start Here' topic in Google Classroom.",
-          body: [
-            "Unlike open-ended AI chatbots that pull from the random internet, Google's NotebookLM is strictly grounded in the documents, Google Slides, PDFs, and YouTube links you upload. That makes it a game-changer for three everyday middle school workflows: Google Classroom resource hubs, curriculum planning, and supporting absent students.",
-            "1. Curriculum Planning & Google Classroom Alignment: Drop your Kansas state standards PDF, pacing guide, and past unit labs into a single notebook. Ask NotebookLM to spot vocabulary gaps, sequence daily bellringers, or draft differentiated reading passages that you can export directly to Google Docs and assign in Google Classroom.",
-            "2. Slide & Video/Audio Generation for Missing Students: When a student misses a pivotal lab or demonstration, use NotebookLM to generate a concise 5-slide 'What You Missed' summary outline (ready to paste into Google Slides or Canva) alongside an AI Audio/Video Overview that walks the student through the core phenomenon in conversational language.",
-            "3. Student-Facing Study Guides: Post the exported study guide, FAQ, and audio/video overview into your Google Classroom stream before a unit test so students have a 24/7 study guide built strictly from your classroom notes."
-          ],
-          script: "NotebookLM Prompt for Absent Students: 'Using only Tuesday's lab slides and guided notes, create a 1-page Missing Student Catch-Up Sheet with: 1) The Big Question we investigated, 2) A 5-slide summary outline of key findings, 3) Three vocabulary terms in plain 8th-grade language, and 4) Two check-for-understanding questions they can answer to earn lab makeup credit.'",
-          tags: ["tech", "ai", "notebooklm", "google classroom", "missing students", "absent", "slides", "video", "curriculum planning"]
-        },
-        {
-          id: "art-2",
-          title: "The 90-Second Transition Reset: Reclaiming Focus Without Raising Your Voice",
-          subtitle: "Practical, non-confrontational routines that bridge chaotic hallway passing periods into calm, productive workshop time.",
-          category: "Classroom Management",
-          author: "Classroom Craft Collective",
-          readTime: "3 min read",
-          date: "Oct 19, 2026",
-          featured: false,
-          image: IMG_MANAGEMENT,
-          takeaway: "Competing with middle school volume drains teacher energy by 5th hour. Anchoring transitions to predictable visual cues and physical proximity resets the room faster than verbal warnings.",
-          tryTomorrow: "Stand at the threshold during passing period to greet students by name, and point silently to a single 'Do Immediately' visual box on the board. Start class from the back or side of the room rather than behind the podium.",
-          body: [
-            "Middle schoolers carry hallway adrenaline three minutes into every period. When we try to talk over that energy from the front of the room, we accidentally train students that the first two requests don't count.",
-            "The most effective reset uses spatial anchoring and visual offloading. Keep a consistent spot on the screen that shows three things only: What stays on your desk, what goes away, and your 2-minute starting task.",
-            "When transitioning out of group lab work back to whole-class debrief, avoid open-ended countdowns. Give a specific physical anchor: 'In 15 seconds, be Seated, Markers capped, Eyes on the graph.'"
-          ],
-          script: "Pause where you are. Cap the marker until it clicks. Look at the blue box on the screen—in 60 seconds, your table needs one sticky note on the front board.",
-          tags: ["classroom management", "transitions", "routines", "proximity", "de-escalation"]
-        },
-        {
-          id: "art-8",
-          title: "Content Videos Dual-Track: Making Quick Teacher Videos & Having Students Record Explainers",
-          subtitle: "How 3-minute teacher screencasts clone your support during labs—and how student-created 90-second videos build deeper mastery than worksheets.",
-          category: "Tech & AI",
-          author: "MMS Media & Instructional Team",
-          readTime: "4 min read",
-          date: "Oct 18, 2026",
-          featured: false,
-          image: IMG_TECH_AI,
-          takeaway: "Middle schoolers tune out generic 15-minute YouTube lectures, but they lock in when they hear their own teacher's voice in a 3-minute screencast—and comprehension skyrockets when students script and film their own 90-second concept explainers.",
-          tryTomorrow: "Track A (Teacher Video): Record a single-take 2-minute screencast walking through your next lab diagram so students can re-watch at their own pace. Track B (Student Video): Give pairs a '3-Box Paper Storyboard' that they must get stamped before recording a 60-second explanation.",
-          body: [
-            "Video in the middle school classroom works best when it is short, authentic, and low-production. Whether you are recording a micro-lesson for your students or handing the camera to them, the secret is keeping the runtime under 3 minutes.",
-            "Track 1 — Teacher-Created Content Videos: Instead of repeating the same multi-step directions 18 times during a lab or math workshop, record a 2-minute screen capture (using Screencastify, Loom, or Canva's built-in recorder) over your Google Slides. Embed it in Google Classroom or Edpuzzle. Struggling learners can pause and rewind without embarrassment, and absent students get your exact explanation.",
-            "Track 2 — Student-Created Explainer Videos: When students have to teach a concept on camera in 90 seconds, they can't hide behind vague copy-pasted sentences. Have pairs create a 'Paper Slide Video' or Chromebook screen recording where they point to a diagram, explain the cause-and-effect relationship using 3 target vocabulary words, and bust one common myth.",
-            "The Golden Rule for Student Videos: Never let students open the camera app first. Require a 5-minute '3-Box Storyboard' on paper (Box 1: The Hook Question, Box 2: The Visual Diagram/Evidence, Box 3: The Real-World Connection). Once you initial their storyboard, they get 10 minutes to record in one take."
-          ],
-          script: "Student Video Challenge Script: 'Your pair has 10 minutes to record a 60-to-90 second One-Take Explainer. You must show your annotated diagram on screen, use all three unit vocabulary words accurately, and explain why the common misconception is wrong. No fancy editing—clarity beats special effects!'",
-          tags: ["tech", "ai", "video", "student videos", "screencast", "edpuzzle", "canva", "engagement"]
-        },
-        {
-          id: "art-3",
-          title: "The Friday 3:15 Triage: Leaving Work at Work With Monday Already Staged",
-          subtitle: "A 15-minute end-of-week ritual designed to protect your weekend bandwidth while eliminating Sunday-night lesson anxiety.",
-          category: "Teacher Support",
-          author: "Staff Wellbeing & Sustainability",
-          readTime: "3 min read",
-          date: "Oct 17, 2026",
-          featured: false,
-          image: IMG_SUPPORT,
-          takeaway: "Taking ungraded stacks home in a tote bag rarely leads to productive grading—it just creates weekend guilt. A ruthless 15-minute Friday afternoon triage closes open loops before you walk to your car.",
-          tryTomorrow: "Set a 15-minute timer after the final bell on Friday: 5 minutes to clear your physical desk surface, 5 minutes to stage Monday's 1st-hour slide/copies, and 5 minutes to reply to two urgent emails.",
-          body: [
-            "Teacher burnout rarely comes from the 45 minutes we spend teaching a period; it comes from the cognitive friction of carrying 140 open loops home over the weekend.",
-            "Instead of leaving Friday afternoon in a blur or staying until 5:30 PM, run the '5-5-5 Reset.' First, do a 3-pile sort on any paper collected that day: Recycle (practice that served its purpose), Quick Scan (check-plus/check/reteach), and Key Assessment.",
-            "Second, stage Monday morning's very first bellringer on your desktop and place Monday's copies on the front corner of your desk. Walking in Monday morning to a prepped 1st hour is the best gift you can give your future self."
-          ],
-          script: "Friday 3:15 Checklist: 1) Monday Slide 1 open on desktop, 2) Whiteboard date updated, 3) Emergency sub folder visible on desk corner, 4) Take-home bag empty.",
-          tags: ["teacher support", "wellbeing", "burnout", "grading", "boundaries", "friday reset"]
-        },
-        {
-          id: "art-9",
-          title: "OrbitNote & Essential Classroom Software: Interactive PDFs, Read-Alouds & Time-Saving Tech",
-          subtitle: "Unlocking static PDFs in Google Classroom with OrbitNote's text-to-speech, color-coded vocabulary highlights, and voice notes—plus our top teacher software picks.",
-          category: "Tech & AI",
-          author: "Assistive & Classroom Tech Team",
-          readTime: "5 min read",
-          date: "Oct 15, 2026",
-          featured: false,
-          image: IMG_TECH_AI,
-          takeaway: "Static PDFs frustrate struggling readers and stall Chromebook workflows. Assigning PDFs through OrbitNote in Google Classroom gives every student text-to-speech read-alouds, visual dictionaries, diagram markup, and voice-recorded answers.",
-          tryTomorrow: "Push tomorrow's reading or lab PDF through the OrbitNote Google Classroom integration. Ask students to use the Yellow highlighter for the main claim, Green for evidence, and click 'Collect Highlights' to auto-generate a study sheet.",
-          body: [
-            "We all have great curriculum resources locked inside PDFs—lab procedures, historical primary sources, math reference sheets, and science articles. But on a student Chromebook, a plain PDF is tough to read and even harder to annotate.",
-            "1. Why OrbitNote Shines in Google Classroom: When students open an assigned PDF with OrbitNote, they immediately get Read&Write accessibility tools built right in: natural-sounding Text-to-Speech with dual-color word tracking, a Picture Dictionary for unfamiliar Tier 2/3 words, and a Screen Mask (reading ruler) that helps students with visual fatigue stay on the right line.",
-            "2. High-Leverage Student Annotation Moves in OrbitNote: Beyond typing directly onto worksheets, students can use freehand drawing to label science diagrams or graph trends, use the 4-color highlighters to code Claim-Evidence-Reasoning (and click 'Collect Highlights' to pull all their highlights into a clean Google Doc), or leave a 20-second Voice Comment explaining their thinking if typing is a barrier.",
-            "3. Pairing OrbitNote with Other High-Utility Teacher Software: Combine OrbitNote for accessible PDFs with NotebookLM (for unit synthesis & catch-up slides), Canva for Education (for visual slide decks & student video templates), and Edpuzzle (for embedding quick comprehension questions inside teacher-made videos)."
-          ],
-          script: "OrbitNote Classroom Routine: 'Open today's article in OrbitNote from Google Classroom. Plug in headphones if you'd like to use the Play button to listen along. Highlight the author's claim in Yellow, two pieces of data in Green, and drop one pushpin text comment next to the graph.'",
-          tags: ["tech", "ai", "orbitnote", "orbit note", "pdf", "accessibility", "google classroom", "software", "read aloud"]
-        },
-        {
-          id: "art-4",
-          title: "Killing the Dictionary Copy-Paste: Morphological Root Walls & Visual Frayer Tweaks",
-          subtitle: "Lightweight, 5-minute disciplinary literacy routines that build real Tier 2 & Tier 3 vocabulary stamina across every subject.",
-          category: "Student Engagement",
-          author: "Disciplinary Literacy Team",
-          readTime: "5 min read",
-          date: "Oct 14, 2026",
-          featured: false,
-          image: IMG_ENGAGEMENT,
-          takeaway: "When students copy glossary definitions, retention drops near zero within 48 hours. Teaching word roots and requiring sketched 'non-examples' forces genuine conceptual processing.",
-          tryTomorrow: "Swap out two quadrants of the classic Frayer model: replace 'Definition' with 'Sketch It (Zero Words Allowed)' and 'Non-Examples' with 'The Common Trap (What people confuse this with).'",
-          body: [
-            "Across science, social studies, math, and ELA, academic vocabulary is the single biggest bottleneck for comprehension. Yet traditional vocabulary lists treat every word as an isolated island to memorize.",
-            "When we teach high-leverage roots (like photo-, therm-, chron-, morph-, equi-), we hand students a master key that unlocks dozens of unfamiliar terms on state assessments and lab instructions.",
-            "Combine root dissection with the 'Modified Frayer Sketch': give students 3 minutes to draw what a concept looks like in action and write the #1 misconception a 6th grader might have about it."
-          ],
-          script: "Don't tell me what 'equilibrium' means from Google. Draw a 10-second stick-figure sketch of what equilibrium looks like in a hallway, and write one thing that looks like equilibrium but isn't.",
-          tags: ["literacy", "vocabulary", "frayer", "roots", "wigs", "engagement"]
-        },
-        {
-          id: "art-5",
-          title: "De-Escalating the ‘I’m Not Doing This’ Shutdown in Under 60 Seconds",
-          subtitle: "How to side-step power struggles with reluctant middle schoolers using micro-choices, private crouch-ins, and low-stakes entry ramps.",
-          category: "Classroom Management",
-          author: "MTSS & Student Support",
-          readTime: "4 min read",
-          date: "Oct 11, 2026",
-          featured: false,
-          image: IMG_MANAGEMENT,
-          takeaway: "Publicly confronting task refusal in middle school almost always triggers a face-saving power struggle. A quiet 10-second crouch-in offering a micro-choice preserves dignity and restarts momentum.",
-          tryTomorrow: "When a student pushes a paper away, drop down beside the desk privately, validate the friction in 5 words, offer a 'Start with #2 or #4?' choice, and immediately walk away to give them space to comply without an audience.",
-          body: [
-            "In 7th and 8th grade, social status is everything. When a student refuses to start a lab write-up or math set, it's frequently masking reading fatigue or fear of looking incapable in front of peers.",
-            "The key rule of thumb: Praise in public, redirect in whisper, and always walk away after giving a micro-choice. Lingering over a student's desk waiting for immediate compliance creates a stage where they feel forced to hold their ground.",
-            "Offer a two-option ramp: 'Do you want to jot bullet points for question 1, or sketch the diagram for question 2 first? I'll swing back in three minutes to see which one you picked.'"
-          ],
-          script: "Hey, I know this graph looks dense right now. Do you want to tackle just the X-axis label first, or partner with Sam for the first two rows? Your call—I'll check back in two minutes.",
-          tags: ["de-escalation", "behavior", "management", "reluctant learners", "mtss"]
-        },
-        {
-          id: "art-6",
-          title: "The 90-Second Feedback Loop: Grading Less While Giving Better Direction",
-          subtitle: "Why whole-class 'Spotlight & Fix' slides beat spending four hours writing the same margin comment on 130 student papers.",
-          category: "Teacher Support",
-          author: "Instructional Coaching Hub",
-          readTime: "4 min read",
-          date: "Oct 08, 2026",
-          featured: false,
-          image: IMG_SUPPORT,
-          takeaway: "Students rarely read paragraphs of red ink returned a week later. Scanning work for the top two building-wide patterns and opening the next day with an anonymous 'Upgrade This Response' warmup saves hours.",
-          tryTomorrow: "Instead of writing comments on every CER paragraph tonight, tally the top 3 errors on a sticky note. Tomorrow, project two anonymous student sentences and let pairs spend 3 minutes upgrading them.",
-          body: [
-            "We've all spent a Sunday afternoon writing 'Need to connect your evidence back to your claim!' on 85 consecutive lab reports—only to watch students glance at the score and shove the paper into their binder.",
-            "Whole-Class Feedback flips the ratio: spend 12 minutes flipping through the stack with a single notepad. Jot down 3 student names whose work nailed the target, and 2 common traps that tripped up the class.",
-            "Open the next class by celebrating the exemplar moves and projecting a composite 'Almost There' response. Have students do the cognitive work of fixing the gap live in class."
-          ],
-          script: "I read through everyone's lab claims yesterday. Here are two anonymized sentences from our class that have great evidence, but they're missing the 'because' bridge. With your partner, rewrite Sentence A on your mini-whiteboard.",
-          tags: ["grading", "feedback", "time savers", "teacher support", "cer"]
-        }
-      ],
+      articles: [],
       quickTipsBySection: {
         "all": {
           heading: "Quick Wins: Try This Next Hour",
@@ -1588,23 +1199,7 @@
           badge: "All-Building Favorites",
           icon: "flame",
           accentClass: "bg-red-600 text-white",
-          items: [
-            {
-              category: "Student Engagement",
-              title: "The ‘Wrong Answer Only’ Brainstorm",
-              tip: "Lower participation anxiety by asking tables for the most plausible incorrect answer to a complex question first—then have them explain why it's a tempting trap."
-            },
-            {
-              category: "Tech & AI (NotebookLM)",
-              title: "Instant ‘Missed Class’ Catch-Up Link",
-              tip: "Drop today's slides into your unit NotebookLM to auto-generate a 5-point summary and audio overview—paste it into Google Classroom for absent students in 60 seconds."
-            },
-            {
-              category: "Classroom Management",
-              title: "The Threshold Greeting & Point",
-              tip: "Greet students at the door by name, then gesture directly toward the board's 'First 2 Minutes' box. It cuts transition chatter in half before the bell rings."
-            }
-          ]
+          items: []
         },
         "Student Engagement": {
           heading: "Engagement Quick Wins: Spark Curiosity in 30 Seconds",
@@ -1612,23 +1207,7 @@
           badge: "Student Engagement Focus",
           icon: "zap",
           accentClass: "bg-red-600 text-white",
-          items: [
-            {
-              category: "Bellringer Twist",
-              title: "The ‘Wrong Answer Only’ Brainstorm",
-              tip: "Ask tables to invent the most believable wrong answer to today's question. Analyzing a misconception hooks reluctant speakers without fear of being wrong."
-            },
-            {
-              category: "Total Participation",
-              title: "The 60-Second Stand & Vote Spectrum",
-              tip: "Have students stand and point toward Wall A or Wall B to vote on a phenomenon prediction before any direct instruction begins—instant kinetic buy-in."
-            },
-            {
-              category: "Vocabulary Hook",
-              title: "Sketch It With Zero Words",
-              tip: "Give students 45 seconds on mini-whiteboards to draw a stick-figure scene of a Tier 3 term in action before showing the formal textbook definition."
-            }
-          ]
+          items: []
         },
         "Classroom Management": {
           heading: "Management Quick Wins: Calm Resets & Smooth Transitions",
@@ -1636,23 +1215,7 @@
           badge: "Classroom Craft Focus",
           icon: "shield-check",
           accentClass: "bg-red-600 text-white",
-          items: [
-            {
-              category: "Passing Period",
-              title: "The Threshold Greeting & Point",
-              tip: "Greet students at the door by name, then gesture silently toward the board's 'Do Immediately' box so expectations start at the doorframe."
-            },
-            {
-              category: "De-Escalation",
-              title: "The 10-Second Crouch & Walk-Away",
-              tip: "Drop to eye level beside a reluctant student's desk, offer a 'Start with #1 or #3?' choice in a whisper, and walk away immediately so they save face."
-            },
-            {
-              category: "Lab & Group Reset",
-              title: "The ‘Marker Click’ Physical Anchor",
-              tip: "Replace countdown yelling with a concrete physical cue: 'Pause where you are, cap your marker until it clicks, and eyes on the blue graph.'"
-            }
-          ]
+          items: []
         },
         "Teacher Support": {
           heading: "Wellbeing Quick Wins: Protect Your Bandwidth Today",
@@ -1660,23 +1223,7 @@
           badge: "Teacher Sustainability",
           icon: "heart-handshake",
           accentClass: "bg-red-600 text-white",
-          items: [
-            {
-              category: "Grading Triage",
-              title: "The 3-Pile Exit Ticket Sort",
-              tip: "Skip logging every formative slip into Skyward. Sort papers into 'Got It', 'Almost', and 'Reteach' in 90 seconds to guide tomorrow's warm-up."
-            },
-            {
-              category: "Focus Armor",
-              title: "The Closed-Tab Passing Period Rule",
-              tip: "Keep Outlook closed during instructional periods. Reading a stressful email during a 4-minute passing period hijacks your working memory for the next class."
-            },
-            {
-              category: "Friday Ritual",
-              title: "Stage Monday's 1st Hour Before 3:30",
-              tip: "Spend 5 minutes Friday afternoon opening Monday's bellringer slide and laying out 1st-hour copies so you walk out with zero Sunday-night dread."
-            }
-          ]
+          items: []
         },
         "Tech & AI": {
           heading: "Tech & AI Quick Wins: Practical Classroom Tools",
@@ -1684,23 +1231,7 @@
           badge: "Tech & AI Focus",
           icon: "cpu",
           accentClass: "bg-red-600 text-white",
-          items: [
-            {
-              category: "NotebookLM + Google Classroom",
-              title: "Absent-Student Slide & Audio Catch-Up",
-              tip: "Upload your unit slides and lab sheet into NotebookLM to generate a 5-slide catch-up outline and audio overview—drop both into Google Classroom for missing students."
-            },
-            {
-              category: "OrbitNote Workflow",
-              title: "2-Color Highlight & ‘Collect’ Routine",
-              tip: "Assign PDFs via OrbitNote in Google Classroom: have students highlight Claims in Yellow and Evidence in Green, then click 'Collect Highlights' into a clean study doc."
-            },
-            {
-              category: "Classroom Videos",
-              title: "The 3-Box Storyboard Before Recording",
-              tip: "Before students record a 90-second concept video, require a 3-box paper sketch (Hook -> Visual Proof -> Vocab Tie-In) so they nail it in one take."
-            }
-          ]
+          items: []
         },
         "saved": {
           heading: "Reading List Quick Wins: Put Your Saved Playbooks to Work",
@@ -1708,23 +1239,7 @@
           badge: "Your Personal Vault",
           icon: "bookmark-check",
           accentClass: "bg-red-600 text-white",
-          items: [
-            {
-              category: "Low-Stakes Trial",
-              title: "Run a ‘Single-Hour Experiment’",
-              tip: "Pick just one saved article below and test its 'Try This Tomorrow' move with your most comfortable class period first before rolling it out all day."
-            },
-            {
-              category: "PLC Collaboration",
-              title: "Bring 1 Verbatim Script to PLC",
-              tip: "Use the 1-click 'Copy Script' button inside any saved playbook to share a ready-to-use discussion prompt with your grade-level team."
-            },
-            {
-              category: "Sub-Plan Armor",
-              title: "Bookmark 2 Evergreen Routines",
-              tip: "Keep at least two low-prep vocabulary or transition playbooks pinned here so you can drop them straight into emergency sub plans."
-            }
-          ]
+          items: []
         },
         "view-directory": {
           heading: "Directory Quick Wins: Fastest Building Shortcuts",
@@ -1732,23 +1247,7 @@
           badge: "Heart of MMS Shortcuts",
           icon: "folder-heart",
           accentClass: "bg-red-600 text-white",
-          items: [
-            {
-              category: "Morning Triage",
-              title: "6:30 AM Sub & Coverage Protocol",
-              tip: "Log absences in Frontline first, then click the Sub Coverage card below if you need an emergency internal classroom roster or split-class note."
-            },
-            {
-              category: "Student Support",
-              title: "Tier 2 MTSS Pre-Referral Tip",
-              tip: "Before submitting the MTSS intake form, jot down two dates where you tried a classroom accommodation—it speeds up SIT team review by a full week."
-            },
-            {
-              category: "Safety & Readiness",
-              title: "Red Crisis Folder Check",
-              tip: "Keep your printed evacuation roster clipped inside your classroom clipboard by the door, and use the Crisis card below for updated severe weather zones."
-            }
-          ]
+          items: []
         },
         "view-bulletin": {
           heading: "Flight Wire Quick Wins: Never Dig Through Gmail Again",
@@ -1756,23 +1255,7 @@
           badge: "Admin Wire Tips",
           icon: "newspaper",
           accentClass: "bg-red-600 text-white",
-          items: [
-            {
-              category: "Instant Retrieval",
-              title: "Search Past Weeks From the Top Bar",
-              tip: "Type keywords like 'pep rally', 'testing window', or 'conferences' in the top search bar to search across every archived Smore newsletter at once."
-            },
-            {
-              category: "Weekly Planning",
-              title: "2-Minute Monday Morning Scan",
-              tip: "Scan the 4 bulleted key points on the latest Flight Wire card during Monday plan hour to spot schedule shifts before the week speeds up."
-            },
-            {
-              category: "Zero Maintenance",
-              title: "Scheduled Newsletter Sync",
-              tip: "The Apps Script sync imports public Smore issues automatically when its scheduled trigger is enabled."
-            }
-          ]
+          items: []
         },
         "view-studio": {
           heading: "Lesson Studio Quick Wins: High-Trust Peer Feedback",
@@ -1780,23 +1263,7 @@
           badge: "Peer Studio Norms",
           icon: "users",
           accentClass: "bg-red-600 text-white",
-          items: [
-            {
-              category: "Low-Friction Sharing",
-              title: "Share Drafts at 70% Done",
-              tip: "Don't wait until a lab or rubric is polished—post a rough Google Doc link and pick one specific 'Focus Dilemma' so peers know where to look."
-            },
-            {
-              category: "Warm Feedback",
-              title: "Name the Exact High-Leverage Move",
-              tip: "Instead of 'Looks great!', point to the exact hook, visual, or sentence frame that will help middle schoolers succeed."
-            },
-            {
-              category: "Cool Feedback",
-              title: "Use the ‘I Wonder If…’ Frame",
-              tip: "Keep suggestions actionable and collegial: 'I wonder if bolding the 3 action verbs in Step 2 would help 6th-hour readers start faster?'"
-            }
-          ]
+          items: []
         },
         "view-academy": {
           heading: "EdTech, AI & Video Lab Quick Wins: Save 45 Minutes This Prep Hour",
@@ -1804,145 +1271,24 @@
           badge: "Tech, AI & Video Lab",
           icon: "graduation-cap",
           accentClass: "bg-red-600 text-white",
-          items: [
-            {
-              category: "NotebookLM + Google Classroom",
-              title: "Upload Your Unit PDF & Slides First",
-              tip: "NotebookLM only uses the sources you upload—drop in your unit slides and Kansas standards so absent-student catch-up guides stay 100% aligned."
-            },
-            {
-              category: "OrbitNote Accessibility",
-              title: "Turn Static PDFs into Read-Aloud Canvases",
-              tip: "Assign PDFs via OrbitNote in Google Classroom so students can listen with word-tracking, use the picture dictionary, and reply with voice notes."
-            },
-            {
-              category: "Classroom Videos",
-              title: "Keep Classroom Videos Under 180 Seconds",
-              tip: "Whether you're recording a teacher screencast or having students film a concept explainer, a tight 90-to-180 second cap keeps engagement near 100%."
-            }
-          ]
+          items: []
         }
       },
-      resources: window.MMS_DIRECTORY_RESOURCES || [],
-      bulletin: [
-        {
-          id: "smore-oct-20",
-          title: "MMS Weekly Flight Wire: Oct 20 - 24",
-          date: "2026-10-20",
-          sourceUrl: "https://www.smore.com/u/maizemiddleschool",
-          keyPoints: [
-            "Fall benchmark testing window closes this Friday at 3:00 PM.",
-            "Pep rally assembly schedule is in effect on Thursday afternoon.",
-            "Staff social in the library annex on Friday morning with coffee provided.",
-            "Parent-teacher conference sign-up links have been sent via Skyward."
-          ]
-        },
-        {
-          id: "smore-oct-13",
-          title: "MMS Flight Wire: Disciplinary Literacy & EdTech Spotlight",
-          date: "2026-10-13",
-          sourceUrl: "https://www.smore.com/u/maizemiddleschool",
-          keyPoints: [
-            "Building WIG update: 82% of classes utilizing weekly morphological root walls.",
-            "New Tech & AI section live: NotebookLM catch-up workflows, OrbitNote PDF markup, and student video rubrics.",
-            "Custodial sweep: Please ensure all lab and prep cabinets are locked prior to 4 PM."
-          ]
-        }
-      ],
-      loungeQuotes: [
-        {
-          id: "quote-1",
-          quote: "Wait… if plants make their own food from air and sunlight, why are we paying for groceries?",
-          attribution: "7th Hour Life Science Debate",
-          type: "quote",
-          reactions: { appreciate: 0, empathy: 0, respect: 0 }
-        },
-        {
-          id: "quote-2",
-          quote: "Mr. H, I used the OrbitNote read-aloud voice at 1.5x speed and I actually finished the whole article before the bell.",
-          attribution: "8th Hour Social Studies",
-          type: "quote",
-          reactions: { appreciate: 0, empathy: 0, respect: 0 }
-        }
-      ],
-      studioItems: [
-        {
-          id: "studio-1",
-          title: "8th Grade Plate Tectonics CER Lab Prompt",
-          subject: "8th Science",
-          dilemma: "Opening Hook & Student Buy-In",
-          warmFeedback: "Opening with the sonar map mystery hooked even reluctant readers immediately.",
-          coolFeedback: "I wonder if trimming the background paragraph to 3 bullet points would get them into the data faster.",
-          docUrl: ""
-        }
-      ],
-      techTools: [
-        {
-          id: "tool-1",
-          badge: "PDF & Accessibility • #1 Pick",
-          title: "OrbitNote (by Texthelp)",
-          linkLabel: "Google Classroom Integration",
-          url: "",
-          description: "Turns flat, inaccessible PDFs in Google Drive and Google Classroom into interactive, read-aloud workspaces.",
-          teacherWorkflow: "Push any PDF worksheet or lab packet through Google Classroom as an 'OrbitNote Assignment' so you never have to reformat a PDF into a Google Doc.",
-          studentWorkflow: "Students use Text-to-Speech with dual-color word tracking, highlight claims/evidence, click 'Collect Highlights', or leave 30-second voice notes."
-        },
-        {
-          id: "tool-2",
-          badge: "AI Unit & Catch-Up Hub",
-          title: "Google NotebookLM",
-          linkLabel: "notebooklm.google.com",
-          url: "https://notebooklm.google.com/",
-          description: "Your zero-hallucination AI teaching assistant grounded strictly in the Google Slides, Docs, and PDFs you upload.",
-          teacherWorkflow: "Map unit pacing, generate tiered reading passages, and build Google Classroom study guides in 60 seconds.",
-          studentWorkflow: "Generate a 5-slide 'What You Missed' summary and a 3-minute AI Audio/Video Overview to post in Google Classroom for absent students."
-        },
-        {
-          id: "tool-3",
-          badge: "Video & Visual Creation",
-          title: "Canva for Education & Screencastify",
-          linkLabel: "Chromebook Ready",
-          url: "https://www.canva.com/education/",
-          description: "Fastest recording tools for both Track A (teacher micro-videos) and Track B (student 90-second explainers).",
-          teacherWorkflow: "Open your Google Slides in Canva or Screencastify and click 'Record' to film a 2-minute lab walkthrough with your camera bubble in the corner.",
-          studentWorkflow: "Pairs use Canva Studio or Chromebook's built-in Screen Capture (Ctrl + Shift + Show Windows) to record their 3-Box Storyboard in one take."
-        },
-        {
-          id: "tool-4",
-          badge: "Interactive Video Checks",
-          title: "Edpuzzle + Google Classroom",
-          linkLabel: "Auto-Graded Video",
-          url: "https://edpuzzle.com/",
-          description: "Turns your 2-minute teacher screencasts or phenomenon clips into active, self-paced checkpoints.",
-          teacherWorkflow: "Drop 3 multiple-choice or open-ended pause points into your video and sync grades directly with Google Classroom.",
-          studentWorkflow: "Prevents passive skipping and lets absent or struggling learners re-watch a 20-second segment right before answering."
-        },
-        {
-          id: "tool-5",
-          badge: "Formative Concept Mapping",
-          title: "FigJam / Canva Whiteboards",
-          linkLabel: "Live Table Collaboration",
-          url: "https://www.figma.com/education/",
-          description: "Infinite digital sticky-note and diagramming canvas that replaces Jamboard for middle school table groups.",
-          teacherWorkflow: "Lock the background graphic organizer and give each table group a color-coded zone to sort vocabulary or build cause-and-effect chains.",
-          studentWorkflow: "Prepares groups visually before they record their 90-second student explainer video."
-        },
-        {
-          id: "tool-6",
-          badge: "AI Question & Rubric Helper",
-          title: "MagicSchool AI / Brisk Teaching",
-          linkLabel: "Chrome Extension",
-          url: "https://www.magicschool.ai/",
-          description: "Quick Chrome tools for leveling online articles, generating DOK 2/3 questions, and giving targeted Google Doc feedback.",
-          teacherWorkflow: "Use inside Google Docs to generate 'Glow & Grow' rubric feedback or instant exemplar paragraphs to model on the projector.",
-          studentWorkflow: "Helps teachers rapidly scaffold reading materials so every student can access the same high-ceiling classroom debate."
-        }
-      ]
+      resources: [],
+      loungeQuotes: [],
+      studioItems: [],
+      techTools: []
     };
 
-    const DEFAULT_ARTICLES_SNAPSHOT = APP_DATA.articles.map(a => ({ ...a }));
     let siteSettings = {};
-    let currentHeroArticleId = 'art-1';
+    // A failed load is an error state; a successful empty load is intentional and stays empty.
+    let siteLoadFailed = false;
+    const LOAD_FAILURE_HTML = `
+      <div role="alert" class="col-span-full rounded-2xl border border-red-300 bg-red-50 p-6 text-center text-sm text-red-900">
+        <p class="font-bold">This content could not be loaded.</p>
+        <p class="mt-1">Check your connection and refresh to try again.</p>
+      </div>`;
+    let currentHeroArticleId = '';
 
     let savedBookmarks = [];
     let activeCategory = 'all';
@@ -2024,20 +1370,8 @@
           title: t.title,
           category: t.badge || 'Tech & AI',
           desc: `${t.description || ''} ${t.teacherWorkflow || ''} ${t.studentWorkflow || ''}`.trim(),
-          tags: 'edtech ai video orbitnote notebooklm tool',
+          tags: 'tool',
           action: () => switchView('view-academy')
-        });
-      });
-
-      APP_DATA.bulletin.forEach(b => {
-        items.push({
-          type: 'Flight Wire',
-          id: b.id,
-          title: b.title,
-          category: b.date,
-          desc: b.keyPoints.join(' '),
-          tags: 'smore bulletin announcement admin',
-          action: () => switchView('view-bulletin')
         });
       });
 
@@ -2102,6 +1436,10 @@
       }
 
       const config = APP_DATA.quickTipsBySection[sectionKey] || APP_DATA.quickTipsBySection['all'];
+      if (!config.items.length) {
+        banner.classList.add('hidden');
+        return;
+      }
 
       headingEl.textContent = config.heading;
       subtitleEl.textContent = config.subtitle;
@@ -2201,7 +1539,9 @@
 
       const badgeEl = document.getElementById('heroFeatureBadge');
       if (badgeEl) {
-        badgeEl.textContent = siteSettings.hero_badge || `Cover Story • ${featured.category}`;
+        const hasBadgeSetting = Object.prototype.hasOwnProperty.call(siteSettings, 'hero_badge');
+        badgeEl.textContent = hasBadgeSetting ? siteSettings.hero_badge : `Cover Story • ${featured.category}`;
+        badgeEl.style.display = badgeEl.textContent.trim() ? '' : 'none';
       }
       const authorEl = document.getElementById('heroFeatureAuthor');
       if (authorEl) authorEl.textContent = featured.author;
@@ -2214,7 +1554,7 @@
       const takeawayEl = document.getElementById('heroFeatureTakeaway');
       if (takeawayEl) takeawayEl.textContent = featured.tryTomorrow || featured.takeaway || featured.subtitle;
       const btnLabelEl = document.getElementById('heroButtonLabelText');
-      if (btnLabelEl && siteSettings.hero_button_label) {
+      if (btnLabelEl && Object.prototype.hasOwnProperty.call(siteSettings, 'hero_button_label')) {
         btnLabelEl.textContent = siteSettings.hero_button_label;
       }
       const heroBookmarkBtn = document.getElementById('heroBookmarkBtn');
@@ -2242,9 +1582,10 @@
       renderHeroFeature();
 
       if (category === 'all') {
-        hero?.classList.remove('hidden');
+        hero?.classList.toggle('hidden', !APP_DATA.articles.length);
         techBanner?.classList.add('hidden');
-        heading.textContent = siteSettings.feed_heading_all || 'Latest Articles & Classroom Playbooks';
+        heading.textContent = Object.prototype.hasOwnProperty.call(siteSettings, 'feed_heading_all')
+          ? siteSettings.feed_heading_all : 'Latest Articles & Classroom Playbooks';
       } else if (category === 'Tech & AI') {
         hero?.classList.add('hidden');
         techBanner?.classList.remove('hidden');
@@ -2262,8 +1603,13 @@
         filtered = APP_DATA.articles.filter(a => a.category === category);
       }
 
-      countEl.textContent = `${filtered.length} ${filtered.length === 1 ? 'story' : 'stories'}`;
+      countEl.textContent = siteLoadFailed ? '' : `${filtered.length} ${filtered.length === 1 ? 'story' : 'stories'}`;
       grid.innerHTML = '';
+
+      if (siteLoadFailed) {
+        grid.innerHTML = LOAD_FAILURE_HTML;
+        return;
+      }
 
       if (filtered.length === 0) {
         grid.innerHTML = `
@@ -2365,12 +1711,7 @@
       document.getElementById('readerScript').textContent = `"${art.script}"`;
       currentReaderScript = art.script;
 
-      const videoBox = document.getElementById('readerVideoDemoBox');
-      if (art.hasVideoDemo) {
-        videoBox?.classList.remove('hidden');
-      } else {
-        videoBox?.classList.add('hidden');
-      }
+      renderReaderVideoCallout(art);
 
       const pContainer = document.getElementById('readerParagraphs');
       pContainer.innerHTML = art.body.map(p => `<p class="whitespace-pre-line break-words">${escapeHtml(p)}</p>`).join('');
@@ -2411,6 +1752,11 @@
       const resultCount = document.getElementById('directoryResultCount');
       if (resultCount) {
         resultCount.textContent = `${items.length} ${items.length === 1 ? 'resource' : 'resources'}`;
+      }
+
+      if (siteLoadFailed) {
+        grid.innerHTML = LOAD_FAILURE_HTML;
+        return;
       }
 
       if (!items.length) {
@@ -2493,6 +1839,10 @@
       const mine = loadMyReactions();
       const posts = (APP_DATA.loungeQuotes || []).filter(q => loungeFilter === 'all' || q.type === loungeFilter);
       feed.replaceChildren();
+      if (siteLoadFailed) {
+        feed.innerHTML = LOAD_FAILURE_HTML;
+        return;
+      }
       if (!posts.length) {
         feed.innerHTML = '<p class="text-sm text-ink-600">No posts here yet. Be the first to share!</p>';
         return;
@@ -2556,7 +1906,7 @@
     function renderStudioItems() {
       const studioContainer = document.getElementById('tuningSubmissionsContainer');
       if (!studioContainer) return;
-      studioContainer.innerHTML = '';
+      studioContainer.innerHTML = siteLoadFailed ? LOAD_FAILURE_HTML : '';
       (APP_DATA.studioItems || []).forEach(item => {
         const docUrl = sanitizeHttpUrl(item.docUrl);
         const card = document.createElement('div');
@@ -2619,15 +1969,261 @@
       });
     }
 
+    // --- BACKEND-DEFINED PAGE CONTENT (page_sections, content_blocks, videos, video_chapters) ---
+    // BACKEND PAGE CONTENT START
+    const TECH_PAGE_ID = 'tech_ai';
+    const BLOCK_ACCENTS = {
+      neutral: 'bg-white border-cream-300',
+      red: 'bg-red-50 border-red-200',
+      green: 'bg-emerald-50 border-emerald-200'
+    };
+    let pageContent = { sections: [], blocks: [], videos: [], chapters: [] };
+    let pageContentAvailable = false;
+
+    function sortByOrder(rows) {
+      const order = row => {
+        const n = parseFloat(row.sort_order);
+        return Number.isFinite(n) ? n : 1e9;
+      };
+      return rows.map((row, index) => ({ row, index }))
+        .sort((a, b) => (order(a.row) - order(b.row)) || (a.index - b.index))
+        .map(entry => entry.row);
+    }
+
+    function textLines(value) {
+      return String(value ?? '').split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+    }
+
+    function parseTimestamp(value) {
+      const text = String(value ?? '').trim();
+      if (/^\d+$/.test(text)) return Number(text);
+      const match = text.match(/^(?:(\d+):)?([0-5]?\d):([0-5]?\d)$/);
+      if (!match) return null;
+      return Number(match[1] || 0) * 3600 + Number(match[2]) * 60 + Number(match[3]);
+    }
+
+    function videoEmbedUrl(rawUrl, startSeconds) {
+      const safe = sanitizeHttpUrl(rawUrl);
+      if (!safe) return '';
+      const url = new URL(safe);
+      const host = url.hostname.replace(/^www\./i, '').toLowerCase();
+      const start = Number.isFinite(startSeconds) && startSeconds > 0 ? Math.floor(startSeconds) : 0;
+      let id = '';
+      if (host === 'youtu.be') {
+        id = url.pathname.slice(1).split('/')[0];
+      } else if (['youtube.com', 'm.youtube.com', 'youtube-nocookie.com'].includes(host)) {
+        if (url.pathname === '/watch') id = url.searchParams.get('v') || '';
+        else id = (url.pathname.match(/^\/(?:embed|shorts|live)\/([^/?]+)/) || [])[1] || '';
+      }
+      if (id && /^[\w-]{6,20}$/.test(id)) {
+        return `https://www.youtube.com/embed/${id}?rel=0${start ? `&start=${start}` : ''}`;
+      }
+      if (host === 'vimeo.com') {
+        const vimeoId = (url.pathname.match(/^\/(\d+)/) || [])[1];
+        if (vimeoId) return `https://player.vimeo.com/video/${vimeoId}${start ? `#t=${start}s` : ''}`;
+      }
+      if (host === 'loom.com') {
+        const loomId = (url.pathname.match(/^\/(?:share|embed)\/([\w-]+)/) || [])[1];
+        if (loomId) return `https://www.loom.com/embed/${loomId}${start ? `?t=${start}` : ''}`;
+      }
+      if (host === 'drive.google.com') {
+        const driveId = (url.pathname.match(/^\/file\/d\/([\w-]+)/) || [])[1];
+        if (driveId) return `https://drive.google.com/file/d/${driveId}/preview`;
+      }
+      return '';
+    }
+
+    function normalizePageContent(data) {
+      const rows = key => (Array.isArray(data[key]) ? data[key] : []).map(row => {
+        const clean = {};
+        Object.keys(row).forEach(field => { clean[field] = String(row[field] ?? '').trim(); });
+        return clean;
+      });
+      const videos = sortByOrder(rows('videos')).filter(v => v.video_id && sanitizeHttpUrl(v.url));
+      const videoIds = new Set(videos.map(v => v.video_id));
+      return {
+        sections: sortByOrder(rows('page_sections')).filter(s => s.section_id),
+        blocks: sortByOrder(rows('content_blocks')).filter(b => b.section_id && b.block_type),
+        videos,
+        chapters: sortByOrder(rows('video_chapters')).filter(c => c.video_id && videoIds.has(c.video_id) && c.title)
+      };
+    }
+
+    function renderContentBlock(block) {
+      const type = block.block_type.toLowerCase();
+      const title = block.title ? `<h3 class="font-editorial font-bold text-lg text-ink-900">${escapeHtml(block.title)}</h3>` : '';
+      const paragraphs = textLines(block.body).map(line => `<p class="text-ink-600 leading-relaxed">${escapeHtml(line)}</p>`).join('');
+      const linkUrl = sanitizeHttpUrl(block.url);
+      const link = linkUrl
+        ? `<a href="${escapeHtml(linkUrl)}" target="_blank" rel="noopener noreferrer" class="font-bold text-red-700 underline">${escapeHtml(block.link_label || linkUrl)}</a>`
+        : '';
+      const style = (block.style || '').toLowerCase();
+      const accent = BLOCK_ACCENTS[style] || BLOCK_ACCENTS.neutral;
+      const card = `rounded-3xl border ${accent} p-6 shadow-sm space-y-3`;
+
+      if (type === 'text') {
+        return `<div class="${card}">${title}${paragraphs}${link}</div>`;
+      }
+      if (type === 'list') {
+        const tag = style === 'numbered' ? 'ol' : 'ul';
+        const items = textLines(block.body).map((line, i) => `
+          <li class="flex items-start gap-2"><span class="font-bold text-red-600">${tag === 'ol' ? `${i + 1}.` : '•'}</span><span>${escapeHtml(line)}</span></li>`).join('');
+        return `<div class="${card}">${title}<${tag} class="space-y-2 text-ink-800">${items}</${tag}>${link}</div>`;
+      }
+      if (type === 'callout') {
+        const calloutCard = `rounded-2xl border ${style in BLOCK_ACCENTS && style !== 'neutral' ? accent : 'bg-cream-100 border-cream-200'} p-4 space-y-1.5`;
+        return `<div class="${calloutCard}">${title}${paragraphs}${link}</div>`;
+      }
+      if (type === 'prompt') {
+        const description = block.description ? `<p class="text-[11px] text-ink-600">${escapeHtml(block.description)}</p>` : '';
+        return `
+          <div class="${card}">
+            <div class="flex items-start justify-between gap-3">
+              <div>${title}${description}</div>
+              <button type="button" class="copy-prompt-btn shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-lg bg-ink-900 text-white hover:bg-ink-800 flex items-center gap-1" data-prompt-id="${escapeHtml(block.block_id)}">
+                <i data-lucide="copy" class="w-3 h-3 text-red-400"></i><span>${escapeHtml(block.link_label || 'Copy')}</span>
+              </button>
+            </div>
+            <p class="whitespace-pre-line rounded-xl bg-cream-100 p-3 text-[11px] text-ink-800">${escapeHtml(block.body)}</p>
+          </div>`;
+      }
+      return '';
+    }
+
+    function renderVideoPanel(video) {
+      const chapters = pageContent.chapters.filter(c => c.video_id === video.video_id);
+      const embed = videoEmbedUrl(video.url, 0);
+      const safeUrl = sanitizeHttpUrl(video.url);
+      const chapterControls = chapters.length ? `
+        <div class="space-y-1.5">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            ${chapters.map(c => `
+              <button type="button" class="video-chapter-btn text-left p-2.5 rounded-xl bg-ink-800 hover:bg-ink-700 border border-ink-600 text-xs transition" data-chapter-id="${escapeHtml(c.chapter_id)}">
+                ${c.start_time ? `<div class="font-bold text-red-300 text-[11px]">${escapeHtml(c.start_time)}</div>` : ''}
+                <div class="font-semibold text-white">${escapeHtml(c.title)}</div>
+              </button>`).join('')}
+          </div>
+          <div data-chapter-detail class="hidden p-4 rounded-2xl bg-ink-800/90 border border-ink-600/50 text-xs text-cream-200 leading-relaxed"></div>
+        </div>` : '';
+      return `
+        <div class="bg-ink-900 text-white rounded-3xl p-6 sm:p-8 space-y-4" data-video-panel data-video-id="${escapeHtml(video.video_id)}">
+          ${video.badge ? `<span class="inline-flex px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-red-600 text-white">${escapeHtml(video.badge)}</span>` : ''}
+          ${video.title ? `<h3 class="font-editorial font-bold text-xl">${escapeHtml(video.title)}</h3>` : ''}
+          ${video.description ? `<p class="text-xs text-cream-200 leading-relaxed">${escapeHtml(video.description)}</p>` : ''}
+          ${embed
+            ? `<div class="rounded-2xl overflow-hidden border border-ink-600/50 aspect-video bg-black"><iframe class="w-full h-full" src="${escapeHtml(embed)}" title="${escapeHtml(video.title || 'Video')}" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`
+            : `<a href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" class="inline-block font-bold text-red-300 underline">${escapeHtml(video.link_label || safeUrl)}</a>`}
+          ${chapterControls}
+        </div>`;
+    }
+
+    function renderAcademyPage() {
+      const root = document.getElementById('academySections');
+      const status = document.getElementById('academyStatus');
+      if (!root) return;
+      root.innerHTML = '';
+      const showStatus = (message, tone) => {
+        if (!status) return;
+        status.textContent = message;
+        status.className = `rounded-2xl border p-4 text-sm ${tone === 'error'
+          ? 'border-red-300 bg-red-50 text-red-900' : 'border-cream-300 bg-white text-ink-600'}`;
+        status.classList.toggle('hidden', !message);
+      };
+      if (siteLoadFailed || !pageContentAvailable) {
+        showStatus(siteLoadFailed
+          ? 'This page could not be loaded. Check your connection and refresh to try again.'
+          : 'This page needs the latest Apps Script. Run Setup and redeploy the web app.', 'error');
+        return;
+      }
+
+      let toolsGridUsed = false;
+      const sections = pageContent.sections.filter(s => s.page === TECH_PAGE_ID);
+      let rendered = 0;
+      sections.forEach(section => {
+        const kind = (section.kind || 'blocks').toLowerCase();
+        let body = '';
+        if (kind === 'videos') {
+          body = pageContent.videos.filter(v => v.section_id === section.section_id).map(renderVideoPanel).join('');
+          body = body && `<div class="space-y-6">${body}</div>`;
+        } else if (kind === 'tools') {
+          if ((APP_DATA.techTools || []).length && !toolsGridUsed) {
+            toolsGridUsed = true;
+            body = '<div id="techToolsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-xs"></div>';
+          }
+        } else {
+          const blocks = pageContent.blocks.filter(b => b.section_id === section.section_id)
+            .map(renderContentBlock).filter(Boolean);
+          const layout = section.layout === 'columns' ? 'grid grid-cols-1 lg:grid-cols-2 gap-6 text-xs' : 'space-y-4 text-xs';
+          body = blocks.length ? `<div class="${layout}">${blocks.join('')}</div>` : '';
+        }
+        if (!body) return;
+        const header = (section.title || section.intro || section.badge) ? `
+          <div class="border-b border-cream-300 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              ${section.title ? `<h2 class="font-editorial font-bold text-xl text-ink-900">${escapeHtml(section.title)}</h2>` : ''}
+              ${section.intro ? `<p class="text-xs text-ink-600">${escapeHtml(section.intro)}</p>` : ''}
+            </div>
+            ${section.badge ? `<span class="text-[11px] font-bold px-3 py-1 rounded-full bg-red-100 text-red-900">${escapeHtml(section.badge)}</span>` : ''}
+          </div>` : '';
+        const el = document.createElement('section');
+        el.className = 'space-y-4';
+        el.innerHTML = header + body;
+        root.appendChild(el);
+        rendered++;
+      });
+
+      const hasEmptyMessage = Object.prototype.hasOwnProperty.call(siteSettings, 'page_empty_message');
+      showStatus(!rendered && hasEmptyMessage ? siteSettings.page_empty_message : '', 'info');
+      if (toolsGridUsed) renderTechTools();
+      if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+    }
+
+    function selectVideoChapter(button) {
+      const panel = button.closest('[data-video-panel]');
+      const video = pageContent.videos.find(v => v.video_id === panel?.dataset.videoId);
+      const chapter = pageContent.chapters.find(c => c.chapter_id === button.dataset.chapterId && c.video_id === video?.video_id);
+      if (!panel || !video || !chapter) return;
+      panel.querySelectorAll('.video-chapter-btn').forEach(b => {
+        b.className = 'video-chapter-btn text-left p-2.5 rounded-xl bg-ink-800 hover:bg-ink-700 border border-ink-600 text-xs transition';
+      });
+      button.className = 'video-chapter-btn text-left p-2.5 rounded-xl bg-red-600/30 border border-red-500 text-xs transition';
+      const embed = videoEmbedUrl(video.url, parseTimestamp(chapter.start_time));
+      const iframe = panel.querySelector('iframe');
+      if (iframe && embed) iframe.src = embed;
+      const detail = panel.querySelector('[data-chapter-detail]');
+      if (detail) {
+        detail.textContent = chapter.description;
+        detail.classList.toggle('hidden', !chapter.description);
+      }
+    }
+
+    function renderReaderVideoCallout(article) {
+      const box = document.getElementById('readerVideoDemoBox');
+      if (!box) return;
+      const show = !!(article && article.hasVideoDemo && !siteLoadFailed && pageContent.videos.length);
+      box.classList.toggle('hidden', !show);
+      [['readerVideoDemoBadge', 'reader_video_badge'], ['readerVideoDemoButton', 'reader_video_button'],
+        ['readerVideoDemoNote', 'reader_video_note']].forEach(([id, key]) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = Object.prototype.hasOwnProperty.call(siteSettings, key) ? String(siteSettings[key] ?? '').trim() : '';
+        el.style.display = el.textContent ? '' : 'none';
+      });
+    }
+    // BACKEND PAGE CONTENT END
+
     function applySiteSettings(settings) {
       if (!settings || typeof settings !== 'object') return;
       siteSettings = { ...siteSettings, ...settings };
 
+      // A key present in the feed is authoritative even when blank: clearing a cell empties the element.
       const setText = (id, key) => {
+        if (!Object.prototype.hasOwnProperty.call(siteSettings, key)) return;
         const val = String(siteSettings[key] ?? '').trim();
-        if (!val) return;
         const el = document.getElementById(id);
-        if (el) el.textContent = val;
+        if (!el) return;
+        el.textContent = val;
+        el.style.display = val ? '' : 'none';
       };
 
       setText('siteTitleText', 'site_title');
@@ -2648,66 +2244,22 @@
       setText('bulletinSubtitleText', 'bulletin_subtitle');
       setText('studioHeadingText', 'studio_heading');
       setText('studioSubtitleText', 'studio_subtitle');
+      setText('academyNavTitleText', 'academy_nav_title');
+      setText('academyNavDescText', 'academy_nav_desc');
       setText('academyHeadingText', 'academy_heading');
       setText('academyBadgeText', 'academy_badge');
       setText('academySubtitleText', 'academy_subtitle');
-      setText('academyVideoBadgeText', 'academy_video_badge');
-      setText('activeVideoChapterTitle', 'academy_video_title');
-      setText('activeVideoChapterDesc', 'academy_video_desc');
       setText('footerLeftText', 'footer_left');
       setText('footerRightText', 'footer_right');
 
       if (siteSettings.site_title) {
-        document.title = `${siteSettings.site_title} | ${siteSettings.site_subtitle || 'Maize Middle School'}`;
-      }
-
-      const videoUrl = sanitizeHttpUrl(siteSettings.academy_video_url);
-      const videoWrapper = document.getElementById('academyVideoEmbedWrapper');
-      const videoIframe = document.getElementById('academyVideoIframe');
-      if (videoWrapper && videoIframe) {
-        if (videoUrl) {
-          videoIframe.src = videoUrl;
-          videoWrapper.classList.remove('hidden');
-        } else {
-          videoIframe.removeAttribute('src');
-          videoWrapper.classList.add('hidden');
-        }
+        document.title = siteSettings.site_subtitle
+          ? `${siteSettings.site_title} | ${siteSettings.site_subtitle}` : siteSettings.site_title;
       }
 
       renderHeroFeature();
+      renderHeroFeature();
     }
-
-    function renderBulletins() {
-      const container = document.getElementById('bulletinFeedContainer');
-      if (!container) return;
-      container.innerHTML = '';
-
-      APP_DATA.bulletin.forEach(b => {
-        const div = document.createElement('div');
-        div.className = 'bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-3 text-xs';
-        div.innerHTML = `
-          <div class="flex items-center justify-between">
-            <h3 class="font-editorial font-bold text-lg text-ink-900">${b.title}</h3>
-            <span class="font-mono text-[11px] px-2.5 py-0.5 rounded-full bg-cream-200 text-ink-800">${b.date}</span>
-          </div>
-          <ul class="space-y-1.5 text-ink-600 pl-1">
-            ${b.keyPoints.map(k => `<li class="flex items-start gap-2"><span class="text-red-600 font-bold">•</span><span>${k}</span></li>`).join('')}
-          </ul>
-          <div class="pt-3 border-t border-cream-200 flex justify-end">
-            <a href="${b.sourceUrl}" target="_blank" class="font-bold text-red-600 hover:underline flex items-center gap-1">
-              <span>Open Original Smore</span> <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
-            </a>
-          </div>
-        `;
-        container.appendChild(div);
-      });
-      lucide.createIcons();
-    }
-
-    // --- LIVE SMORE BULLETIN FEED (GOOGLE APPS SCRIPT) ---
-    const SMORE_FEED_API_URL = SUBMISSION_API_URL;
-    let smoreIssues = [];
-    let schoolUpdates = [];
 
     function schoolUpdateAudience(item) {
       return /^(?:MMS News|MMS|Maize Middle School)$/i.test(String(item.source || '').trim())
@@ -2870,13 +2422,12 @@
       const rawId = text('article_id');
       const title = text('title');
       const category = text('category');
-      const isDefaultOverride = DEFAULT_ARTICLES_SNAPSHOT.some(a => a.id === rawId);
       const rawImage = text('cover_image_url') || text('image_url');
       const rawTags = text('tags')
         ? text('tags').split(',').map(t => t.trim()).filter(Boolean)
         : [category];
       return {
-        id: isDefaultOverride ? rawId : ('published-' + rawId),
+        id: 'published-' + rawId,
         rawId: rawId,
         source: 'published_articles',
         title,
@@ -2900,27 +2451,10 @@
       if (!Array.isArray(rawItems)) return;
       const articles = [...new Map(rawItems.map(normalizePublishedArticle).filter(Boolean)
         .map(article => [article.id, article])).values()];
-      if (!articles.length) return;
       APP_DATA.articles = articles;
-      if (String(siteSettings.show_placeholder_articles || 'FALSE').trim().toUpperCase() === 'TRUE') {
-        const taken = new Set(articles.map(a => a.rawId));
-        APP_DATA.articles = [...articles, ...DEFAULT_ARTICLES_SNAPSHOT.filter(d => !taken.has(d.id))];
-      }
       initFuse();
       renderArticlesGrid(activeCategory);
       document.getElementById('globalSearchInput')?.dispatchEvent(new Event('input'));
-    }
-
-    async function loadPublishedArticles() {
-      try {
-        const url = new URL(SUBMISSION_API_URL);
-        url.searchParams.set('feed', 'articles');
-        const data = await fetchJsonWithTimeout(url.href);
-        if (!data?.ok || !Array.isArray(data.items)) throw new Error('Unexpected articles format');
-        applyPublishedArticles(data.items);
-      } catch (error) {
-        console.warn('Published articles unavailable:', error);
-      }
     }
 
     function normalizeSmoreIssue(item) {
@@ -3048,11 +2582,7 @@
       const cards = smoreIssues.map(renderBulletinCard).filter(Boolean);
 
       if (!cards.length) {
-        if (APP_DATA.bulletin && APP_DATA.bulletin.length) {
-          renderBulletins();
-        } else {
-          setBulletinFeedMessage(container, 'No bulletins have been published yet. Check back soon.');
-        }
+        setBulletinFeedMessage(container, 'No bulletins have been published yet. Check back soon.');
         return;
       }
 
@@ -3072,11 +2602,7 @@
         applySmoreItems(data.items);
       } catch (err) {
         console.warn('Smore bulletin feed unavailable:', err);
-        if (APP_DATA.bulletin && APP_DATA.bulletin.length) {
-          renderBulletins();
-        } else {
-          setBulletinFeedMessage(container, 'The Flight Wire bulletin feed is temporarily unavailable. Please try again later.', 'error');
-        }
+        setBulletinFeedMessage(container, 'The Flight Wire bulletin feed is temporarily unavailable. Please try again later.', 'error');
       }
     }
 
@@ -3228,18 +2754,14 @@
         const data = await fetchJsonWithTimeout(url.href);
         if (!data || !data.ok || typeof data !== 'object') throw new Error('Unexpected site feed response');
 
-        // If older deployment doesn't return Unified CMS properties (`settings` or `articles`), fall back
-        if (!('settings' in data) && !('articles' in data)) {
-          if (!Array.isArray(data.items)) throw new Error('Unexpected legacy feed response');
-          notice = 'This feed uses an older format. Some sections use built-in content.';
-          console.info(notice);
-          applySmoreItems(data.items);
-          await loadPublishedArticles();
-          return;
+        // An older deployment cannot provide backend-managed content; surface it rather than guess.
+        if (!('settings' in data) || !('articles' in data)) {
+          throw new Error('The site feed is out of date; redeploy the latest Apps Script.');
         }
 
         if (('settings' in data && (!data.settings || typeof data.settings !== 'object' || Array.isArray(data.settings))) ||
-            ['articles', 'quick_wins', 'directory', 'quotes', 'studio', 'tech_tools', 'smore', 'image_library']
+            ['articles', 'quick_wins', 'directory', 'quotes', 'studio', 'tech_tools', 'smore', 'image_library',
+              'page_sections', 'content_blocks', 'videos', 'video_chapters']
               .some(key => key in data && (!Array.isArray(data[key]) ||
                 data[key].some(row => !row || typeof row !== 'object' || Array.isArray(row))))) {
           throw new Error('Unexpected site feed format');
@@ -3249,8 +2771,9 @@
           applySiteSettings(data.settings);
         }
 
-        if (Array.isArray(data.quick_wins) && data.quick_wins.length > 0) {
+        if (Array.isArray(data.quick_wins)) {
           const grouped = {};
+          Object.values(APP_DATA.quickTipsBySection).forEach(section => { section.items = []; });
           data.quick_wins.forEach(row => {
             const sec = String(row.section || 'all').trim() || 'all';
             const title = String(row.title || '').trim();
@@ -3280,7 +2803,7 @@
           renderQuickTips(activeView === 'view-editorial' ? activeCategory : activeView);
         }
 
-        if (Array.isArray(data.directory) && data.directory.length > 0) {
+        if (Array.isArray(data.directory)) {
           const resources = data.directory.map((r, i) => ({
             id: String(r.resource_id || `res-${i + 1}`).trim(),
             title: String(r.title || '').trim(),
@@ -3290,12 +2813,10 @@
             tags: String(r.tags || '').split(',').map(t => t.trim()).filter(Boolean),
             updateStatus: String(r.update_status || '').trim().toLowerCase()
           })).filter(r => r.title && r.url && !r.url.includes('sample_'));
-          if (resources.length) {
-            APP_DATA.resources = resources;
-            const category = document.getElementById('directoryCategory')?.value || 'all';
-            const query = document.getElementById('directorySearch')?.value || '';
-            renderDirectory(category, query);
-          }
+          APP_DATA.resources = resources;
+          const category = document.getElementById('directoryCategory')?.value || 'all';
+          const query = document.getElementById('directorySearch')?.value || '';
+          renderDirectory(category, query);
         }
 
         if (Array.isArray(data.quotes)) {
@@ -3330,8 +2851,11 @@
             studentWorkflow: String(t.student_workflow || '').trim()
           })).filter(t => t.title);
           APP_DATA.techTools = tools;
-          renderTechTools();
         }
+
+        pageContentAvailable = ['page_sections', 'content_blocks', 'videos', 'video_chapters']
+          .every(key => Array.isArray(data[key]));
+        pageContent = normalizePageContent(data);
 
         if (Array.isArray(data.image_library) && data.image_library.length > 0) {
           approvedImageLibrary = data.image_library
@@ -3345,7 +2869,7 @@
             .filter(img => img.url);
         }
 
-        if (Array.isArray(data.articles) && data.articles.length > 0) {
+        if (Array.isArray(data.articles)) {
           applyPublishedArticles(data.articles);
         } else {
           renderArticlesGrid(activeCategory);
@@ -3357,19 +2881,19 @@
         initFuse();
         document.getElementById('globalSearchInput')?.dispatchEvent(new Event('input'));
       } catch (err) {
-        console.warn('Unified site feed unavailable; using built-in content:', err);
+        console.warn('Unified site feed unavailable:', err);
+        siteLoadFailed = true;
         notice = err.name === 'TimeoutError'
-          ? 'Site content took too long to load. Showing built-in content; refresh to try again.'
-          : 'Live site content is temporarily unavailable. Showing built-in content; refresh to try again.';
-        if (APP_DATA.bulletin && APP_DATA.bulletin.length) renderBulletins();
-        else if (container) setBulletinFeedMessage(container, 'The Flight Wire bulletin feed is temporarily unavailable. Please try again later.', 'error');
+          ? 'Site content took too long to load. Refresh to try again.'
+          : 'Site content could not be loaded. Refresh to try again.';
+        if (container) setBulletinFeedMessage(container, 'The Flight Wire bulletin feed is temporarily unavailable. Please try again later.', 'error');
       } finally {
         try {
           renderArticlesGrid(activeCategory);
           renderDirectory('all');
           renderLoungeQuotes();
           renderStudioItems();
-          renderTechTools();
+          renderAcademyPage();
           initFuse();
         } finally {
           stopLoadingMessages();
@@ -3478,31 +3002,32 @@
         loadSchoolUpdates();
       });
 
-      // Interactive Video Chapter Buttons in EdTech Lab
-      document.querySelectorAll('.video-chapter-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.video-chapter-btn').forEach(b => {
-            b.className = 'video-chapter-btn text-left p-2.5 rounded-xl bg-ink-800 hover:bg-ink-700 border border-ink-600 text-xs transition';
-          });
-          btn.className = 'video-chapter-btn text-left p-2.5 rounded-xl bg-red-600/30 border border-red-500 text-xs transition';
-          document.getElementById('activeVideoChapterBadge').textContent = btn.dataset.badge;
-          document.getElementById('activeVideoChapterTitle').textContent = btn.dataset.title;
-          document.getElementById('activeVideoChapterDesc').textContent = btn.dataset.desc;
-        });
+      // Backend-rendered Tech & AI controls (chapters, copyable prompts)
+      document.getElementById('academySections')?.addEventListener('click', event => {
+        const chapterBtn = event.target.closest('.video-chapter-btn');
+        if (chapterBtn) {
+          selectVideoChapter(chapterBtn);
+          return;
+        }
+        const copyBtn = event.target.closest('.copy-prompt-btn');
+        const block = copyBtn && pageContent.blocks.find(b => b.block_id === copyBtn.dataset.promptId);
+        if (!block) return;
+        navigator.clipboard.writeText(block.body);
+        const orig = copyBtn.innerHTML;
+        copyBtn.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5 text-red-400"></i><span>Copied!</span>';
+        lucide.createIcons();
+        setTimeout(() => {
+          copyBtn.innerHTML = orig;
+          lucide.createIcons();
+        }, 1800);
       });
 
       // Tech & AI Banner & Sidebar Shortcuts
       document.getElementById('openEdTechLabFromBannerBtn')?.addEventListener('click', () => switchView('view-academy'));
-      document.getElementById('openNotebookLmArticleBtn')?.addEventListener('click', () => openArticleReader('art-7'));
       document.getElementById('sidebarNotebookLmCard')?.addEventListener('click', () => switchView('view-academy'));
-      document.getElementById('sidebarOrbitNoteCard')?.addEventListener('click', () => openArticleReader('art-9'));
       document.getElementById('jumpToVideoLabFromReaderBtn')?.addEventListener('click', () => {
         document.getElementById('articleReaderModal').classList.add('hidden');
         switchView('view-academy');
-      });
-      document.getElementById('addTechTipFromAcademyBtn')?.addEventListener('click', () => {
-        document.getElementById('tipCategory').value = 'Tech & AI';
-        document.getElementById('shareTipModal').classList.remove('hidden');
       });
 
       // Masthead home click
@@ -3511,7 +3036,7 @@
       });
 
       // Hero read button
-      document.getElementById('readHeroArticleBtn')?.addEventListener('click', () => openArticleReader(currentHeroArticleId || 'art-1'));
+      document.getElementById('readHeroArticleBtn')?.addEventListener('click', () => currentHeroArticleId && openArticleReader(currentHeroArticleId));
 
       // Close Article Reader
       document.getElementById('closeArticleReaderBtn')?.addEventListener('click', () => {
@@ -3843,20 +3368,6 @@
         document.getElementById('savedCountLabel').textContent = '2';
         renderArticlesGrid(activeCategory);
         setModal.classList.add('hidden');
-      });
-
-      // Copy Prompt Buttons in Academy
-      document.querySelectorAll('.copy-prompt-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          navigator.clipboard.writeText(btn.dataset.prompt);
-          const orig = btn.innerHTML;
-          btn.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5 text-red-400"></i><span>Copied!</span>';
-          lucide.createIcons();
-          setTimeout(() => {
-            btn.innerHTML = orig;
-            lucide.createIcons();
-          }, 1800);
-        });
       });
 
       // Lesson Studio Form

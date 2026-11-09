@@ -15,18 +15,21 @@ On refresh, skeleton placeholders cover the Sheet-controlled page regions until
 random order on each refresh; the page then reveals its final content and enables
 interactions. Each feed request, including
 reading its JSON body, has a 12-second timeout. Failed, invalid, or timed-out site
-requests reveal built-in content with a non-blocking notice and a console warning.
-Refresh to retry. Flight Wire shows local bulletins when available, otherwise an
-unavailable message. Older `items`-only feeds remain supported through a bounded
-articles request, with a notice explaining that some sections use built-in content.
+requests show an explicit error in each Sheet-driven region (articles, directory,
+lounge, studio, Tech & AI, Flight Wire) plus a notice and console warning; no
+built-in content is substituted. Refresh to retry. A successful feed with an empty
+tab is treated as intentionally empty and stays empty. Older `items`-only
+deployments are treated as a failure: redeploy the latest Apps Script.
 
 Quick manual checks (browser developer tools → Network):
 
 - [ ] Hard refresh with a healthy feed: Sheet text appears without a flash of defaults.
 - [ ] Throttle the connection: placeholders remain until content is applied.
-- [ ] Block the feed or keep it pending past 12 seconds: built-in content appears,
-      the notice explains the failure/timeout, and no loading message remains.
-- [ ] Try an invalid JSON response and an older `items`-only deployment.
+- [ ] Block the feed or keep it pending past 12 seconds: each region shows the
+      load error, the notice explains the failure/timeout, and no loading message remains.
+- [ ] Try an invalid JSON response and an older `items`-only deployment (both show the error).
+- [ ] Clear a settings value (blank cell): the matching text disappears instead of
+      reverting to default text.
 - [ ] Check search, topic/directory filters, bookmarks, article/newsletter modals,
       submission forms, Quick Wins, quotes, studio cards, and tech tools.
 
@@ -168,6 +171,47 @@ values `updated` or `needs-update` to show status badges.
 Two links with token-like URL parameters were left out of the snapshot. Replace
 them with stable links before adding them to the directory.
 
+### Backend-managed pages (Tech & AI pilot)
+
+Code defines the available components; the Sheet defines every label, item,
+order, and visibility. Blank settings are respected: a key present in `settings`
+with an empty value clears that text. Run `setupSiteSheet` (menu item 1) to add
+these tabs without touching existing ones:
+
+| Tab | Controls |
+| --- | --- |
+| `page_sections` | `section_id`, `page` (`tech_ai`), `kind` (`blocks`, `videos`, `tools`), `layout` (`stack`, `columns`), `title`, `intro`, `badge`, `sort_order`, `is_live` |
+| `content_blocks` | `block_id`, `section_id`, `block_type` (`text`, `list`, `callout`, `prompt`), `title`, `body`, `description`, `url`, `link_label`, `style`, `sort_order`, `is_live` |
+| `videos` | `video_id`, `section_id`, `badge`, `title`, `description`, `url`, `link_label`, `sort_order`, `is_live` |
+| `video_chapters` | `chapter_id`, `video_id`, `title`, `description`, `start_time` (`1:25`, `1:02:03` or seconds), `sort_order`, `is_live` |
+
+- `list` blocks: one item per line in `body`; `style` is `bullets` or `numbered`.
+  Other blocks: `style` is `neutral`, `red`, or `green`. `prompt` blocks show
+  `body` with a Copy button (`link_label` renames it).
+- Lower `sort_order` appears first; only `is_live` `TRUE` rows are published.
+  A section with nothing published is not shown.
+- No live video row (with a URL) means no video panel; no chapters means no
+  chapter controls. YouTube, Vimeo, Loom, and Google Drive links embed (chapters
+  seek except on Drive); other links show as a plain link.
+- The `tools` section renders the existing `tech_tools` tab.
+- Page, menu, and callout text: `academy_heading`, `academy_badge`,
+  `academy_subtitle`, `academy_nav_title`, `academy_nav_desc`,
+  `page_empty_message`, and `reader_video_badge`/`reader_video_button`/`reader_video_note`
+  (shown on articles with `has_video_demo` once a video is published).
+  Retired: `academy_video_*` and `show_placeholder_articles`.
+- Missing new tabs make the feed return an error (shown as a load failure) rather
+  than looking intentionally empty.
+
+New sheets seed demonstration rows with `is_live` `FALSE`. Sheets seeded by
+earlier versions still contain live samples (`art-*`, `qw-*`, `tool-*`, etc.):
+run **Eagle Site CMS → 5. Unpublish Sample Rows** to hide them (it asks first,
+never deletes, and logs to `audit_log`). `mms-directory-data.js` is no longer
+loaded; it remains only as reference data for the `directory_links` tab.
+
+Still code-owned (next milestones): navigation labels other than Tech & AI,
+Quick Wins headings, the hero/feed headings' fallbacks, category names, and
+form labels. The other pages follow the same section/block pattern.
+
 ### Article images and placeholders
 
 Put a public image URL, Google Drive file link, or an `image_library` ID or
@@ -179,9 +223,9 @@ article has no usable image, the page chooses a library image in the same
 category, then the matching `default_img_*` setting or a built-in image.
 Failed image loads fall back to the built-in support image.
 
-Live sheet articles replace the built-in samples. Set `show_placeholder_articles`
-to `TRUE` in `settings` to include samples that were not overridden by a sheet
-article. Articles may use `body` instead of `article_body_text`.
+The page has no built-in sample articles. Only rows with `is_live` `TRUE` appear;
+an empty `published_articles` tab shows an empty feed. Articles may use `body`
+instead of `article_body_text`.
 
 After updating the Apps Script, deploy a new version of its web app. The page
 changes in `index.html` must also be published to the site; updating Apps Script

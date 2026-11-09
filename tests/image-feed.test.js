@@ -5,7 +5,7 @@ const vm = require('node:vm');
 
 const page = fs.readFileSync('index.html', 'utf8');
 const imageCode = page.slice(page.indexOf('    const IMG_ENGAGEMENT'), page.indexOf('    // Revolving Search Suggestions'));
-const articleCode = page.slice(page.indexOf('    function normalizePublishedArticle'), page.indexOf('    async function loadPublishedArticles'));
+const articleCode = page.slice(page.indexOf('    function normalizePublishedArticle'), page.indexOf('    function normalizeSmoreIssue'));
 
 function frontend() {
   const context = vm.createContext({ URL, console, Event: class {},
@@ -13,8 +13,7 @@ function frontend() {
     document: { getElementById: () => null }, activeCategory: 'all' });
   vm.runInContext(`${imageCode}
     let siteSettings = {};
-    const DEFAULT_ARTICLES_SNAPSHOT = [{id: 'default'}, {id: 'other'}];
-    const APP_DATA = {articles: DEFAULT_ARTICLES_SNAPSHOT.slice()};
+    const APP_DATA = {articles: [{id: 'stale'}]};
     ${articleCode}
     globalThis.api = {
       resolveImageUrl, normalizeImageSource, normalizePublishedArticle, applyPublishedArticles, setArticleImage,
@@ -41,7 +40,7 @@ test('resolves library, Drive, relative, deterministic and default images', () =
   assert.equal(api.resolveImageUrl('', 'Classroom Management'), 'https://example.com/default.jpg');
 });
 
-test('live sheet articles replace placeholders unless explicitly enabled', () => {
+test('live sheet articles replace content and an empty result stays empty', () => {
   const api = frontend();
   const row = { article_id: 'default', title: 'Title', category: 'Teacher Support',
     body: 'Article text', image_url: 'https://example.com/photo.jpg', is_live: true };
@@ -50,10 +49,10 @@ test('live sheet articles replace placeholders unless explicitly enabled', () =>
   assert.equal(item.subtitle, 'Article text…');
   assert.equal(item.takeaway, 'Article text');
   api.applyPublishedArticles([row]);
-  assert.deepEqual(Array.from(api.articles(), article => article.id), ['default']);
-  api.setSettings({ show_placeholder_articles: ' true ' });
-  api.applyPublishedArticles([row]);
-  assert.deepEqual(Array.from(api.articles(), article => article.id), ['default', 'other']);
+  assert.deepEqual(Array.from(api.articles(), article => article.id), ['published-default']);
+  api.setSettings({ show_placeholder_articles: 'true' });
+  api.applyPublishedArticles([]);
+  assert.deepEqual(Array.from(api.articles()), []);
 });
 
 test('reused hero images regain their error fallback', () => {
