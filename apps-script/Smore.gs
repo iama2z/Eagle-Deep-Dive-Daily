@@ -13,8 +13,6 @@ const SMORE_COLUMNS = [
   'cover_image_url', 'article_body_text'
 ];
 
-const SMORE_PUBLIC_SYNC_COOLDOWN_MS = 15 * 60 * 1000;
-const SMORE_PUBLIC_SYNC_LAST_ATTEMPT = 'smore_public_sync_last_attempt';
 
 // Utility pages on smore.com that look like issue slugs but are never newsletters.
 const SMORE_RESERVED_PATHS = /^(?:about|account|app|blog|business|careers|contact|dashboard|discover|educators|explore|features|gallery|help|jobs|legal|library|login|logout|newsletters|press|pricing|privacy|schools|search|settings|signup|support|templates|terms)$/i;
@@ -248,19 +246,6 @@ function requestPublicSmoreSync_(customSourceUrl) {
         return { ok: false, code: 'invalid_url', error: 'Enter a public Smore newsletter (smore.com/n/...) or profile (smore.com/u/...) URL.', retry_after_seconds: 0 };
       }
     }
-    const properties = PropertiesService.getScriptProperties();
-    const now = Date.now();
-    const lastAttempt = Number(properties.getProperty(SMORE_PUBLIC_SYNC_LAST_ATTEMPT)) || 0;
-    const remaining = lastAttempt + SMORE_PUBLIC_SYNC_COOLDOWN_MS - now;
-    if (remaining > 0) {
-      return {
-        ok: false, code: 'cooldown',
-        error: 'Website updates are limited to once every 15 minutes for all visitors.',
-        retry_after_seconds: Math.ceil(remaining / 1000)
-      };
-    }
-    // Reserve the cooldown before fetching, including attempts that fail.
-    properties.setProperty(SMORE_PUBLIC_SYNC_LAST_ATTEMPT, String(now));
     let items;
     if (customUrl) {
       // Saved to the sheets so the archive persists across reloads.
@@ -272,14 +257,13 @@ function requestPublicSmoreSync_(customSourceUrl) {
     }
     return {
       ok: true, action: 'sync_smore', items: items, preview: false,
-      retry_after_seconds: Math.max(0, Math.ceil((now + SMORE_PUBLIC_SYNC_COOLDOWN_MS - Date.now()) / 1000))
+      retry_after_seconds: 0
     };
   } catch (err) {
     console.error('Public Smore sync failed: ' + err.message);
-    const lastAttempt = Number(PropertiesService.getScriptProperties().getProperty(SMORE_PUBLIC_SYNC_LAST_ATTEMPT)) || 0;
     return {
       ok: false, code: 'sync_failed', error: String(err.message),
-      retry_after_seconds: Math.max(0, Math.ceil((lastAttempt + SMORE_PUBLIC_SYNC_COOLDOWN_MS - Date.now()) / 1000))
+      retry_after_seconds: 0
     };
   } finally {
     lock.releaseLock();

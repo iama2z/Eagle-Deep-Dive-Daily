@@ -415,7 +415,7 @@ URL-fetch quotas; check failed executions and reduce the refresh frequency.
 Anyone can click **Update newsletters** on Flight Wire to fetch fresh Smore
 content, update the Sheet, and refresh the board and full-text search without
 reloading the page. Existing newsletters remain readable during the update.
-The button reports completion, failures, or an active cooldown.
+The button reports completion, or failures.
 
 Install the updated `apps-script/Smore.gs` and redeploy the existing web app as a
 **New version**, then publish the updated `index.html`. The button sends a simple
@@ -423,13 +423,8 @@ form-encoded `POST /exec` with `action=sync_smore`; existing submission forms an
 read-only GET feeds are unchanged. No credentials or private sheet data are sent
 back to the browser.
 
-Website-triggered sync attempts are limited to **one every 15 minutes across all
-visitors**, including failed attempts. Apps Script stores the timestamp in Script
-Properties and checks it while holding the same script lock used by spreadsheet
-and scheduled syncs. Reloading the page or using another browser cannot bypass
-this limit. Spreadsheet and scheduled syncs retain their existing behavior and
-do not consume the website cooldown. This limits expensive syncs, not all HTTP
-requests; an anonymous endpoint can still receive unwanted traffic.
+Website-triggered syncs have no cooldown. Only one sync runs at a time (the
+script lock); a click during another sync gets a "busy" message.
 
 Updates may take several minutes. If the browser times out or loses its
 connection, it cannot confirm whether the server finished; reload later to check.
@@ -443,11 +438,10 @@ again before starting another sync.
 that cell in `settings` to change the permanent source used by all syncs. On the
 site, **Add a different Smore URL** accepts a newsletter or profile URL. Its
 newsletters are saved to the Sheet (`smore_feed_raw` and `smore_feed_public`), so
-they stay in the archive after reload. It uses the same 15-minute cooldown.
+they stay in the archive after reload.
 
 After redeploying, check that the button imports a new or edited newsletter,
-updates full-body search, and shows a cooldown on a second click from another
-browser. Also verify a failed import keeps existing issues and that lesson
+updates full-body search. Also verify a failed import keeps existing issues and that lesson
 submissions and spreadsheet/scheduled syncs still work.
 
 ### JSON contract / browser access
