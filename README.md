@@ -51,6 +51,20 @@ are ignored so previously saved AI messaging does not reappear. Existing Sheets
 work without redeployment; run `setupSiteSheet` with the updated Apps Script to
 append the new editable settings without clearing existing content.
 
+### Admin console
+
+**Menu → Settings → Admin access** opens a minimalist console after the passcode
+is entered. Boxes cover Submissions (approve / back to pending / delete), Site Text
+(every `settings` row), Articles, Quick Wins, Directory Links, Lounge Posts, Peer
+Lesson Studio, AI & Tech Tools, and Image Library. Saves write directly to the
+matching Sheet tab by column name, with loading messages while the Sheet responds.
+
+Setup: in the Apps Script project open **Project Settings → Script properties**
+and add `ADMIN_PASSCODE`. The passcode is checked only by the script (never stored
+in `index.html`); five wrong attempts lock the console for 15 minutes. Then
+redeploy the web app as a **New version**. Not yet editable here: `school_news`,
+`school_social`, and Smore archive tabs (synced automatically).
+
 ## Unified Google Sheet CMS + Smore Sync Setup
 
 ### School News and Social on Flight Wire
