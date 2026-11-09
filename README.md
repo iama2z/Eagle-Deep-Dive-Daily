@@ -205,8 +205,8 @@ these tabs without touching existing ones:
 New sheets seed demonstration rows with `is_live` `FALSE`. Sheets seeded by
 earlier versions still contain live samples (`art-*`, `qw-*`, `tool-*`, etc.):
 run **Eagle Site CMS → 5. Unpublish Sample Rows** to hide them (it asks first,
-never deletes, and logs to `audit_log`). `mms-directory-data.js` is no longer
-loaded; it remains only as reference data for the `directory_links` tab.
+never deletes, and logs to `audit_log`). The Heart of MMS directory keeps
+its built-in `mms-directory-data.js` list, which live `directory_links` rows replace.
 
 Still code-owned (next milestones): navigation labels other than Tech & AI,
 Quick Wins headings, the hero/feed headings' fallbacks, category names, and

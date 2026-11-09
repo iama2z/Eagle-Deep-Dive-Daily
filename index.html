@@ -15,6 +15,7 @@
   <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="mms-directory-data.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -1274,7 +1275,7 @@
           items: []
         }
       },
-      resources: [],
+      resources: window.MMS_DIRECTORY_RESOURCES || [],
       loungeQuotes: [],
       studioItems: [],
       techTools: []
@@ -1752,11 +1753,6 @@
       const resultCount = document.getElementById('directoryResultCount');
       if (resultCount) {
         resultCount.textContent = `${items.length} ${items.length === 1 ? 'resource' : 'resources'}`;
-      }
-
-      if (siteLoadFailed) {
-        grid.innerHTML = LOAD_FAILURE_HTML;
-        return;
       }
 
       if (!items.length) {
@@ -2809,7 +2805,7 @@
           renderQuickTips(activeView === 'view-editorial' ? activeCategory : activeView);
         }
 
-        if (Array.isArray(data.directory)) {
+        if (Array.isArray(data.directory) && data.directory.length > 0) {
           const resources = data.directory.map((r, i) => ({
             id: String(r.resource_id || `res-${i + 1}`).trim(),
             title: String(r.title || '').trim(),
@@ -2819,10 +2815,12 @@
             tags: String(r.tags || '').split(',').map(t => t.trim()).filter(Boolean),
             updateStatus: String(r.update_status || '').trim().toLowerCase()
           })).filter(r => r.title && r.url && !r.url.includes('sample_'));
-          APP_DATA.resources = resources;
-          const category = document.getElementById('directoryCategory')?.value || 'all';
-          const query = document.getElementById('directorySearch')?.value || '';
-          renderDirectory(category, query);
+          if (resources.length) {
+            APP_DATA.resources = resources;
+            const category = document.getElementById('directoryCategory')?.value || 'all';
+            const query = document.getElementById('directorySearch')?.value || '';
+            renderDirectory(category, query);
+          }
         }
 
         if (Array.isArray(data.quotes)) {
