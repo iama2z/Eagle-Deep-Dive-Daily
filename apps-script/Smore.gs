@@ -1243,6 +1243,7 @@ function seedDefaultSettings_(settingsSheet) {
     ['reader_video_note', '', 'Optional note on that callout'],
     ['footer_left', 'Classroom Craft, Student Engagement, Teacher Support & Tech/AI', 'Footer description text'],
     ['footer_right', 'Maize Middle School (USD 266)', 'Footer school name text'],
+    ['loading_messages', 'Burnout prevention protocol enabled.\nEmergency coffee reserves detected.\nThe copier has agreed to cooperate. For now.\nGrading pile temporarily classified as “later.”\nOne more deep breath has been scheduled.\nTiny classroom wins loading. No committee required.\nYour inbox has been asked to calm down.\nClassroom chaos contained. Please do not startle it.\nSurvival mode activated.\nThe laminator is warming up. Everyone stay calm.\nTeacher powers activate!\nHave you tried turning it off and on again?\nMaybe there\'s snacks in the lounge?\n6-7 has been reclaimed.\nLow key lit unc bootloader\nSearching for peak rizz\nSearching databases for "aura"\nNo crash outs detected.', 'Messages shown while the site loads, one per line. New messages appear from a visitor\'s next visit.'],
     ['menu_title', 'Site Navigation Menu', 'Small heading at the top of the site menu'],
     ['menu_badge', 'Eagles Hub', 'Red badge in the site menu header'],
     ['menu_home_title', 'Home: Main Editorial Feed', 'Menu item: Home title'],

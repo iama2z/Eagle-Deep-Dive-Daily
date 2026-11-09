@@ -392,7 +392,7 @@
   <script>
     const stopLoadingMessages = (() => {
       const message = document.getElementById('loadingMessage');
-      const messages = [
+      const defaultMessages = [
         'Burnout prevention protocol enabled.',
         'Emergency coffee reserves detected.',
         'The copier has agreed to cooperate. For now.',
@@ -412,6 +412,12 @@
         'Searching databases for "aura"',
         'No crash outs detected.'
       ];
+      // Custom messages from the Sheet (setting loading_messages) are saved here by applySiteSettings.
+      let messages = defaultMessages.slice();
+      try {
+        const saved = JSON.parse(localStorage.getItem('loading_messages') || 'null');
+        if (Array.isArray(saved) && saved.length) messages = saved.map(String);
+      } catch {}
       for (let i = messages.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [messages[i], messages[j]] = [messages[j], messages[i]];
@@ -2288,6 +2294,12 @@
         document.title = siteSettings.site_subtitle
           ? `${siteSettings.site_title} | ${siteSettings.site_subtitle}` : siteSettings.site_title;
       }
+
+      try {
+        const custom = String(siteSettings.loading_messages ?? '').split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+        if (custom.length) localStorage.setItem('loading_messages', JSON.stringify(custom));
+        else localStorage.removeItem('loading_messages');
+      } catch {}
 
       document.querySelectorAll('[data-text]').forEach(node => {
         const val = String(siteSettings[node.dataset.text] ?? '').trim();

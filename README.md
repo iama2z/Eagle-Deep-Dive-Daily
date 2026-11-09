@@ -70,6 +70,10 @@ automatically. The Tech & AI page is edited through the **Tech Page** boxes
 Article **Cover Image Url** accepts a link or an `image_id`/label from the
 Image Library tab (for example `eng-1`).
 
+Loading messages are the `loading_messages` setting (one per line). The loading
+screen appears before the Sheet responds, so edits are saved in the visitor's
+browser and show from their next visit; clearing the setting restores the defaults.
+
 Setup: in the Apps Script project open **Project Settings → Script properties**
 and add `ADMIN_PASSCODE`. The passcode is checked only by the script (never stored
 in `index.html`); five wrong attempts lock the console for 15 minutes. Then
