@@ -16,7 +16,7 @@ random order on each refresh; the page then reveals its final content and enable
 interactions. Each feed request, including
 reading its JSON body, has a 12-second timeout. Failed, invalid, or timed-out site
 requests show an explicit error in each Sheet-driven region (articles, directory,
-lounge, studio, Tech & AI, Flight Wire) plus a notice and console warning; no
+lounge, studio, Tech & AI, School Updates) plus a notice and console warning; no
 built-in content is substituted. Refresh to retry. A successful feed with an empty
 tab is treated as intentionally empty and stays empty. Older `items`-only
 deployments are treated as a failure: redeploy the latest Apps Script.
@@ -62,9 +62,12 @@ is entered. Boxes cover Submissions (approve / back to pending / delete), Site T
 Lesson Studio, AI & Tech Tools, and Image Library. Saves write directly to the
 matching Sheet tab by column name, with loading messages while the Sheet responds.
 
-Site Text covers the menu, topic bar, Staff Lounge, Flight Wire, Peer Lesson
-Studio, article reader and form text (elements marked `data-text="key"` in
-`index.html`). Opening the console adds any missing text keys to `settings`
+Site Text covers the landing cards and side toolbar, menu, topic bar, Shout Outs and
+Staff Lounge, School Updates, The Heart of MMS, Peer Feedback Forum, Video Lab, Quick Wins
+banners, article reader and form text (elements marked `data-text="key"` in
+`index.html`). Opening the console adds any missing text keys to `settings` and renames
+rows that still hold an old default (for example Flight Wire) to the current name; text you
+edited yourself is never overwritten
 automatically. The Tech & AI page is edited through the **Tech Page** boxes
 (sections, content blocks, videos, chapters). Items show **Live** or **Hidden**.
 Article **Cover Image Url** accepts a link or an `image_id`/label from the

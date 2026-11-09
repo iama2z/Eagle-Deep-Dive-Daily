@@ -325,12 +325,12 @@
             </div>
 
             <div class="py-1 space-y-0.5">
-              <button class="menu-nav-item w-full text-left px-3 py-2.5 rounded-xl hover:bg-cream-100 flex items-start gap-3 transition" data-view="view-directory">
+              <button class="menu-nav-item w-full text-left px-3 py-2.5 rounded-xl hover:bg-cream-100 flex items-start gap-3 transition" data-view="view-directory" data-tip="menu_directory_tip" title="The Heart of MMS">
                 <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center shrink-0 mt-0.5">
                   <i data-lucide="folder-heart" class="w-4 h-4"></i>
                 </div>
                 <div>
-                  <div data-text="menu_directory_title" class="text-xs font-bold text-ink-900">Heart of MMS Directory</div>
+                  <div data-text="menu_directory_title" class="text-xs font-bold text-ink-900">Directory</div>
                   <div data-text="menu_directory_desc" class="text-[11px] text-ink-600">Clean, searchable building links &amp; forms</div>
                 </div>
               </button>
@@ -340,7 +340,7 @@
                   <i data-lucide="newspaper" class="w-4 h-4"></i>
                 </div>
                 <div>
-                  <div data-text="menu_bulletin_title" class="text-xs font-bold text-ink-900">Flight Wire (School Updates)</div>
+                  <div data-text="menu_bulletin_title" class="text-xs font-bold text-ink-900">School Updates</div>
                   <div data-text="menu_bulletin_desc" class="text-[11px] text-ink-600">News, social posts, calendars, and newsletter archive</div>
                 </div>
               </button>
@@ -360,7 +360,7 @@
                   <i data-lucide="users" class="w-4 h-4"></i>
                 </div>
                 <div>
-                  <div data-text="menu_studio_title" class="text-xs font-bold text-ink-900">The Peer Lesson Studio</div>
+                  <div data-text="menu_studio_title" class="text-xs font-bold text-ink-900">Peer Feedback Forum</div>
                   <div data-text="menu_studio_desc" class="text-[11px] text-ink-600">Warm &amp; Cool feedback lab for lesson drafts</div>
                 </div>
               </button>
@@ -385,7 +385,7 @@
               </button>
               <button class="topleft-editorial-item text-left px-2.5 py-1.5 rounded-lg hover:bg-cream-100 text-[11px] font-semibold text-ink-800 flex items-center gap-1.5" data-category="Tech & AI">
                 <span class="w-2 h-2 rounded-full bg-red-600 shrink-0"></span>
-                <span data-text="menu_topic_tech" class="truncate">Tech &amp; AI</span>
+                <span data-text="menu_topic_tech" class="truncate">Tech</span>
               </button>
             </div>
 
@@ -464,7 +464,7 @@
           </button>
           <button class="topic-pill font-semibold text-ink-600 hover:text-ink-900 hover:bg-cream-200 px-3.5 py-1.5 rounded-full transition whitespace-nowrap flex items-center gap-1.5" data-category="Tech & AI">
             <span class="w-2 h-2 rounded-full bg-red-600"></span>
-            <span data-text="topbar_tech">Tech &amp; AI Tips</span>
+            <span data-text="topbar_tech">Tech Talk</span>
           </button>
           <button class="topic-pill font-semibold text-ink-600 hover:text-ink-900 hover:bg-cream-200 px-3.5 py-1.5 rounded-full transition whitespace-nowrap flex items-center gap-1.5" data-category="saved">
             <i data-lucide="bookmark" class="w-3.5 h-3.5 text-red-600"></i>
@@ -731,7 +731,7 @@
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <i data-lucide="coffee" class="w-4 h-4 text-red-600"></i>
-                <h3 class="font-editorial font-bold text-base text-ink-900"><button type="button" id="loungeHeadingLink" class="hover:text-red-600 hover:underline text-left" title="Open the Staff Lounge"><span id="loungeHeadingText">Overheard at MMS</span></button></h3>
+                <h3 class="font-editorial font-bold text-base text-ink-900"><button type="button" id="loungeHeadingLink" class="hover:text-red-600 hover:underline text-left" title="Open the Staff Lounge"><span id="loungeHeadingText">Shout Outs</span></button></h3>
               </div>
               <span id="loungeBadgeText" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-50 text-rose-700">Staff Lounge</span>
             </div>
@@ -762,12 +762,12 @@
             <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
             <span data-text="back_to_feed_label">Back to Editorial Feed</span>
           </button>
-          <h1 id="directoryHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">Heart of MMS: Clean Building Directory</h1>
+          <h1 id="directoryHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">The Heart of MMS</h1>
           <p id="directorySubtitleText" class="text-sm text-ink-600">Streamlined, color-coded access to internal USD 266 forms, maps, and operational links.</p>
         </div>
 
         <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
-          <label class="sr-only" for="directorySearch">Search Heart of MMS resources</label>
+          <label class="sr-only" for="directorySearch">Search The Heart of MMS</label>
           <input id="directorySearch" type="search" placeholder="Search resources..." class="w-full sm:w-64 rounded-xl border border-cream-300 bg-white px-3 py-2 text-sm text-ink-900 placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-red-500" />
           <label class="sr-only" for="directoryCategory">Filter by category</label>
           <select id="directoryCategory" class="w-full sm:w-56 rounded-xl border border-cream-300 bg-white px-3 py-2 text-sm font-semibold text-ink-800 focus:outline-none focus:ring-2 focus:ring-red-500">
@@ -815,10 +815,10 @@
     <!-- ========================================== -->
     <div id="view-bulletin" class="view-section hidden space-y-6">
       <section class="space-y-3">
-        <h1 data-text="flight_page_heading" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">Flight Wire: School Updates</h1>
+        <h1 data-text="flight_page_heading" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">School Updates</h1>
         <p data-text="flight_page_subtitle" class="text-sm text-ink-600">MMS updates first, with district posts and Smore newsletters in their own tabs.</p>
         <button class="back-to-feed-btn text-xs font-bold text-red-600" data-text="back_to_feed_label">Back to Editorial Feed</button>
-        <div role="tablist" aria-label="Flight Wire sections" class="flex flex-wrap gap-2">
+        <div role="tablist" aria-label="School Updates sections" class="flex flex-wrap gap-2">
           <button data-text="flight_tab_mms" id="flightTab-mms" type="button" role="tab" aria-selected="true" aria-controls="flightPanel-mms" tabindex="0" data-flight-tab="mms" class="rounded-full px-4 py-2 text-sm font-bold bg-ink-900 text-white">MMS Updates</button>
           <button data-text="flight_tab_district" id="flightTab-district" type="button" role="tab" aria-selected="false" aria-controls="flightPanel-district" tabindex="-1" data-flight-tab="district" class="rounded-full px-4 py-2 text-sm font-bold bg-cream-100 text-ink-600">District Updates</button>
           <button data-text="flight_tab_smore" id="flightTab-smore" type="button" role="tab" aria-selected="false" aria-controls="flightPanel-smore" tabindex="-1" data-flight-tab="smore" class="rounded-full px-4 py-2 text-sm font-bold bg-cream-100 text-ink-600">Smore Archive</button>
@@ -886,7 +886,7 @@
           <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
           <span data-text="back_to_feed_label">Back to Editorial Feed</span>
         </button>
-        <h1 id="studioHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">The Peer Lesson Studio</h1>
+        <h1 id="studioHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">Peer Feedback Forum</h1>
         <p id="studioSubtitleText" class="text-sm text-ink-600">Share a draft lab, CER prompt, or activity for low-stakes Warm &amp; Cool feedback from colleagues.</p>
       </div>
 
@@ -1389,9 +1389,9 @@
           items: []
         },
         "Tech & AI": {
-          heading: "Tech & AI Quick Wins: Practical Classroom Tools",
+          heading: "Tech Talk Quick Wins: Practical Classroom Tools",
           subtitle: "Zero-fluff workflows for NotebookLM, OrbitNote PDF markup, and classroom video creation",
-          badge: "Tech & AI Focus",
+          badge: "Tech Talk Focus",
           icon: "cpu",
           accentClass: "bg-red-600 text-white",
           items: []
@@ -1405,7 +1405,7 @@
           items: []
         },
         "view-directory": {
-          heading: "Directory Quick Wins: Fastest Building Shortcuts",
+          heading: "The Heart of MMS Quick Wins: Fastest Building Shortcuts",
           subtitle: "Time-saving tips for navigating USD 266 forms, referrals, and daily operations",
           badge: "Heart of MMS Shortcuts",
           icon: "folder-heart",
@@ -1413,25 +1413,25 @@
           items: []
         },
         "view-bulletin": {
-          heading: "Flight Wire Quick Wins: Never Dig Through Gmail Again",
+          heading: "School Updates Quick Wins: Never Dig Through Gmail Again",
           subtitle: "How to get the most out of the automated Smore administrative newsletter archive",
-          badge: "Admin Wire Tips",
+          badge: "School Updates Tips",
           icon: "newspaper",
           accentClass: "bg-red-600 text-white",
           items: []
         },
         "view-studio": {
-          heading: "Lesson Studio Quick Wins: High-Trust Peer Feedback",
+          heading: "Peer Feedback Forum Quick Wins: High-Trust Peer Feedback",
           subtitle: "Norms for fast, supportive Warm & Cool lesson tuning with MMS colleagues",
-          badge: "Peer Studio Norms",
+          badge: "Peer Feedback Norms",
           icon: "users",
           accentClass: "bg-red-600 text-white",
           items: []
         },
         "view-academy": {
-          heading: "EdTech, AI & Video Lab Quick Wins: Save 45 Minutes This Prep Hour",
-          subtitle: "Best practices for NotebookLM in Google Classroom, OrbitNote PDFs, and classroom video creation",
-          badge: "Tech, AI & Video Lab",
+          heading: "Video Lab Quick Wins: Learn It Fast With a Short Tutorial",
+          subtitle: "Short tutorial videos for NotebookLM in Google Classroom, OrbitNote PDFs, and classroom video creation",
+          badge: "Tutorial Library",
           icon: "graduation-cap",
           accentClass: "bg-red-600 text-white",
           items: []
@@ -1516,7 +1516,7 @@
 
       APP_DATA.resources.forEach(r => {
         items.push({
-          type: 'Directory Link',
+          type: 'Heart of MMS',
           id: r.id,
           title: r.title,
           category: r.category,
@@ -1528,7 +1528,7 @@
 
       (APP_DATA.techTools || []).forEach(t => {
         items.push({
-          type: 'EdTech Tool',
+          type: 'Video Lab',
           id: t.id,
           title: t.title,
           category: t.badge || 'Tech & AI',
@@ -1540,7 +1540,7 @@
 
       smoreIssues.forEach(issue => {
         items.push({
-          type: 'Flight Wire',
+          type: 'School Updates',
           id: issue.issue_url,
           title: issue.issue_title,
           category: 'Smore Newsletter',
@@ -1553,7 +1553,7 @@
 
       schoolUpdates.forEach((item, index) => {
         items.push({
-          type: 'Flight Wire', id: 'school-' + item.id, title: item.title,
+          type: 'School Updates', id: 'school-' + item.id, title: item.title,
           category: item.source, desc: item.text, body: item.text,
           tags: 'school news social announcement',
           action: () => {
@@ -1604,9 +1604,11 @@
         return;
       }
 
-      headingEl.textContent = config.heading;
-      subtitleEl.textContent = config.subtitle;
-      pillEl.textContent = config.badge;
+      const tipSlug = { 'Student Engagement': 'engagement', 'Classroom Management': 'management', 'Teacher Support': 'support', 'Tech & AI': 'tech' }[sectionKey] || sectionKey;
+      const tipText = (part, fallback) => String(siteSettings[`quicktips_${tipSlug}_${part}`] ?? '').trim() || fallback;
+      headingEl.textContent = tipText('heading', config.heading);
+      subtitleEl.textContent = tipText('subtitle', config.subtitle);
+      pillEl.textContent = tipText('badge', config.badge);
       iconBoxEl.className = `w-9 h-9 rounded-xl ${config.accentClass} flex items-center justify-center font-bold shrink-0 shadow-xs`;
       iconBoxEl.innerHTML = `<i data-lucide="${config.icon}" class="w-4 h-4"></i>`;
 
@@ -1752,7 +1754,7 @@
       } else if (category === 'Tech & AI') {
         hero?.classList.add('hidden');
         techBanner?.classList.remove('hidden');
-        heading.textContent = 'Tech & AI Playbooks';
+        heading.textContent = String(siteSettings.topic_tech_heading ?? '').trim() || 'Tech Talk';
       } else {
         hero?.classList.add('hidden');
         techBanner?.classList.add('hidden');
@@ -2426,8 +2428,14 @@
         if (val) node.textContent = val;
       });
 
+      document.querySelectorAll('[data-tip]').forEach(node => {
+        const val = String(siteSettings[node.dataset.tip] ?? '').trim();
+        if (val) node.title = val;
+      });
+
       renderHeroFeature();
       renderHeroFeature();
+      window.refreshLanding?.();
     }
 
     // --- LIVE SMORE BULLETIN FEED (GOOGLE APPS SCRIPT) ---
@@ -2671,7 +2679,7 @@
       image.classList.toggle('hidden', !issue.cover_image_url);
       if (issue.cover_image_url) setArticleImage(image, issue.cover_image_url);
       else image.removeAttribute('src');
-      document.getElementById('readerCategoryBadge').textContent = 'Flight Wire';
+      document.getElementById('readerCategoryBadge').textContent = String(siteSettings.reader_updates_badge ?? '').trim() || 'School Updates';
       document.getElementById('readerAuthor').textContent = 'Smore Newsletter';
       document.getElementById('readerReadTime').textContent = issue.article_body_text
         ? `${Math.max(1, Math.ceil(issue.article_body_text.split(/\s+/).length / 200))} min read` : '';
@@ -2824,7 +2832,7 @@
     async function loadSmoreBulletinFeed() {
       const container = document.getElementById('bulletinFeedContainer');
       if (!container) return;
-      setBulletinFeedMessage(container, 'Loading the latest Flight Wire bulletins...');
+      setBulletinFeedMessage(container, 'Loading the latest School Updates bulletins...');
 
       try {
         const data = await fetchJsonWithTimeout(SMORE_FEED_API_URL);
@@ -2832,7 +2840,7 @@
         applySmoreItems(data.items);
       } catch (err) {
         console.warn('Smore bulletin feed unavailable:', err);
-        setBulletinFeedMessage(container, 'The Flight Wire bulletin feed is temporarily unavailable. Please try again later.', 'error');
+        setBulletinFeedMessage(container, 'The School Updates bulletin feed is temporarily unavailable. Please try again later.', 'error');
       }
     }
 
@@ -2980,7 +2988,7 @@
       const container = document.getElementById('bulletinFeedContainer');
       const status = document.getElementById('siteLoadStatus');
       let notice = '';
-      if (container) setBulletinFeedMessage(container, 'Loading the latest Flight Wire bulletins...');
+      if (container) setBulletinFeedMessage(container, 'Loading the latest School Updates bulletins...');
       try {
         const url = new URL(SUBMISSION_API_URL);
         url.searchParams.set('feed', 'site');
@@ -3122,7 +3130,7 @@
         notice = err.name === 'TimeoutError'
           ? 'Site content took too long to load. Refresh to try again.'
           : 'Site content could not be loaded (' + (err && err.message || 'unknown error') + '). Refresh to try again.';
-        if (container) setBulletinFeedMessage(container, 'The Flight Wire bulletin feed is temporarily unavailable. Please try again later.', 'error');
+        if (container) setBulletinFeedMessage(container, 'The School Updates bulletin feed is temporarily unavailable. Please try again later.', 'error');
       } finally {
         try {
           renderArticlesGrid(activeCategory);
@@ -3707,15 +3715,15 @@
         { id: 'settings', label: 'Site Text', hint: 'Headings, badges, subtitles, footer', icon: 'type' },
         { id: 'articles', label: 'Articles', hint: 'Published articles & playbooks', icon: 'newspaper', title: 'title', table: true },
         { id: 'quick_wins', label: 'Quick Wins', hint: 'Short classroom tips', icon: 'zap', title: 'title', table: true },
-        { id: 'directory', label: 'Directory Links', hint: 'Forms, maps, and operational links', icon: 'link', title: 'title', table: true },
-        { id: 'quotes', label: 'Lounge Posts', hint: 'Overheard at MMS posts', icon: 'message-square', title: 'quote', table: true },
-        { id: 'studio', label: 'Peer Lesson Studio', hint: 'Lesson drafts for feedback', icon: 'users', title: 'title', table: true },
-        { id: 'tech_tools', label: 'AI & Tech Tools', hint: 'EdTech Lab tool cards', icon: 'cpu', title: 'title', table: true },
+        { id: 'directory', label: 'Heart of MMS Links', hint: 'Forms, maps, and operational links', icon: 'link', title: 'title', table: true },
+        { id: 'quotes', label: 'Lounge Posts', hint: 'Shout Outs and staff lounge posts', icon: 'message-square', title: 'quote', table: true },
+        { id: 'studio', label: 'Peer Feedback Forum', hint: 'Lesson drafts for feedback', icon: 'users', title: 'title', table: true },
+        { id: 'tech_tools', label: 'AI & Tech Tools', hint: 'Tool cards on the Video Lab page', icon: 'cpu', title: 'title', table: true },
         { id: 'image_library', label: 'Image Library', hint: 'Approved cover images', icon: 'image', title: 'label', table: true },
-        { id: 'page_sections', label: 'Tech Page: Sections', hint: 'Section headings, intros and order', icon: 'layout-list', title: 'title', table: true },
-        { id: 'content_blocks', label: 'Tech Page: Content Blocks', hint: 'Text, lists, callouts and prompts', icon: 'text', title: 'title', table: true },
-        { id: 'videos', label: 'Tech Page: Videos', hint: 'Walkthrough videos', icon: 'video', title: 'title', table: true },
-        { id: 'video_chapters', label: 'Tech Page: Video Chapters', hint: 'Timestamps inside a video', icon: 'list-video', title: 'title', table: true }
+        { id: 'page_sections', label: 'Video Lab: Sections', hint: 'Section headings, intros and order', icon: 'layout-list', title: 'title', table: true },
+        { id: 'content_blocks', label: 'Video Lab: Content Blocks', hint: 'Text, lists, callouts and prompts', icon: 'text', title: 'title', table: true },
+        { id: 'videos', label: 'Video Lab: Videos', hint: 'Walkthrough videos', icon: 'video', title: 'title', table: true },
+        { id: 'video_chapters', label: 'Video Lab: Video Chapters', hint: 'Timestamps inside a video', icon: 'list-video', title: 'title', table: true }
       ];
       const TABLE_FIELDS = {
         articles: ['title', 'category', 'summary', 'article_body_text', 'author', 'published_at', 'cover_image_url', 'is_live', 'takeaway', 'try_tomorrow', 'script', 'read_time', 'featured', 'has_video_demo', 'tags'],
@@ -4002,14 +4010,16 @@
 
       const SETTING_GROUPS = [
         ['Header, Footer & Loading', ['site', 'topbar', 'search', 'footer', 'back', 'loading']],
+        ['Landing Page & Side Toolbar', ['nav', 'landing']],
         ['Menu', ['menu']],
-        ['Home Page & Cover Story', ['hero', 'feed', 'article']],
+        ['Home Page & Cover Story', ['hero', 'feed', 'article', 'topic']],
+        ['Quick Wins Banners', ['quicktips']],
         ['Article Reader', ['reader']],
-        ['Staff Lounge', ['lounge']],
-        ['Flight Wire', ['flight', 'bulletin', 'smore']],
-        ['Heart of MMS Directory', ['directory']],
-        ['Peer Lesson Studio', ['studio']],
-        ['Tech & AI Page', ['academy']],
+        ['Staff Lounge & Shout Outs', ['lounge']],
+        ['School Updates', ['flight', 'bulletin', 'smore']],
+        ['The Heart of MMS', ['directory']],
+        ['Peer Feedback Forum', ['studio']],
+        ['Video Lab', ['academy']],
         ['Forms & Pop-ups', ['tip']]
       ];
       const settingGroup = key => {
@@ -4019,36 +4029,42 @@
       };
 
       const GROUP_INFO = {
+        'Landing Page & Side Toolbar': 'Names, hints and hover labels for the landing-page card stack and the icon toolbar, plus the rotating tips.',
         'Header, Footer & Loading': 'Text in the site header, the footer, the search button and the loading screen.',
         'Menu': 'Titles and descriptions inside the slide-out navigation menu.',
         'Home Page & Cover Story': 'The cover story card, the article feed heading and the article search page.',
         'Article Reader': 'Labels shown while reading a single article.',
-        'Staff Lounge': 'The Staff Lounge preview on the home page, the Lounge page and its post pop-up.',
-        'Flight Wire': 'The school updates page, its tabs and section headings.',
-        'Heart of MMS Directory': 'The building directory page.',
-        'Peer Lesson Studio': 'The Peer Lesson Studio page and its submission form.',
-        'Tech & AI Page': 'The EdTech, AI & Video Lab page and its menu entry.',
+        'Staff Lounge & Shout Outs': 'The Shout Outs widget, the Staff Lounge page and its post pop-up.',
+        'Quick Wins Banners': 'The heading, subtitle and badge on the Quick Wins banner for each topic and page.',
+        'School Updates': 'The School Updates page, its tabs and section headings.',
+        'The Heart of MMS': 'The Heart of MMS directory page.',
+        'Peer Feedback Forum': 'The Peer Feedback Forum page and its submission form.',
+        'Video Lab': 'The Video Lab tutorial library page and its menu entry.',
         'Forms & Pop-ups': 'The Share a Tip pop-up.',
         'Other Settings': 'Settings that do not belong to a specific page.'
       };
       const SETTING_AREA = {
         site: 'the site header', topbar: 'the category tabs under the header', search: 'the header search', footer: 'the footer',
         back: 'article and page back links', loading: 'the loading screen', menu: 'the navigation menu', hero: 'the cover story card',
-        feed: 'the home page feed', article: 'the article search and reader', reader: 'the article reader', lounge: 'the Staff Lounge',
-        flight: 'the Flight Wire page', bulletin: 'the Flight Wire card in the menu or home page', smore: 'the Smore archive',
-        directory: 'the Directory page', studio: 'the Peer Lesson Studio', academy: 'the Tech & AI page', tip: 'the Share a Tip pop-up',
+        feed: 'the home page feed', article: 'the article search and reader', reader: 'the article reader', lounge: 'the Staff Lounge and Shout Outs',
+        flight: 'the School Updates page', bulletin: 'the School Updates page', smore: 'the Smore archive', nav: 'the landing page cards and side toolbar', landing: 'the landing page', quicktips: 'the Quick Wins banner', topic: 'a topic page',
+        directory: 'the Heart of MMS page', studio: 'the Peer Feedback Forum', academy: 'the Video Lab page', tip: 'the Share a Tip pop-up',
         page: 'pages with no content'
       };
       const SETTING_KIND = [
         ['heading', 'The heading'], ['title', 'The title'], ['subtitle', 'The subtitle under the heading'], ['desc', 'The short description'],
         ['badge', 'The small badge label'], ['button', 'The button text'], ['label', 'The label'], ['note', 'The small note'],
-        ['intro', 'The intro text'], ['message', 'The message'], ['tagline', 'The tagline'], ['tab', 'The tab name'], ['filter', 'The filter button']
+        ['hint', 'The small hint under the name'], ['tip', 'The hover label'], ['intro', 'The intro text'], ['message', 'The message'], ['tagline', 'The tagline'], ['tab', 'The tab name'], ['filter', 'The filter button']
       ];
       const SETTING_NOTES = {
         hero_article_id: 'Which article is the cover story. Easier to change from the Articles page.',
         loading_messages: 'Messages that rotate on the loading screen, one per line. Visitors see changes on their next visit.',
-        smore_source_url: 'The Smore newsletter link the Flight Wire archive is built from.',
-        academy_nav_desc: 'The line under the Tech & AI page in the menu.',
+        smore_source_url: 'The Smore newsletter link the School Updates archive is built from.',
+        academy_nav_desc: 'The line under Video Lab in the menu.',
+        landing_tips: 'Tips that rotate under the landing page title, one per line.',
+        topic_tech_heading: 'The heading on the Tech topic page (Tech Talk).',
+        reader_updates_badge: 'The badge shown when reading a Smore newsletter.',
+        menu_directory_tip: 'The hover text on the Directory menu item (The Heart of MMS).',
         page_empty_message: 'Shown on a page that has no live content yet.',
         reader_video_note: 'A note shown next to an article’s companion video.',
         menu_settings: 'The Settings entry at the bottom of the menu.',
@@ -4363,26 +4379,34 @@
 (function () {
   const $ = id => document.getElementById(id);
   const click = sel => document.querySelector(sel)?.click();
-  const academyTitle = () => $('academyNavTitleText')?.textContent.trim() || 'Academy';
+  const academyTitle = () => $('academyNavTitleText')?.textContent.trim() || 'Video Lab';
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  const S = (key, fallback) => {
+    const v = typeof siteSettings === 'object' && siteSettings ? String(siteSettings[key] ?? '').trim() : '';
+    return v || fallback;
+  };
+
   // Each entry proxies a click to the site's existing control so current behavior is preserved.
+  // Text comes from the nav_<key>_label / _hint / _tip settings so the admin console can edit it.
   const ITEMS = [
-    { label: 'Find an Article', hint: 'Search by keyword', icon: 'search', popup: 'finderWidget' },
-    { label: 'Overheard at MMS', hint: 'Quotes & classroom wins', icon: 'coffee', popup: 'loungeWidget' },
-    { label: 'Directory', hint: 'Heart of MMS', icon: 'map-pin', run: () => click('.menu-nav-item[data-view="view-directory"]') },
-    { label: 'Flight Wire', hint: 'School updates', icon: 'newspaper', run: () => click('.menu-nav-item[data-view="view-bulletin"]') },
-    { label: () => academyTitle(), hint: 'Learn & grow', icon: 'graduation-cap', run: () => click('.menu-nav-item[data-view="view-academy"]') },
-    { label: 'Peer Lesson Studio', hint: 'Warm & cool feedback', icon: 'users', run: () => click('.menu-nav-item[data-view="view-studio"]') },
-    { label: 'Staff Lounge', hint: 'Hang out & share', icon: 'message-square', run: () => window.switchView('view-lounge') },
-    { label: 'Student Engagement', hint: 'Articles', icon: 'sparkles', run: () => click('.topleft-editorial-item[data-category="Student Engagement"]') },
-    { label: 'Classroom Management', hint: 'Articles', icon: 'layout-dashboard', run: () => click('.topleft-editorial-item[data-category="Classroom Management"]') },
-    { label: 'Teacher Support', hint: 'Articles', icon: 'heart-handshake', run: () => click('.topleft-editorial-item[data-category="Teacher Support"]') },
-    { label: 'Tech & AI', hint: 'Articles', icon: 'cpu', run: () => click('.topleft-editorial-item[data-category="Tech & AI"]') },
-    { label: 'Saved Reading List', hint: 'Your bookmarks', icon: 'bookmark', run: () => click('.topic-pill[data-category="saved"]') },
-    { label: 'Share a Tip', hint: 'Submit for review', icon: 'lightbulb', run: () => click('#openShareTipModalBtn') }
+    { key: 'nav_find', label: 'Find an Article', hint: 'Search by keyword', icon: 'search', popup: 'finderWidget' },
+    { key: 'nav_shoutouts', label: 'Shout Outs', hint: 'Quotes & classroom wins', icon: 'coffee', popup: 'loungeWidget' },
+    { key: 'nav_directory', label: 'Directory', hint: 'The Heart of MMS', tip: 'The Heart of MMS', icon: 'map-pin', run: () => click('.menu-nav-item[data-view="view-directory"]') },
+    { key: 'nav_updates', label: 'School Updates', hint: 'News, social & newsletters', icon: 'newspaper', run: () => click('.menu-nav-item[data-view="view-bulletin"]') },
+    { key: 'nav_academy', label: () => academyTitle(), hint: 'Tutorial video library', icon: 'graduation-cap', run: () => click('.menu-nav-item[data-view="view-academy"]') },
+    { key: 'nav_studio', label: 'Peer Feedback Forum', hint: 'Warm & cool feedback', icon: 'users', run: () => click('.menu-nav-item[data-view="view-studio"]') },
+    { key: 'nav_lounge', label: 'Staff Lounge', hint: 'Hang out & share', icon: 'message-square', run: () => window.switchView('view-lounge') },
+    { key: 'nav_engagement', label: 'Student Engagement', hint: 'Articles', icon: 'sparkles', run: () => click('.topleft-editorial-item[data-category="Student Engagement"]') },
+    { key: 'nav_management', label: 'Classroom Management', hint: 'Articles', icon: 'layout-dashboard', run: () => click('.topleft-editorial-item[data-category="Classroom Management"]') },
+    { key: 'nav_support', label: 'Teacher Support', hint: 'Articles', icon: 'heart-handshake', run: () => click('.topleft-editorial-item[data-category="Teacher Support"]') },
+    { key: 'nav_tech', label: 'Tech', hint: 'Tech Talk articles', icon: 'cpu', run: () => click('.topleft-editorial-item[data-category="Tech & AI"]') },
+    { key: 'nav_saved', label: 'Saved Reading List', hint: 'Your bookmarks', icon: 'bookmark', run: () => click('.topic-pill[data-category="saved"]') },
+    { key: 'nav_share_tip', label: 'Share a Tip', hint: 'Submit for review', icon: 'lightbulb', run: () => click('#openShareTipModalBtn') }
   ];
-  const labelOf = it => typeof it.label === 'function' ? it.label() : it.label;
+  const labelOf = it => S(it.key + '_label', typeof it.label === 'function' ? it.label() : it.label);
+  const hintOf = it => S(it.key + '_hint', it.hint || '');
+  const tipOf = it => S(it.key + '_tip', it.tip || labelOf(it));
 
   // ---- Popups: move the existing widgets in and back out so their listeners and IDs are untouched ----
   const popup = $('sitePopup'), popupBody = $('sitePopupBody'), store = $('popupWidgetStore');
@@ -4419,7 +4443,7 @@
     b.type = 'button';
     b.className = 'stack-card';
     b.innerHTML = '<span class="stack-icon"><i data-lucide="' + it.icon + '"></i></span><span class="stack-title"></span><span class="stack-hint"></span>';
-    b.querySelector('.stack-hint').textContent = it.hint;
+    b.querySelector('.stack-hint').textContent = hintOf(it);
     b.addEventListener('click', () => {
       if (swiped) return;
       if (i === active) activate(it); else go(offset(i));
@@ -4434,6 +4458,7 @@
     cards.forEach((c, i) => {
       const d = offset(i), a = Math.abs(d);
       c.querySelector('.stack-title').textContent = labelOf(ITEMS[i]);
+      c.querySelector('.stack-hint').textContent = hintOf(ITEMS[i]);
       c.dataset.hidden = a > 2 ? 'true' : 'false';
       c.classList.toggle('is-active', d === 0);
       c.tabIndex = d === 0 ? 0 : -1;
@@ -4474,12 +4499,12 @@
 
   // ---- Icon toolbar (desktop: always visible, floating labels; mobile: drawer) ----
   const rail = $('siteRail'), tip = $('railTip'), backdrop = $('railBackdrop');
-  const homeItem = { label: 'Home', icon: 'home', logo: 'eagle-logo.svg', run: () => click('.topleft-editorial-item[data-category="all"]') };
-  const searchItem = { label: 'Search', icon: 'search', run: () => {
+  const homeItem = { key: 'nav_home', label: 'Home', icon: 'home', logo: 'eagle-logo.svg', run: () => click('.topleft-editorial-item[data-category="all"]') };
+  const searchItem = { key: 'nav_search', label: 'Search', icon: 'search', run: () => {
     if (scrollY > 0) scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
     setTimeout(() => $('globalSearchInput')?.focus(), 150);
   } };
-  const settingsItem = { label: 'Settings', icon: 'settings', run: () => click('#openSettingsModalBtn') };
+  const settingsItem = { key: 'nav_settings', label: 'Settings', icon: 'settings', run: () => click('#openSettingsModalBtn') };
   const railEntries = [homeItem, searchItem, 'sep', ...ITEMS, 'sep', settingsItem];
   const railButtons = [];
   railEntries.forEach(it => {
@@ -4491,7 +4516,7 @@
     b.addEventListener('click', () => { tip.classList.remove('show'); if (it.run && !it.popup) { closeRail(); it.run(); } else activate(it); });
     const show = () => {
       if (innerWidth < 1024) return;
-      tip.textContent = labelOf(it);
+      tip.textContent = tipOf(it);
       const r = b.getBoundingClientRect();
       tip.style.left = (r.right + 10) + 'px';
       tip.style.top = (r.top + r.height / 2 - tip.offsetHeight / 2) + 'px';
@@ -4524,19 +4549,24 @@
   if (siteTitle) new MutationObserver(syncTitle).observe(siteTitle, { childList: true, characterData: true, subtree: true });
   $('miniTitle').addEventListener('click', () => homeItem.run());
 
-  const TIPS = [
+  const DEFAULT_TIPS = [
     'What do you want to explore?',
     'Swipe left or right to rotate through the stack.',
-    'You can search for posted articles, school updates, or the Heart of MMS.',
+    'You can search for posted articles, school updates, or The Heart of MMS.',
     'Save any article by clicking the "save to reading list" icon.'
   ];
+  const tipList = () => {
+    const custom = S('landing_tips', '').split(/\r?\n/).map(t => t.trim()).filter(Boolean);
+    return custom.length ? custom : DEFAULT_TIPS;
+  };
   const sub = $('landingSubtitle');
   let tipIndex = 0;
   setInterval(() => {
     sub.classList.add('fading');
     setTimeout(() => {
-      tipIndex = (tipIndex + 1) % TIPS.length;
-      sub.textContent = TIPS[tipIndex];
+      const tips = tipList();
+      tipIndex = (tipIndex + 1) % tips.length;
+      sub.textContent = tips[tipIndex];
       sub.classList.remove('fading');
     }, reduceMotion ? 0 : 800);
   }, 5500);
@@ -4596,6 +4626,7 @@
   placeSearch(true);
   layout();
   refreshRailLabels();
+  window.refreshLanding = () => { layout(); refreshRailLabels(); const tips = tipList(); if (!tips.includes(sub.textContent)) { tipIndex = 0; sub.textContent = tips[0]; } };
   new MutationObserver(() => { layout(); refreshRailLabels(); }).observe($('academyNavTitleText') || document.body, { childList: true, characterData: true, subtree: true });
   if (window.lucide) lucide.createIcons();
 })();
