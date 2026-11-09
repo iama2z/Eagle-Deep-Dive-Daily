@@ -435,10 +435,9 @@ again before starting another sync.
 **Changing the source URL.** New installs seed `smore_source_url` as
 `https://app.smore.com/n/rsn15`. An existing sheet keeps its current value: edit
 that cell in `settings` to change the permanent source used by all syncs. On the
-site, **Use a different Smore URL** accepts a newsletter or profile URL for a
-one-time **preview** in that visitor's browser. It uses the same 15-minute
-cooldown, is not saved to the Sheet, and disappears on reload, so visitors cannot
-change the shared board.
+site, **Add a different Smore URL** accepts a newsletter or profile URL. Its
+newsletters are saved to the Sheet (`smore_feed_raw` and `smore_feed_public`), so
+they stay in the archive after reload. It uses the same 15-minute cooldown.
 
 After redeploying, check that the button imports a new or edited newsletter,
 updates full-body search, and shows a cooldown on a second click from another

@@ -263,14 +263,15 @@ function requestPublicSmoreSync_(customSourceUrl) {
     properties.setProperty(SMORE_PUBLIC_SYNC_LAST_ATTEMPT, String(now));
     let items;
     if (customUrl) {
-      // Preview only: nothing is written to the sheet, so visitors cannot change the shared board.
-      items = smorePreviewItems_(customUrl);
+      // Saved to the sheets so the archive persists across reloads.
+      saveSmoreSourceIssues_(customUrl);
+      items = publicSmoreItems_(true);
     } else {
       syncSmoreFeedUnlocked_();
       items = publicSmoreItems_(true);
     }
     return {
-      ok: true, action: 'sync_smore', items: items, preview: !!customUrl,
+      ok: true, action: 'sync_smore', items: items, preview: false,
       retry_after_seconds: Math.max(0, Math.ceil((now + SMORE_PUBLIC_SYNC_COOLDOWN_MS - Date.now()) / 1000))
     };
   } catch (err) {
@@ -292,6 +293,29 @@ function smoreNormalizeSource_(value) {
   if (issue) return issue;
   const match = text.match(/^https:\/\/(?:www\.|app\.)?smore\.com\/u\/([a-z0-9_-]+)\/?$/i);
   return match ? 'https://www.smore.com/u/' + match[1] : '';
+}
+
+function saveSmoreSourceIssues_(sourceUrl) {
+  setupSiteSheet();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const raw = ss.getSheetByName('smore_feed_raw');
+  const published = ss.getSheetByName('smore_feed_public');
+  const rawHeaders = smoreHeaders_(raw, SMORE_COLUMNS, true);
+  const publicHeaders = smoreHeaders_(published, SMORE_COLUMNS, true);
+  const now = new Date().toISOString();
+  const saved = [];
+  const failures = [];
+  smoreDiscover_(sourceUrl).slice(0, 10).forEach(url => {
+    try {
+      saved.push(Object.assign(smoreParseIssue_(smoreFetchIssue_(url), url), { last_synced_at: now }));
+    } catch (err) {
+      failures.push(url + ': ' + err.message);
+    }
+  });
+  if (!saved.length) throw new Error('No readable newsletters found at that URL.' + (failures.length ? ' ' + failures[0] : ''));
+  smoreWriteIssues_(raw, rawHeaders, saved);
+  smoreWriteIssues_(published, publicHeaders, saved);
+  appendAuditLog_(ss, 'smore_add', 'smore_feed_public', 'batch', 'Smore Add', 'Saved: ' + saved.length + ', Failures: ' + failures.length);
 }
 
 function smorePreviewItems_(sourceUrl) {
