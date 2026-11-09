@@ -67,8 +67,7 @@ Staff Lounge, School Updates, The Heart of MMS, Peer Feedback Forum, Video Lab, 
 banners, article reader and form text (elements marked `data-text="key"` in
 `index.html`). Opening the console adds any missing text keys to `settings` and renames
 rows that still hold an old default (for example Flight Wire) to the current name; text you
-edited yourself is never overwritten
-automatically. The Tech & AI page is edited through the **Tech Page** boxes
+edited yourself is never overwritten automatically. The Tech & AI page is edited through the **Tech Page** boxes
 (sections, content blocks, videos, chapters). Items show **Live** or **Hidden**.
 Article **Cover Image Url** accepts a link or an `image_id`/label from the
 Image Library tab (for example `eng-1`).
@@ -91,7 +90,7 @@ redeploy the web app as a **New version**. Not yet editable here: `school_news`,
 
 ## Unified Google Sheet CMS + Smore Sync Setup
 
-### School News and Social on Flight Wire
+### School News and Social on School Updates
 
 Install **both** `apps-script/Smore.gs` and `apps-script/SchoolUpdates.gs`
 as separate files in the same sheet-bound Apps Script project. Keep only one
@@ -121,7 +120,7 @@ upstream sources. Add a time-driven trigger for **`syncSchoolUpdates`** every
 six hours for automatic imports, or use the Sheet menu **Eagle Site CMS →
 4. Sync School News & Social** after reloading the Sheet.
 
-Flight Wire opens on **MMS Updates**, with separate **District Updates** and
+School Updates opens on **MMS Updates**, with separate **District Updates** and
 **Smore Archive** tabs. The MMS tab accepts sources labeled `MMS News`, `MMS`,
 or `Maize Middle School` (case-insensitive); district and unrecognized account
 labels stay in District Updates, rather than being guessed from post text.
@@ -181,7 +180,7 @@ The site is powered by a unified Google Apps Script (`apps-script/Smore.gs`) bou
 | `peer_studio` | Published Peer Lesson Studio cards | `studio_id`, `title`, `subject`, `dilemma`, `warm_feedback`, `cool_feedback`, `doc_url`, `is_live` |
 | `tech_tools` | EdTech, AI & Classroom Video Lab software cards | `tool_id`, `badge`, `title`, `link_label`, `url`, `description`, `teacher_workflow`, `student_workflow`, `is_live` |
 | `image_library` | Optional approved images for articles | `image_id`, `category`, `label`, `image_url`, `is_live` |
-| `smore_feed_raw` / `smore_feed_public` | Automated Smore Flight Wire newsletter archive | `issue_url`, `issue_title`, `published_at`, `summary`, `cover_image_url`, `article_body_text` |
+| `smore_feed_raw` / `smore_feed_public` | Automated Smore School Updates newsletter archive | `issue_url`, `issue_title`, `published_at`, `summary`, `cover_image_url`, `article_body_text` |
 | `submissions` / `review_queue` | Incoming staff form submissions (`status = pending`) | `id`, `submitted_at`, `submitter_name`, `submitter_email`, `submission_type`, `title`, `content`, `links`, `status`, `category`, `reviewed_by`, `reviewed_at`, `cover_image_url` |
 | `audit_log` | Automatic log of submissions, approvals, and Smore syncs | `timestamp`, `action`, `source_tab`, `item_id`, `title`, `details` |
 
@@ -355,7 +354,7 @@ paragraph-sized chunks in a future storage extension; the importer rejects them
 instead of silently truncating. A later successful sync replaces manual edits
 for the same issue.
 
-### Troubleshooting: bad links in Flight Wire
+### Troubleshooting: bad links in School Updates
 
 Symptoms: `/exec` items have `issue_url` values like `https://cdn.smore.com/...jpeg`
 or `https://out.smore.com/render/...`, titles like `zoom_out_map`, or no
@@ -413,9 +412,9 @@ Delete old newsletter-sync triggers to avoid duplicate writers. Do not delete
 unrelated submission triggers. Larger archives may hit Apps Script execution or
 URL-fetch quotas; check failed executions and reduce the refresh frequency.
 
-### Update Flight Wire from the website
+### Update School Updates from the website
 
-Anyone can click **Update newsletters** on Flight Wire to fetch fresh Smore
+Anyone can click **Update newsletters** on School Updates to fetch fresh Smore
 content, update the Sheet, and refresh the board and full-text search without
 reloading the page. Existing newsletters remain readable during the update.
 The button reports completion, or failures.
@@ -485,17 +484,17 @@ Browser JavaScript does not scrape Smore directly.
       issue, and a complete `article_body_text`. Check no private sheet data leaks.
 - [ ] Run sync twice; no duplicate issue rows. Edit a source issue and sync:
       the existing row updates. A failed fetch preserves the previous body.
-- [ ] On the site, menu → **Flight Wire (Smore Board)** → **Read newsletter**.
+- [ ] On the site, menu → **School Updates** → **Read newsletter**.
       Verify paragraphs, title, date, cover, and **Open original Smore**.
 - [ ] Search in **Instant** mode for a distinctive phrase near the *end* of the
       body that isn't in the title/summary. Select the result: it opens the issue.
 - [ ] Close the reader; open a normal article. Classroom callouts/video controls,
       navigation, bookmarks, and lesson submissions still behave as before.
-- [ ] If the feed is unavailable/empty, Flight Wire displays a clear message.
+- [ ] If the feed is unavailable/empty, School Updates displays a clear message.
 - [ ] Submit a lesson draft from **The Peer Lesson Studio**. Confirm the success
       message and verify a new row appears in the spreadsheet's `submissions`
       tab with `submission_type=lesson_draft` and `status=pending`.
-- [ ] Load Flight Wire and confirm the Smore feed displays its published issues.
+- [ ] Load School Updates and confirm the Smore feed displays its published issues.
 
 ## Functional flow: private drafts → published articles
 
@@ -525,7 +524,7 @@ Browser JavaScript does not scrape Smore directly.
    valid live rows in article listings, the reader, bookmarks, and Instant search,
    including full-body search. False/blank live flags and incomplete rows are
    excluded. Set `is_live=FALSE` and refresh to unpublish. Existing editorial
-   articles and Flight Wire newsletters remain unchanged; submissions never
+   articles and School Updates newsletters remain unchanged; submissions never
    supply public content. An absent `published_articles` tab returns an empty
    feed. There is no automatic draft-to-article copy or reviewer portal yet.
 
@@ -558,6 +557,6 @@ Spreadsheet edits after this setup do not require another deployment.
 - [ ] **E. Unpublish:** Set that row's `is_live=FALSE`, refresh the site, and
       confirm it disappears from listings, Saved, and search. Also check a blank
       live flag does not publish it. Already-open pages must be refreshed.
-- [ ] **Regression:** Open Flight Wire, read a newsletter, and search for a phrase
+- [ ] **Regression:** Open School Updates, read a newsletter, and search for a phrase
       in its full body. Existing editorial articles and navigation still work.
       A failed lesson submission should show an error and retain the form values.

@@ -825,7 +825,7 @@
     <div id="view-bulletin" class="view-section hidden space-y-6">
       <section class="space-y-3">
         <h1 data-text="flight_page_heading" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">School Updates</h1>
-        <p data-text="flight_page_subtitle" class="text-sm text-ink-600">MMS updates first, with district posts and Smore newsletters in their own tabs.</p>
+        <p data-text="flight_page_subtitle" class="text-sm text-ink-600">MMS updates alongside the latest Smore newsletter, with district posts and the Smore archive in their own tabs.</p>
         <button class="back-to-feed-btn text-xs font-bold text-red-600" data-text="back_to_feed_label">Back to Editorial Feed</button>
         <div role="tablist" aria-label="School Updates sections" class="flex flex-wrap gap-2">
           <button data-text="flight_tab_mms" id="flightTab-mms" type="button" role="tab" aria-selected="true" aria-controls="flightPanel-mms" tabindex="0" data-flight-tab="mms" class="rounded-full px-4 py-2 text-sm font-bold bg-ink-900 text-white">MMS Updates</button>
@@ -836,7 +836,8 @@
         <p id="schoolUpdateStatus" role="status" class="text-xs text-ink-600">Loading saved school updates...</p>
         <p data-text="flight_older_note" class="text-xs text-ink-600">Updates older than seven days are tucked away; items without a date remain visible.</p>
       </section>
-      <section id="flightPanel-mms" role="tabpanel" aria-labelledby="flightTab-mms" tabindex="0" class="space-y-3">
+      <section id="flightPanel-mms" role="tabpanel" aria-labelledby="flightTab-mms" tabindex="0" class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        <div class="lg:col-span-2 space-y-3 min-w-0">
         <h2 data-text="flight_news_heading" class="font-editorial font-bold text-xl">News</h2>
         <p data-text="flight_news_note" class="text-xs text-ink-600">Headlines link to the complete articles on the school website.</p>
         <div id="schoolNewsCards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
@@ -848,6 +849,11 @@
           <a href="https://mms.usd266.com/about-us/calendar" target="_blank" rel="noopener noreferrer">MMS calendar</a>
           <a href="https://gobound.com/ks/schools/maizems/calendar" target="_blank" rel="noopener noreferrer">MMS athletics calendar</a>
         </div>
+        </div>
+        <aside aria-labelledby="latestSmoreHeading" class="lg:col-span-1 space-y-3 min-w-0 lg:sticky lg:top-4">
+          <h2 id="latestSmoreHeading" data-text="flight_latest_smore_heading" class="font-editorial font-bold text-xl">Latest Smore</h2>
+          <div id="latestSmoreContainer"></div>
+        </aside>
       </section>
       <section id="flightPanel-district" role="tabpanel" aria-labelledby="flightTab-district" tabindex="0" hidden class="space-y-3">
         <h2 data-text="flight_district_news_heading" class="font-editorial font-bold text-xl">District News</h2>
@@ -2875,7 +2881,18 @@
 
       container.innerHTML = '';
       cards.forEach(card => container.appendChild(card));
+      renderLatestSmore();
       if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+    }
+
+    function renderLatestSmore() {
+      const target = document.getElementById('latestSmoreContainer');
+      if (!target) return;
+      const time = issue => { const t = Date.parse(issue.published_at); return isNaN(t) ? -Infinity : t; };
+      const latest = smoreIssues.reduce((best, issue) => (!best || time(issue) > time(best)) ? issue : best, null);
+      const card = latest && renderBulletinCard(latest);
+      if (card) { target.innerHTML = ''; target.appendChild(card); }
+      else setBulletinFeedMessage(target, 'No newsletters have been published yet.');
     }
 
     async function loadSmoreBulletinFeed() {
@@ -2890,6 +2907,8 @@
       } catch (err) {
         console.warn('Smore bulletin feed unavailable:', err);
         setBulletinFeedMessage(container, 'The School Updates bulletin feed is temporarily unavailable. Please try again later.', 'error');
+        const latestTarget = document.getElementById('latestSmoreContainer');
+        if (latestTarget) setBulletinFeedMessage(latestTarget, 'The newsletter feed is temporarily unavailable.', 'error');
       }
     }
 
