@@ -174,11 +174,12 @@
         radial-gradient(50rem 40rem at 100% 30%, rgba(15, 23, 42, 0.06), transparent 60%);
       background-attachment: fixed;
     }
+    html, body { overflow-x: clip; max-width: 100%; overscroll-behavior-x: none; }
     @media (min-width: 1024px) { body { padding-left: 3.5rem; } }
     body > header.sheet-region { display: none; }
     body.mini-on { padding-top: 3.5rem; }
 
-    .landing-hero { position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+    .landing-hero { position: relative; overflow-x: clip; overflow-y: visible; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
     .landing-blobs { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
     .hero-search { position: relative; z-index: 5; display: flex; justify-content: center; margin-top: 1.25rem; }
     .hero-search > div { width: 100%; max-width: 36rem; }
@@ -191,7 +192,7 @@
     .landing-blob-b { width: 28rem; height: 28rem; background: #cbd5e1; bottom: -8rem; right: -6rem; }
 
     .stack-wrap { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1.25rem; }
-    .stack-scene { position: relative; flex: 1; max-width: 62rem; height: 22rem; perspective: 1400px; outline: none; touch-action: pan-y; user-select: none; }
+    .stack-scene { position: relative; flex: 1; max-width: 62rem; height: 22rem; perspective: 1400px; outline: none; touch-action: pan-y pinch-zoom; user-select: none; overflow: visible; }
     .stack-scene:focus-visible { box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.5); border-radius: 1.5rem; }
     .stack-card {
       position: absolute; top: 50%; left: 50%; width: 13rem; height: 17rem; margin: -8.5rem 0 0 -6.5rem;
@@ -230,6 +231,7 @@
     #siteRail .rail-item { display: flex; align-items: center; justify-content: center; flex: none; width: 2.6rem; height: 2.6rem; border-radius: 0.8rem; color: #27272a; transition: background .15s ease, transform .15s ease; }
     #siteRail .rail-item:hover, #siteRail .rail-item:focus-visible { background: #fee2e2; transform: scale(1.08); }
     #siteRail .rail-item svg { width: 1.25rem; height: 1.25rem; color: #dc2626; flex: none; }
+    #siteRail .rail-logo { width: 2.2rem; height: 2.2rem; object-fit: contain; }
     #siteRail .rail-item span { display: none; }
     #siteRail .rail-sep { width: 1.6rem; height: 1px; background: #e2e8f0; margin: 0.35rem 0; flex: none; }
     #railTip { position: fixed; z-index: 60; pointer-events: none; background: #09090B; color: #fff; font-size: 0.75rem; font-weight: 700; padding: 0.4rem 0.7rem; border-radius: 0.6rem; white-space: nowrap; box-shadow: 0 8px 20px rgba(0,0,0,.3); opacity: 0; transform: translateX(-6px); transition: opacity .15s ease, transform .15s ease; }
@@ -4344,7 +4346,7 @@
 
   // ---- Icon toolbar (desktop: always visible, floating labels; mobile: drawer) ----
   const rail = $('siteRail'), tip = $('railTip'), backdrop = $('railBackdrop');
-  const homeItem = { label: 'Home', icon: 'home', run: () => click('.topleft-editorial-item[data-category="all"]') };
+  const homeItem = { label: 'Home', icon: 'home', logo: 'eagle-logo.svg', run: () => click('.topleft-editorial-item[data-category="all"]') };
   const searchItem = { label: 'Search', icon: 'search', run: () => {
     if (scrollY > 0) scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
     setTimeout(() => $('globalSearchInput')?.focus(), 150);
@@ -4357,7 +4359,7 @@
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'rail-item';
-    b.innerHTML = '<i data-lucide="' + it.icon + '"></i><span></span>';
+    b.innerHTML = (it.logo ? '<img src="' + it.logo + '" alt="" class="rail-logo">' : '<i data-lucide="' + it.icon + '"></i>') + '<span></span>';
     b.addEventListener('click', () => { tip.classList.remove('show'); if (it.run && !it.popup) { closeRail(); it.run(); } else activate(it); });
     const show = () => {
       if (innerWidth < 1024) return;
