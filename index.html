@@ -4277,7 +4277,7 @@
   const offset = i => { let d = (i - active) % n; if (d > n / 2) d -= n; if (d < -n / 2) d += n; return d; };
   function layout() {
     const narrow = scene.clientWidth < 640;
-    const step = narrow ? 70 : 150;
+    const step = narrow ? 95 : 205;
     cards.forEach((c, i) => {
       const d = offset(i), a = Math.abs(d);
       c.querySelector('.stack-title').textContent = labelOf(ITEMS[i]);
@@ -4286,7 +4286,7 @@
       c.tabIndex = d === 0 ? 0 : -1;
       c.setAttribute('aria-label', labelOf(ITEMS[i]));
       c.style.zIndex = String(10 - a);
-      c.style.transform = 'translateX(' + (d * step) + 'px) translateZ(' + (-a * 140) + 'px) rotateY(' + (-d * 26) + 'deg) scale(' + (1 - a * 0.06) + ')';
+      c.style.transform = 'translateX(' + (d * step) + 'px) translateZ(' + (-a * 90) + 'px) rotateY(' + (-d * 22) + 'deg) scale(' + (1 - a * 0.06) + ')';
       c.style.opacity = a > 2 ? '0' : String(1 - a * 0.2);
     });
     $('stackLabel').textContent = labelOf(ITEMS[active]);
