@@ -74,6 +74,12 @@ Loading messages are the `loading_messages` setting (one per line). The loading
 screen appears before the Sheet responds, so edits are saved in the visitor's
 browser and show from their next visit; clearing the setting restores the defaults.
 
+The Articles page starts with a **Cover Story** picker (saves `hero_article_id`;
+the article's `featured` flag only applies while it is set to Automatic). Article
+**Category** is a dropdown of the four topics, and typed variants such as
+"student engagement" are matched to them. Long lists use collapsible items, search,
+group chips, and a "More options" fold; Site Text groups open from jump chips.
+
 Setup: in the Apps Script project open **Project Settings → Script properties**
 and add `ADMIN_PASSCODE`. The passcode is checked only by the script (never stored
 in `index.html`); five wrong attempts lock the console for 15 minutes. Then
