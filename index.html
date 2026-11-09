@@ -338,7 +338,7 @@
                   <i data-lucide="newspaper" class="w-4 h-4"></i>
                 </div>
                 <div>
-                  <div data-text="menu_bulletin_title" class="text-xs font-bold text-ink-900">Flight Wire (School Updates)</div>
+                  <div data-text="menu_bulletin_title" class="text-xs font-bold text-ink-900">School Updates</div>
                   <div data-text="menu_bulletin_desc" class="text-[11px] text-ink-600">News, social posts, calendars, and newsletter archive</div>
                 </div>
               </button>
@@ -813,10 +813,10 @@
     <!-- ========================================== -->
     <div id="view-bulletin" class="view-section hidden space-y-6">
       <section class="space-y-3">
-        <h1 data-text="flight_page_heading" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">Flight Wire: School Updates</h1>
-        <p data-text="flight_page_subtitle" class="text-sm text-ink-600">MMS updates first, with district posts and Smore newsletters in their own tabs.</p>
+        <h1 data-text="flight_page_heading" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">School Updates</h1>
+        <p data-text="flight_page_subtitle" class="text-sm text-ink-600">MMS updates alongside the latest Smore newsletter, with district posts and the Smore archive in their own tabs.</p>
         <button class="back-to-feed-btn text-xs font-bold text-red-600" data-text="back_to_feed_label">Back to Editorial Feed</button>
-        <div role="tablist" aria-label="Flight Wire sections" class="flex flex-wrap gap-2">
+        <div role="tablist" aria-label="School Updates sections" class="flex flex-wrap gap-2">
           <button data-text="flight_tab_mms" id="flightTab-mms" type="button" role="tab" aria-selected="true" aria-controls="flightPanel-mms" tabindex="0" data-flight-tab="mms" class="rounded-full px-4 py-2 text-sm font-bold bg-ink-900 text-white">MMS Updates</button>
           <button data-text="flight_tab_district" id="flightTab-district" type="button" role="tab" aria-selected="false" aria-controls="flightPanel-district" tabindex="-1" data-flight-tab="district" class="rounded-full px-4 py-2 text-sm font-bold bg-cream-100 text-ink-600">District Updates</button>
           <button data-text="flight_tab_smore" id="flightTab-smore" type="button" role="tab" aria-selected="false" aria-controls="flightPanel-smore" tabindex="-1" data-flight-tab="smore" class="rounded-full px-4 py-2 text-sm font-bold bg-cream-100 text-ink-600">Smore Archive</button>
@@ -825,7 +825,8 @@
         <p id="schoolUpdateStatus" role="status" class="text-xs text-ink-600">Loading saved school updates...</p>
         <p data-text="flight_older_note" class="text-xs text-ink-600">Updates older than seven days are tucked away; items without a date remain visible.</p>
       </section>
-      <section id="flightPanel-mms" role="tabpanel" aria-labelledby="flightTab-mms" tabindex="0" class="space-y-3">
+      <section id="flightPanel-mms" role="tabpanel" aria-labelledby="flightTab-mms" tabindex="0" class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        <div class="lg:col-span-2 space-y-3 min-w-0">
         <h2 data-text="flight_news_heading" class="font-editorial font-bold text-xl">News</h2>
         <p data-text="flight_news_note" class="text-xs text-ink-600">Headlines link to the complete articles on the school website.</p>
         <div id="schoolNewsCards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
@@ -837,6 +838,11 @@
           <a href="https://mms.usd266.com/about-us/calendar" target="_blank" rel="noopener noreferrer">MMS calendar</a>
           <a href="https://gobound.com/ks/schools/maizems/calendar" target="_blank" rel="noopener noreferrer">MMS athletics calendar</a>
         </div>
+        </div>
+        <aside aria-labelledby="latestSmoreHeading" class="lg:col-span-1 space-y-3 min-w-0 lg:sticky lg:top-4">
+          <h2 id="latestSmoreHeading" data-text="flight_latest_smore_heading" class="font-editorial font-bold text-xl">Latest Smore</h2>
+          <div id="latestSmoreContainer"></div>
+        </aside>
       </section>
       <section id="flightPanel-district" role="tabpanel" aria-labelledby="flightTab-district" tabindex="0" hidden class="space-y-3">
         <h2 data-text="flight_district_news_heading" class="font-editorial font-bold text-xl">District News</h2>
@@ -1411,7 +1417,7 @@
           items: []
         },
         "view-bulletin": {
-          heading: "Flight Wire Quick Wins: Never Dig Through Gmail Again",
+          heading: "School Updates Quick Wins: Never Dig Through Gmail Again",
           subtitle: "How to get the most out of the automated Smore administrative newsletter archive",
           badge: "Admin Wire Tips",
           icon: "newspaper",
@@ -1538,7 +1544,7 @@
 
       smoreIssues.forEach(issue => {
         items.push({
-          type: 'Flight Wire',
+          type: 'School Updates',
           id: issue.issue_url,
           title: issue.issue_title,
           category: 'Smore Newsletter',
@@ -1551,7 +1557,7 @@
 
       schoolUpdates.forEach((item, index) => {
         items.push({
-          type: 'Flight Wire', id: 'school-' + item.id, title: item.title,
+          type: 'School Updates', id: 'school-' + item.id, title: item.title,
           category: item.source, desc: item.text, body: item.text,
           tags: 'school news social announcement',
           action: () => {
@@ -2669,7 +2675,7 @@
       image.classList.toggle('hidden', !issue.cover_image_url);
       if (issue.cover_image_url) setArticleImage(image, issue.cover_image_url);
       else image.removeAttribute('src');
-      document.getElementById('readerCategoryBadge').textContent = 'Flight Wire';
+      document.getElementById('readerCategoryBadge').textContent = 'School Updates';
       document.getElementById('readerAuthor').textContent = 'Smore Newsletter';
       document.getElementById('readerReadTime').textContent = issue.article_body_text
         ? `${Math.max(1, Math.ceil(issue.article_body_text.split(/\s+/).length / 200))} min read` : '';
@@ -2816,13 +2822,24 @@
 
       container.innerHTML = '';
       cards.forEach(card => container.appendChild(card));
+      renderLatestSmore();
       if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+    }
+
+    function renderLatestSmore() {
+      const target = document.getElementById('latestSmoreContainer');
+      if (!target) return;
+      const time = issue => { const t = Date.parse(issue.published_at); return isNaN(t) ? -Infinity : t; };
+      const latest = smoreIssues.reduce((best, issue) => (!best || time(issue) > time(best)) ? issue : best, null);
+      const card = latest && renderBulletinCard(latest);
+      if (card) { target.innerHTML = ''; target.appendChild(card); }
+      else setBulletinFeedMessage(target, 'No newsletters have been published yet.');
     }
 
     async function loadSmoreBulletinFeed() {
       const container = document.getElementById('bulletinFeedContainer');
       if (!container) return;
-      setBulletinFeedMessage(container, 'Loading the latest Flight Wire bulletins...');
+      setBulletinFeedMessage(container, 'Loading the latest School Updates bulletins...');
 
       try {
         const data = await fetchJsonWithTimeout(SMORE_FEED_API_URL);
@@ -2830,7 +2847,9 @@
         applySmoreItems(data.items);
       } catch (err) {
         console.warn('Smore bulletin feed unavailable:', err);
-        setBulletinFeedMessage(container, 'The Flight Wire bulletin feed is temporarily unavailable. Please try again later.', 'error');
+        setBulletinFeedMessage(container, 'The School Updates bulletin feed is temporarily unavailable. Please try again later.', 'error');
+        const latestTarget = document.getElementById('latestSmoreContainer');
+        if (latestTarget) setBulletinFeedMessage(latestTarget, 'The newsletter feed is temporarily unavailable.', 'error');
       }
     }
 
@@ -2978,7 +2997,7 @@
       const container = document.getElementById('bulletinFeedContainer');
       const status = document.getElementById('siteLoadStatus');
       let notice = '';
-      if (container) setBulletinFeedMessage(container, 'Loading the latest Flight Wire bulletins...');
+      if (container) setBulletinFeedMessage(container, 'Loading the latest School Updates bulletins...');
       try {
         const url = new URL(SUBMISSION_API_URL);
         url.searchParams.set('feed', 'site');
@@ -3120,7 +3139,7 @@
         notice = err.name === 'TimeoutError'
           ? 'Site content took too long to load. Refresh to try again.'
           : 'Site content could not be loaded (' + (err && err.message || 'unknown error') + '). Refresh to try again.';
-        if (container) setBulletinFeedMessage(container, 'The Flight Wire bulletin feed is temporarily unavailable. Please try again later.', 'error');
+        if (container) setBulletinFeedMessage(container, 'The School Updates bulletin feed is temporarily unavailable. Please try again later.', 'error');
       } finally {
         try {
           renderArticlesGrid(activeCategory);
@@ -4004,7 +4023,7 @@
         ['Home Page & Cover Story', ['hero', 'feed', 'article']],
         ['Article Reader', ['reader']],
         ['Staff Lounge', ['lounge']],
-        ['Flight Wire', ['flight', 'bulletin', 'smore']],
+        ['School Updates', ['flight', 'bulletin', 'smore']],
         ['Heart of MMS Directory', ['directory']],
         ['Peer Lesson Studio', ['studio']],
         ['Tech & AI Page', ['academy']],
@@ -4022,7 +4041,7 @@
         'Home Page & Cover Story': 'The cover story card, the article feed heading and the article search page.',
         'Article Reader': 'Labels shown while reading a single article.',
         'Staff Lounge': 'The Staff Lounge preview on the home page, the Lounge page and its post pop-up.',
-        'Flight Wire': 'The school updates page, its tabs and section headings.',
+        'School Updates': 'The school updates page, its tabs and section headings.',
         'Heart of MMS Directory': 'The building directory page.',
         'Peer Lesson Studio': 'The Peer Lesson Studio page and its submission form.',
         'Tech & AI Page': 'The EdTech, AI & Video Lab page and its menu entry.',
@@ -4033,7 +4052,7 @@
         site: 'the site header', topbar: 'the category tabs under the header', search: 'the header search', footer: 'the footer',
         back: 'article and page back links', loading: 'the loading screen', menu: 'the navigation menu', hero: 'the cover story card',
         feed: 'the home page feed', article: 'the article search and reader', reader: 'the article reader', lounge: 'the Staff Lounge',
-        flight: 'the Flight Wire page', bulletin: 'the Flight Wire card in the menu or home page', smore: 'the Smore archive',
+        flight: 'the School Updates page', bulletin: 'the School Updates card in the menu or home page', smore: 'the Smore archive',
         directory: 'the Directory page', studio: 'the Peer Lesson Studio', academy: 'the Tech & AI page', tip: 'the Share a Tip pop-up',
         page: 'pages with no content'
       };
@@ -4045,7 +4064,7 @@
       const SETTING_NOTES = {
         hero_article_id: 'Which article is the cover story. Easier to change from the Articles page.',
         loading_messages: 'Messages that rotate on the loading screen, one per line. Visitors see changes on their next visit.',
-        smore_source_url: 'The Smore newsletter link the Flight Wire archive is built from.',
+        smore_source_url: 'The Smore newsletter link the School Updates archive is built from.',
         academy_nav_desc: 'The line under the Tech & AI page in the menu.',
         page_empty_message: 'Shown on a page that has no live content yet.',
         reader_video_note: 'A note shown next to an article’s companion video.',
@@ -4369,7 +4388,7 @@
     { label: 'Find an Article', hint: 'Search by keyword', icon: 'search', popup: 'finderWidget' },
     { label: 'Overheard at MMS', hint: 'Quotes & classroom wins', icon: 'coffee', popup: 'loungeWidget' },
     { label: 'Directory', hint: 'Heart of MMS', icon: 'map-pin', run: () => click('.menu-nav-item[data-view="view-directory"]') },
-    { label: 'Flight Wire', hint: 'School updates', icon: 'newspaper', run: () => click('.menu-nav-item[data-view="view-bulletin"]') },
+    { label: 'School Updates', hint: 'School updates', icon: 'newspaper', run: () => click('.menu-nav-item[data-view="view-bulletin"]') },
     { label: () => academyTitle(), hint: 'Learn & grow', icon: 'graduation-cap', run: () => click('.menu-nav-item[data-view="view-academy"]') },
     { label: 'Peer Lesson Studio', hint: 'Warm & cool feedback', icon: 'users', run: () => click('.menu-nav-item[data-view="view-studio"]') },
     { label: 'Staff Lounge', hint: 'Hang out & share', icon: 'message-square', run: () => window.switchView('view-lounge') },
