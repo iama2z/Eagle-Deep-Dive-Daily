@@ -256,6 +256,15 @@
     #miniSearchHost > div { width: 100%; max-width: 28rem; }
     @media (max-width: 1023px) { #miniBar { left: 0; padding-left: 4rem; } #miniTitle { display: none; } #miniSearchHost { justify-content: stretch; } }
 
+    /* Persistent Contribute button */
+    #contributeFab { position: fixed; top: 0.75rem; right: 0.75rem; z-index: 46; height: 2.75rem; min-width: 2.75rem; display: flex; align-items: center; justify-content: center; gap: 0; padding: 0 0.7rem; border-radius: 9999px; background: #dc2626; color: #fff; font-weight: 800; font-size: 0.85rem; white-space: nowrap; overflow: hidden; box-shadow: 0 8px 20px rgba(220,38,38,.4), 0 2px 4px rgba(15,23,42,.2); transition: background .2s ease, box-shadow .2s ease, gap .25s ease; }
+    #contributeFab svg { width: 1.3rem; height: 1.3rem; flex: none; }
+    #contributeFab .fab-label { max-width: 0; opacity: 0; overflow: hidden; transition: max-width .3s ease, opacity .2s ease; }
+    #contributeFab:hover, #contributeFab:focus-visible { background: #b91c1c; gap: 0.45rem; box-shadow: 0 12px 28px rgba(220,38,38,.5), 0 2px 4px rgba(15,23,42,.2); }
+    #contributeFab:hover .fab-label, #contributeFab:focus-visible .fab-label { max-width: 6rem; opacity: 1; }
+    #miniBar { padding-right: 4.5rem; }
+    @media (prefers-reduced-motion: reduce) { #contributeFab, #contributeFab .fab-label { transition: none; } }
+
     /* Popups */
     #sitePopup { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; padding: 1rem; background: rgba(9,9,11,.55); backdrop-filter: blur(6px); }
     #sitePopup.show { display: flex; }
@@ -4224,6 +4233,7 @@
   <div id="railBackdrop"></div>
   <nav id="siteRail" aria-label="Site menu"></nav>
   <div id="railTip" role="presentation"></div>
+  <button type="button" id="contributeFab" aria-label="Contribute"><i data-lucide="plus"></i><span class="fab-label">Contribute</span></button>
   <div id="miniBar"><button type="button" id="miniTitle" class="font-editorial font-extrabold text-lg text-ink-900 whitespace-nowrap hover:text-red-600"></button><div id="miniSearchHost"></div></div>
   <button type="button" id="railMobileBtn" aria-label="Open site menu" aria-controls="siteRail"><i data-lucide="menu" class="w-5 h-5"></i></button>
   <div id="sitePopup" role="dialog" aria-modal="true" aria-label="Site tool">
@@ -4384,6 +4394,8 @@
   function closeRail() { rail.classList.remove('open'); backdrop.classList.remove('show'); }
   $('railMobileBtn').addEventListener('click', () => rail.classList.contains('open') ? closeRail() : openRail());
   backdrop.addEventListener('click', closeRail);
+
+  $('contributeFab').addEventListener('click', () => { closeRail(); click('#openShareTipModalBtn'); });
 
   // ---- Title, rotating tips, and search placement ----
   const siteTitle = $('siteTitleText');
