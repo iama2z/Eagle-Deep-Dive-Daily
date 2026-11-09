@@ -62,6 +62,18 @@ is entered. Boxes cover Submissions (approve / back to pending / delete), Site T
 Lesson Studio, AI & Tech Tools, and Image Library. Saves write directly to the
 matching Sheet tab by column name, with loading messages while the Sheet responds.
 
+Site Text covers the menu, topic bar, Staff Lounge, Flight Wire, Peer Lesson
+Studio, article reader and form text (elements marked `data-text="key"` in
+`index.html`). Opening the console adds any missing text keys to `settings`
+automatically. The Tech & AI page is edited through the **Tech Page** boxes
+(sections, content blocks, videos, chapters). Items show **Live** or **Hidden**.
+Article **Cover Image Url** accepts a link or an `image_id`/label from the
+Image Library tab (for example `eng-1`).
+
+Loading messages are the `loading_messages` setting (one per line). The loading
+screen appears before the Sheet responds, so edits are saved in the visitor's
+browser and show from their next visit; clearing the setting restores the defaults.
+
 Setup: in the Apps Script project open **Project Settings → Script properties**
 and add `ADMIN_PASSCODE`. The passcode is checked only by the script (never stored
 in `index.html`); five wrong attempts lock the console for 15 minutes. Then
