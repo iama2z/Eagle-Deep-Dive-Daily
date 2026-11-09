@@ -2720,6 +2720,8 @@
       if (button.disabled) return;
       button.disabled = true;
       button.setAttribute('aria-busy', 'true');
+      const icon = button.querySelector('svg, i');
+      icon?.classList.add('animate-spin', 'motion-reduce:animate-none');
       label.textContent = 'Updating...';
       status.textContent = 'Fetching newsletters from Smore. This can take several minutes; current newsletters remain available.';
       const customUrl = document.getElementById('smoreCustomUrl').value.trim();
@@ -2755,6 +2757,7 @@
           : `Newsletter update failed: ${err.message} Current newsletters remain available.`;
       } finally {
         button.removeAttribute('aria-busy');
+        icon?.classList.remove('animate-spin');
         setSmoreUpdateCooldown(retryAfter);
       }
     }
