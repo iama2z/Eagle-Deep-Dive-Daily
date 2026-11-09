@@ -203,8 +203,8 @@
           <!-- TOP-LEFT SITE NAVIGATION DROPDOWN MENU -->
           <div id="topLeftMenuDropdown" class="hidden absolute left-0 top-full mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-cream-300 p-2.5 z-50">
             <div class="px-3 py-2 border-b border-cream-200 flex items-center justify-between">
-              <span class="text-[10px] font-extrabold uppercase tracking-widest text-ink-400">Site Navigation Menu</span>
-              <span class="text-[10px] font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded-full">Eagles Hub</span>
+              <span data-text="menu_title" class="text-[10px] font-extrabold uppercase tracking-widest text-ink-400">Site Navigation Menu</span>
+              <span data-text="menu_badge" class="text-[10px] font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded-full">Eagles Hub</span>
             </div>
 
             <div class="py-1.5 space-y-0.5">
@@ -213,14 +213,14 @@
                   <i data-lucide="home" class="w-3.5 h-3.5"></i>
                 </div>
                 <div>
-                  <div class="text-xs font-bold text-ink-900">Home: Main Editorial Feed</div>
-                  <div class="text-[11px] text-ink-600">All featured stories, playbooks &amp; quick wins</div>
+                  <div data-text="menu_home_title" class="text-xs font-bold text-ink-900">Home: Main Editorial Feed</div>
+                  <div data-text="menu_home_desc" class="text-[11px] text-ink-600">All featured stories, playbooks &amp; quick wins</div>
                 </div>
               </button>
             </div>
 
             <div class="px-3 pt-2 pb-1 border-t border-cream-200">
-              <span class="text-[10px] font-extrabold uppercase tracking-widest text-ink-400">Building Wings &amp; Special Sections</span>
+              <span data-text="menu_section_heading" class="text-[10px] font-extrabold uppercase tracking-widest text-ink-400">Building Wings &amp; Special Sections</span>
             </div>
 
             <div class="py-1 space-y-0.5">
@@ -229,8 +229,8 @@
                   <i data-lucide="folder-heart" class="w-4 h-4"></i>
                 </div>
                 <div>
-                  <div class="text-xs font-bold text-ink-900">Heart of MMS Directory</div>
-                  <div class="text-[11px] text-ink-600">Clean, searchable building links &amp; forms</div>
+                  <div data-text="menu_directory_title" class="text-xs font-bold text-ink-900">Heart of MMS Directory</div>
+                  <div data-text="menu_directory_desc" class="text-[11px] text-ink-600">Clean, searchable building links &amp; forms</div>
                 </div>
               </button>
 
@@ -239,8 +239,8 @@
                   <i data-lucide="newspaper" class="w-4 h-4"></i>
                 </div>
                 <div>
-                  <div class="text-xs font-bold text-ink-900">Flight Wire (School Updates)</div>
-                  <div class="text-[11px] text-ink-600">News, social posts, calendars, and newsletter archive</div>
+                  <div data-text="menu_bulletin_title" class="text-xs font-bold text-ink-900">Flight Wire (School Updates)</div>
+                  <div data-text="menu_bulletin_desc" class="text-[11px] text-ink-600">News, social posts, calendars, and newsletter archive</div>
                 </div>
               </button>
 
@@ -259,43 +259,43 @@
                   <i data-lucide="users" class="w-4 h-4"></i>
                 </div>
                 <div>
-                  <div class="text-xs font-bold text-ink-900">The Peer Lesson Studio</div>
-                  <div class="text-[11px] text-ink-600">Warm &amp; Cool feedback lab for lesson drafts</div>
+                  <div data-text="menu_studio_title" class="text-xs font-bold text-ink-900">The Peer Lesson Studio</div>
+                  <div data-text="menu_studio_desc" class="text-[11px] text-ink-600">Warm &amp; Cool feedback lab for lesson drafts</div>
                 </div>
               </button>
             </div>
 
             <div class="px-3 pt-2 pb-1 border-t border-cream-200">
-              <span class="text-[10px] font-extrabold uppercase tracking-widest text-ink-400">Editorial Topics</span>
+              <span data-text="menu_topics_heading" class="text-[10px] font-extrabold uppercase tracking-widest text-ink-400">Editorial Topics</span>
             </div>
 
             <div class="py-1 grid grid-cols-2 gap-1 px-1">
               <button class="topleft-editorial-item text-left px-2.5 py-1.5 rounded-lg hover:bg-cream-100 text-[11px] font-semibold text-ink-800 flex items-center gap-1.5" data-category="Student Engagement">
                 <span class="w-2 h-2 rounded-full bg-red-500 shrink-0"></span>
-                <span class="truncate">Engagement</span>
+                <span data-text="menu_topic_engagement" class="truncate">Engagement</span>
               </button>
               <button class="topleft-editorial-item text-left px-2.5 py-1.5 rounded-lg hover:bg-cream-100 text-[11px] font-semibold text-ink-800 flex items-center gap-1.5" data-category="Classroom Management">
                 <span class="w-2 h-2 rounded-full bg-ink-900 shrink-0"></span>
-                <span class="truncate">Management</span>
+                <span data-text="menu_topic_management" class="truncate">Management</span>
               </button>
               <button class="topleft-editorial-item text-left px-2.5 py-1.5 rounded-lg hover:bg-cream-100 text-[11px] font-semibold text-ink-800 flex items-center gap-1.5" data-category="Teacher Support">
                 <span class="w-2 h-2 rounded-full bg-red-400 shrink-0"></span>
-                <span class="truncate">Teacher Support</span>
+                <span data-text="menu_topic_support" class="truncate">Teacher Support</span>
               </button>
               <button class="topleft-editorial-item text-left px-2.5 py-1.5 rounded-lg hover:bg-cream-100 text-[11px] font-semibold text-ink-800 flex items-center gap-1.5" data-category="Tech & AI">
                 <span class="w-2 h-2 rounded-full bg-red-600 shrink-0"></span>
-                <span class="truncate">Tech &amp; AI</span>
+                <span data-text="menu_topic_tech" class="truncate">Tech &amp; AI</span>
               </button>
             </div>
 
             <div class="pt-1.5 mt-1 border-t border-cream-200 px-2 py-1.5 flex items-center justify-between gap-2">
               <button id="openShareTipModalBtn" class="text-[11px] font-bold text-red-600 hover:text-red-700 flex items-center gap-1.5 px-2 py-1 rounded-lg hover:bg-red-50 transition">
                 <i data-lucide="pen-tool" class="w-3.5 h-3.5"></i>
-                <span>Share a Tip</span>
+                <span data-text="menu_share_tip">Share a Tip</span>
               </button>
               <button id="openSettingsModalBtn" class="text-[11px] font-semibold text-ink-600 hover:text-ink-900 flex items-center gap-1.5 px-2 py-1 rounded-lg hover:bg-cream-100 transition">
                 <i data-lucide="settings" class="w-3.5 h-3.5"></i>
-                <span>Settings</span>
+                <span data-text="menu_settings">Settings</span>
               </button>
             </div>
           </div>
@@ -320,7 +320,7 @@
               </span>
             </div>
             <button id="globalSearchSubmitBtn" class="absolute right-1.5 z-10 text-[11px] font-bold px-2.5 py-1 rounded-full bg-cream-200 hover:bg-cream-300 text-ink-800 transition flex items-center gap-1" title="Search by keyword">
-              <span>Search</span>
+              <span data-text="search_button_label">Search</span>
             </button>
           </div>
 
@@ -346,24 +346,24 @@
       <!-- EDITORIAL TOPIC BAR -->
       <nav class="flex items-center justify-between py-2.5 border-t border-cream-200 overflow-x-auto text-xs">
         <div class="flex items-center gap-1.5" id="editorialCategoryNav">
-          <button class="topic-pill nav-pill-active font-bold px-3.5 py-1.5 rounded-full transition whitespace-nowrap" data-category="all">
+          <button data-text="topbar_all" class="topic-pill nav-pill-active font-bold px-3.5 py-1.5 rounded-full transition whitespace-nowrap" data-category="all">
             All Featured &amp; Latest
           </button>
           <button class="topic-pill font-semibold text-ink-600 hover:text-ink-900 hover:bg-cream-200 px-3.5 py-1.5 rounded-full transition whitespace-nowrap flex items-center gap-1.5" data-category="Student Engagement">
             <span class="w-2 h-2 rounded-full bg-red-500"></span>
-            <span>Student Engagement</span>
+            <span data-text="topbar_engagement">Student Engagement</span>
           </button>
           <button class="topic-pill font-semibold text-ink-600 hover:text-ink-900 hover:bg-cream-200 px-3.5 py-1.5 rounded-full transition whitespace-nowrap flex items-center gap-1.5" data-category="Classroom Management">
             <span class="w-2 h-2 rounded-full bg-ink-900"></span>
-            <span>Classroom Management</span>
+            <span data-text="topbar_management">Classroom Management</span>
           </button>
           <button class="topic-pill font-semibold text-ink-600 hover:text-ink-900 hover:bg-cream-200 px-3.5 py-1.5 rounded-full transition whitespace-nowrap flex items-center gap-1.5" data-category="Teacher Support">
             <span class="w-2 h-2 rounded-full bg-red-400"></span>
-            <span>Teacher Support &amp; Wellbeing</span>
+            <span data-text="topbar_support">Teacher Support &amp; Wellbeing</span>
           </button>
           <button class="topic-pill font-semibold text-ink-600 hover:text-ink-900 hover:bg-cream-200 px-3.5 py-1.5 rounded-full transition whitespace-nowrap flex items-center gap-1.5" data-category="Tech & AI">
             <span class="w-2 h-2 rounded-full bg-red-600"></span>
-            <span>Tech &amp; AI Tips</span>
+            <span data-text="topbar_tech">Tech &amp; AI Tips</span>
           </button>
           <button class="topic-pill font-semibold text-ink-600 hover:text-ink-900 hover:bg-cream-200 px-3.5 py-1.5 rounded-full transition whitespace-nowrap flex items-center gap-1.5" data-category="saved">
             <i data-lucide="bookmark" class="w-3.5 h-3.5 text-red-600"></i>
@@ -541,7 +541,7 @@
 
           <div id="savedStorageWarning" class="hidden flex items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900" role="note">
             <i data-lucide="triangle-alert" class="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true"></i>
-            <p>Saved articles are stored in this browser. Clearing browser data/cache will remove your saved items.</p>
+            <p data-text="feed_saved_note">Saved articles are stored in this browser. Clearing browser data/cache will remove your saved items.</p>
           </div>
 
           <button id="contributeTopicBtn" type="button" class="hidden px-5 py-2 rounded-full bg-ink-900 hover:bg-ink-800 text-white text-xs font-bold">Contribute to this Topic</button>
@@ -574,7 +574,7 @@
               <textarea id="sidebarCoachInput" aria-label="Article search keywords" rows="2" placeholder="e.g., missing students, OrbitNote, bellringers..." class="w-full p-3 text-xs bg-cream-50 border border-cream-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-600/30"></textarea>
               <button id="sidebarCoachSubmitBtn" class="w-full py-2.5 px-4 rounded-xl bg-ink-900 hover:bg-ink-800 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition">
                 <i data-lucide="search" class="w-3.5 h-3.5 text-red-400"></i>
-                <span>Search Articles</span>
+                <span data-text="article_search_button">Search Articles</span>
               </button>
             </div>
 
@@ -612,8 +612,8 @@
 
             <div id="loungeQuotesContainer" class="space-y-3"></div>
 
-            <button id="loungeViewAllBtn" type="button" class="w-full text-xs font-bold text-red-600 hover:text-red-900 text-left">Visit the Staff Lounge &rarr;</button>
-            <button id="sidebarAddQuoteBtn" class="w-full py-2 rounded-xl border border-cream-300 hover:bg-cream-100 text-xs font-bold text-ink-800 transition">
+            <button data-text="lounge_view_all_button" id="loungeViewAllBtn" type="button" class="w-full text-xs font-bold text-red-600 hover:text-red-900 text-left">Visit the Staff Lounge &rarr;</button>
+            <button data-text="lounge_add_button" id="sidebarAddQuoteBtn" class="w-full py-2 rounded-xl border border-cream-300 hover:bg-cream-100 text-xs font-bold text-ink-800 transition">
               + Post a Classroom Quote or Win
             </button>
           </div>
@@ -634,7 +634,7 @@
         <div>
           <button class="back-to-feed-btn inline-flex items-center gap-1.5 text-xs font-bold text-red-600 hover:text-red-900 mb-2">
             <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
-            <span>Back to Editorial Feed</span>
+            <span data-text="back_to_feed_label">Back to Editorial Feed</span>
           </button>
           <h1 id="directoryHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">Heart of MMS: Clean Building Directory</h1>
           <p id="directorySubtitleText" class="text-sm text-ink-600">Streamlined, color-coded access to internal USD 266 forms, maps, and operational links.</p>
@@ -652,7 +652,7 @@
 
       <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-ink-600">
         <p id="directoryResultCount" role="status" aria-live="polite"></p>
-        <p>Some resources require your USD 266 work account.</p>
+        <p data-text="directory_footnote">Some resources require your USD 266 work account.</p>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="hqResourceGrid"></div>
     </div>
@@ -662,22 +662,22 @@
     <!-- ========================================== -->
     <div id="view-lounge" class="view-section hidden space-y-6">
       <section class="space-y-3">
-        <h1 class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">Staff Lounge</h1>
-        <p class="text-sm text-ink-600">Share a classroom win, a funny quote, or a question. React to a colleague's post with appreciation, empathy, or respect.</p>
+        <h1 data-text="lounge_page_heading" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">Staff Lounge</h1>
+        <p data-text="lounge_page_subtitle" class="text-sm text-ink-600">Share a classroom win, a funny quote, or a question. React to a colleague's post with appreciation, empathy, or respect.</p>
         <div class="flex flex-wrap items-center gap-3">
-          <button type="button" id="loungeNewPostBtn" class="px-4 py-2 rounded-full bg-ink-900 hover:bg-ink-800 text-white text-xs font-bold">+ New Post</button>
+          <button data-text="lounge_new_post_button" type="button" id="loungeNewPostBtn" class="px-4 py-2 rounded-full bg-ink-900 hover:bg-ink-800 text-white text-xs font-bold">+ New Post</button>
           <button type="button" id="loungeRefreshBtn" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-cream-100 hover:bg-cream-200 border border-cream-300 text-ink-900 text-xs font-bold disabled:opacity-60">
             <i data-lucide="refresh-cw" class="w-3.5 h-3.5" aria-hidden="true"></i>
             <span id="loungeRefreshLabel">Refresh Lounge</span>
           </button>
-          <button class="back-to-feed-btn text-xs font-bold text-red-600">Back to Editorial Feed</button>
+          <button class="back-to-feed-btn text-xs font-bold text-red-600" data-text="back_to_feed_label">Back to Editorial Feed</button>
         </div>
         <p id="loungeRefreshStatus" class="text-xs text-green-700 font-semibold" role="status" aria-live="polite"></p>
         <div role="group" aria-label="Filter posts" class="flex flex-wrap gap-2" id="loungeFilters">
-          <button type="button" data-lounge-filter="all" class="lounge-filter rounded-full px-3 py-1.5 text-xs font-bold bg-ink-900 text-white">All</button>
-          <button type="button" data-lounge-filter="win" class="lounge-filter rounded-full px-3 py-1.5 text-xs font-bold bg-cream-100 text-ink-600">Wins</button>
-          <button type="button" data-lounge-filter="quote" class="lounge-filter rounded-full px-3 py-1.5 text-xs font-bold bg-cream-100 text-ink-600">Quotes</button>
-          <button type="button" data-lounge-filter="question" class="lounge-filter rounded-full px-3 py-1.5 text-xs font-bold bg-cream-100 text-ink-600">Questions</button>
+          <button data-text="lounge_filter_all" type="button" data-lounge-filter="all" class="lounge-filter rounded-full px-3 py-1.5 text-xs font-bold bg-ink-900 text-white">All</button>
+          <button data-text="lounge_filter_wins" type="button" data-lounge-filter="win" class="lounge-filter rounded-full px-3 py-1.5 text-xs font-bold bg-cream-100 text-ink-600">Wins</button>
+          <button data-text="lounge_filter_quotes" type="button" data-lounge-filter="quote" class="lounge-filter rounded-full px-3 py-1.5 text-xs font-bold bg-cream-100 text-ink-600">Quotes</button>
+          <button data-text="lounge_filter_questions" type="button" data-lounge-filter="question" class="lounge-filter rounded-full px-3 py-1.5 text-xs font-bold bg-cream-100 text-ink-600">Questions</button>
         </div>
       </section>
       <p id="loungeReactionStatus" class="text-sm text-red-700" role="status" aria-live="polite"></p>
@@ -689,36 +689,36 @@
     <!-- ========================================== -->
     <div id="view-bulletin" class="view-section hidden space-y-6">
       <section class="space-y-3">
-        <h1 class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">Flight Wire: School Updates</h1>
-        <p class="text-sm text-ink-600">MMS updates first, with district posts and Smore newsletters in their own tabs.</p>
-        <button class="back-to-feed-btn text-xs font-bold text-red-600">Back to Editorial Feed</button>
+        <h1 data-text="flight_page_heading" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">Flight Wire: School Updates</h1>
+        <p data-text="flight_page_subtitle" class="text-sm text-ink-600">MMS updates first, with district posts and Smore newsletters in their own tabs.</p>
+        <button class="back-to-feed-btn text-xs font-bold text-red-600" data-text="back_to_feed_label">Back to Editorial Feed</button>
         <div role="tablist" aria-label="Flight Wire sections" class="flex flex-wrap gap-2">
-          <button id="flightTab-mms" type="button" role="tab" aria-selected="true" aria-controls="flightPanel-mms" tabindex="0" data-flight-tab="mms" class="rounded-full px-4 py-2 text-sm font-bold bg-ink-900 text-white">MMS Updates</button>
-          <button id="flightTab-district" type="button" role="tab" aria-selected="false" aria-controls="flightPanel-district" tabindex="-1" data-flight-tab="district" class="rounded-full px-4 py-2 text-sm font-bold bg-cream-100 text-ink-600">District Updates</button>
-          <button id="flightTab-smore" type="button" role="tab" aria-selected="false" aria-controls="flightPanel-smore" tabindex="-1" data-flight-tab="smore" class="rounded-full px-4 py-2 text-sm font-bold bg-cream-100 text-ink-600">Smore Archive</button>
+          <button data-text="flight_tab_mms" id="flightTab-mms" type="button" role="tab" aria-selected="true" aria-controls="flightPanel-mms" tabindex="0" data-flight-tab="mms" class="rounded-full px-4 py-2 text-sm font-bold bg-ink-900 text-white">MMS Updates</button>
+          <button data-text="flight_tab_district" id="flightTab-district" type="button" role="tab" aria-selected="false" aria-controls="flightPanel-district" tabindex="-1" data-flight-tab="district" class="rounded-full px-4 py-2 text-sm font-bold bg-cream-100 text-ink-600">District Updates</button>
+          <button data-text="flight_tab_smore" id="flightTab-smore" type="button" role="tab" aria-selected="false" aria-controls="flightPanel-smore" tabindex="-1" data-flight-tab="smore" class="rounded-full px-4 py-2 text-sm font-bold bg-cream-100 text-ink-600">Smore Archive</button>
         </div>
         <button id="reloadSchoolUpdates" type="button" class="text-sm font-bold text-red-600 disabled:opacity-50">Reload saved updates</button>
         <p id="schoolUpdateStatus" role="status" class="text-xs text-ink-600">Loading saved school updates...</p>
-        <p class="text-xs text-ink-600">Updates older than seven days are tucked away; items without a date remain visible.</p>
+        <p data-text="flight_older_note" class="text-xs text-ink-600">Updates older than seven days are tucked away; items without a date remain visible.</p>
       </section>
       <section id="flightPanel-mms" role="tabpanel" aria-labelledby="flightTab-mms" tabindex="0" class="space-y-3">
-        <h2 class="font-editorial font-bold text-xl">News</h2>
-        <p class="text-xs text-ink-600">Headlines link to the complete articles on the school website.</p>
+        <h2 data-text="flight_news_heading" class="font-editorial font-bold text-xl">News</h2>
+        <p data-text="flight_news_note" class="text-xs text-ink-600">Headlines link to the complete articles on the school website.</p>
         <div id="schoolNewsCards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-        <h2 class="font-editorial font-bold text-xl">Social</h2>
+        <h2 data-text="flight_social_heading" class="font-editorial font-bold text-xl">Social</h2>
         <div id="schoolSocialCards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-        <h2 class="font-editorial font-bold text-xl">Calendars</h2>
-        <p class="text-xs text-ink-600">These open the official calendars; events are not imported into this site.</p>
+        <h2 data-text="flight_calendars_heading" class="font-editorial font-bold text-xl">Calendars</h2>
+        <p data-text="flight_calendars_note" class="text-xs text-ink-600">These open the official calendars; events are not imported into this site.</p>
         <div class="flex flex-wrap gap-4 text-sm font-bold text-red-600">
           <a href="https://mms.usd266.com/about-us/calendar" target="_blank" rel="noopener noreferrer">MMS calendar</a>
           <a href="https://gobound.com/ks/schools/maizems/calendar" target="_blank" rel="noopener noreferrer">MMS athletics calendar</a>
         </div>
       </section>
       <section id="flightPanel-district" role="tabpanel" aria-labelledby="flightTab-district" tabindex="0" hidden class="space-y-3">
-        <h2 class="font-editorial font-bold text-xl">District News</h2>
+        <h2 data-text="flight_district_news_heading" class="font-editorial font-bold text-xl">District News</h2>
         <div id="districtNewsCards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-        <h2 class="font-editorial font-bold text-xl">District Social</h2>
-        <p class="text-xs text-ink-600">District and other account updates are kept here rather than mixed into MMS Updates.</p>
+        <h2 data-text="flight_district_social_heading" class="font-editorial font-bold text-xl">District Social</h2>
+        <p data-text="flight_district_note" class="text-xs text-ink-600">District and other account updates are kept here rather than mixed into MMS Updates.</p>
         <div id="districtSocialCards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         <a href="https://www.usd266.com/district/calendar" target="_blank" rel="noopener noreferrer" class="text-sm font-bold text-red-600">Official district calendar</a>
       </section>
@@ -726,7 +726,7 @@
       <div class="pb-5 border-b border-cream-300">
         <button class="back-to-feed-btn inline-flex items-center gap-1.5 text-xs font-bold text-red-600 hover:text-red-900 mb-2">
           <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
-          <span>Back to Editorial Feed</span>
+          <span data-text="back_to_feed_label">Back to Editorial Feed</span>
         </button>
         <div class="flex items-center justify-between flex-wrap gap-2">
           <div>
@@ -758,7 +758,7 @@
       <div class="pb-5 border-b border-cream-300">
         <button class="back-to-feed-btn inline-flex items-center gap-1.5 text-xs font-bold text-red-600 hover:text-red-900 mb-2">
           <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
-          <span>Back to Editorial Feed</span>
+          <span data-text="back_to_feed_label">Back to Editorial Feed</span>
         </button>
         <h1 id="studioHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">The Peer Lesson Studio</h1>
         <p id="studioSubtitleText" class="text-sm text-ink-600">Share a draft lab, CER prompt, or activity for low-stakes Warm &amp; Cool feedback from colleagues.</p>
@@ -766,18 +766,18 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-4">
-          <h2 class="font-editorial font-bold text-lg text-ink-900">Post a Lesson Draft</h2>
+          <h2 data-text="studio_form_heading" class="font-editorial font-bold text-lg text-ink-900">Post a Lesson Draft</h2>
           <form id="lessonTuneForm" class="space-y-3 text-xs">
             <div>
-              <label class="block font-bold text-ink-800 mb-1">Lesson / Activity Title</label>
+              <label data-text="studio_label_title" class="block font-bold text-ink-800 mb-1">Lesson / Activity Title</label>
               <input id="tuneTitle" type="text" placeholder="e.g., 8th Grade Thermal Energy Lab" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" required />
             </div>
             <div>
-              <label class="block font-bold text-ink-800 mb-1">Department &amp; Grade</label>
+              <label data-text="studio_label_subject" class="block font-bold text-ink-800 mb-1">Department &amp; Grade</label>
               <input id="tuneSubject" type="text" placeholder="e.g., 8th Science" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" required />
             </div>
             <div>
-              <label class="block font-bold text-ink-800 mb-1">Feedback Focus Dilemma</label>
+              <label data-text="studio_label_dilemma" class="block font-bold text-ink-800 mb-1">Feedback Focus Dilemma</label>
               <select id="tuneDilemma" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 bg-white">
                 <option value="Student Engagement Hook">Opening Hook &amp; Student Buy-In</option>
                 <option value="Pacing & Transitions">Pacing &amp; Transition Smoothness</option>
@@ -786,10 +786,10 @@
               </select>
             </div>
             <div>
-              <label class="block font-bold text-ink-800 mb-1">Google Doc / Slides Link</label>
+              <label data-text="studio_label_link" class="block font-bold text-ink-800 mb-1">Google Doc / Slides Link</label>
               <input id="tuneLink" type="url" placeholder="https://docs.google.com/..." class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" required />
             </div>
-            <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-ink-900 hover:bg-ink-800 text-white font-bold transition">
+            <button data-text="studio_submit_button" type="submit" class="w-full py-2.5 px-4 rounded-xl bg-ink-900 hover:bg-ink-800 text-white font-bold transition">
               Submit for Review
             </button>
             <p id="lessonSubmissionStatus" class="hidden text-xs" role="status" aria-live="polite"></p>
@@ -808,7 +808,7 @@
         <div>
           <button class="back-to-feed-btn inline-flex items-center gap-1.5 text-xs font-bold text-red-600 hover:text-red-900 mb-2">
             <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
-            <span>Back to Editorial Feed</span>
+            <span data-text="back_to_feed_label">Back to Editorial Feed</span>
           </button>
           <div class="flex items-center gap-2.5 flex-wrap">
             <h1 id="academyHeadingText" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900"></h1>
@@ -873,7 +873,7 @@
         <div id="readerTryTomorrowBox" class="p-5 rounded-2xl bg-red-50 border border-red-300 space-y-1.5">
           <div class="text-xs font-extrabold uppercase tracking-wider text-red-900 flex items-center gap-1.5">
             <i data-lucide="zap" class="w-4 h-4 text-red-600"></i>
-            <span>Try This Tomorrow in Class</span>
+            <span data-text="article_try_tomorrow_label">Try This Tomorrow in Class</span>
           </div>
           <p id="readerTryTomorrow" class="text-xs sm:text-sm text-ink-900 font-medium leading-relaxed"></p>
         </div>
@@ -888,7 +888,7 @@
           <div class="flex items-center justify-between">
             <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
               <i data-lucide="message-square" class="w-4 h-4 text-emerald-600"></i>
-              <span>Ready-to-Use Classroom Script / Prompt</span>
+              <span data-text="article_script_label">Ready-to-Use Classroom Script / Prompt</span>
             </span>
             <button id="copyReaderScriptBtn" class="text-xs font-bold text-red-600 hover:underline flex items-center gap-1">
               <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Script
@@ -898,8 +898,8 @@
         </div>
 
         <div class="pt-4 border-t border-cream-300 flex items-center justify-between">
-          <span class="text-xs text-ink-600">Found this helpful? Share it with your PLC or pin it to your reading list.</span>
-          <button id="closeArticleReaderBottomBtn" class="px-5 py-2 rounded-full bg-ink-900 text-white text-xs font-bold hover:bg-ink-800 transition">
+          <span data-text="article_share_note" class="text-xs text-ink-600">Found this helpful? Share it with your PLC or pin it to your reading list.</span>
+          <button data-text="article_done_button" id="closeArticleReaderBottomBtn" class="px-5 py-2 rounded-full bg-ink-900 text-white text-xs font-bold hover:bg-ink-800 transition">
             Done Reading
           </button>
         </div>
@@ -915,8 +915,8 @@
     <div class="bg-white rounded-3xl shadow-2xl border border-cream-300 max-w-lg w-full p-6 sm:p-8 space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-cream-200">
         <div>
-          <h3 class="font-editorial font-bold text-xl text-ink-900">Share a Classroom Tip or Win</h3>
-          <p class="text-xs text-ink-600">Contribute a strategy, Tech/AI workflow, engagement hook, or student quote</p>
+          <h3 data-text="tip_modal_heading" class="font-editorial font-bold text-xl text-ink-900">Share a Classroom Tip or Win</h3>
+          <p data-text="tip_modal_subtitle" class="text-xs text-ink-600">Contribute a strategy, Tech/AI workflow, engagement hook, or student quote</p>
         </div>
         <button id="closeShareTipModalBtn" class="text-ink-400 hover:text-ink-900 p-1">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -977,7 +977,7 @@
           <p id="shareTipSubmissionStatus" class="hidden text-xs" role="status" aria-live="polite"></p>
           <div class="flex justify-end gap-2 ml-auto">
             <button type="button" id="cancelShareTipBtn" class="px-4 py-2 rounded-full border border-cream-300 text-ink-600 font-bold">Cancel</button>
-            <button type="submit" class="px-5 py-2 rounded-full bg-ink-900 hover:bg-ink-800 text-white font-bold">Submit for Review</button>
+            <button data-text="tip_submit_button" type="submit" class="px-5 py-2 rounded-full bg-ink-900 hover:bg-ink-800 text-white font-bold">Submit for Review</button>
           </div>
         </div>
       </form>
@@ -991,8 +991,8 @@
     <div class="bg-white rounded-3xl shadow-2xl border border-cream-300 max-w-lg w-full p-6 sm:p-8 space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-cream-200">
         <div>
-          <h3 class="font-editorial font-bold text-xl text-ink-900">Post to the Staff Lounge</h3>
-          <p class="text-xs text-ink-600">Share a classroom win, a quote you overheard, or a question. Posts are reviewed before they appear.</p>
+          <h3 data-text="lounge_modal_heading" class="font-editorial font-bold text-xl text-ink-900">Post to the Staff Lounge</h3>
+          <p data-text="lounge_modal_subtitle" class="text-xs text-ink-600">Share a classroom win, a quote you overheard, or a question. Posts are reviewed before they appear.</p>
         </div>
         <button id="closeLoungePostBtn" type="button" aria-label="Close" class="text-ink-400 hover:text-ink-900 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
@@ -1017,7 +1017,7 @@
           <p id="loungePostStatus" class="text-xs" role="status" aria-live="polite"></p>
           <div class="flex justify-end gap-2 ml-auto">
             <button type="button" id="cancelLoungePostBtn" class="px-4 py-2 rounded-full border border-cream-300 text-ink-600 font-bold">Cancel</button>
-            <button type="submit" class="px-5 py-2 rounded-full bg-ink-900 hover:bg-ink-800 text-white font-bold">Post</button>
+            <button data-text="lounge_submit_button" type="submit" class="px-5 py-2 rounded-full bg-ink-900 hover:bg-ink-800 text-white font-bold">Post</button>
           </div>
         </div>
       </form>
@@ -2289,6 +2289,11 @@
           ? `${siteSettings.site_title} | ${siteSettings.site_subtitle}` : siteSettings.site_title;
       }
 
+      document.querySelectorAll('[data-text]').forEach(node => {
+        const val = String(siteSettings[node.dataset.text] ?? '').trim();
+        if (val) node.textContent = val;
+      });
+
       renderHeroFeature();
       renderHeroFeature();
     }
@@ -3512,7 +3517,11 @@
         { id: 'quotes', label: 'Lounge Posts', hint: 'Overheard at MMS posts', icon: 'message-square', title: 'quote', table: true },
         { id: 'studio', label: 'Peer Lesson Studio', hint: 'Lesson drafts for feedback', icon: 'users', title: 'title', table: true },
         { id: 'tech_tools', label: 'AI & Tech Tools', hint: 'EdTech Lab tool cards', icon: 'cpu', title: 'title', table: true },
-        { id: 'image_library', label: 'Image Library', hint: 'Approved cover images', icon: 'image', title: 'label', table: true }
+        { id: 'image_library', label: 'Image Library', hint: 'Approved cover images', icon: 'image', title: 'label', table: true },
+        { id: 'page_sections', label: 'Tech Page: Sections', hint: 'Section headings, intros and order', icon: 'layout-list', title: 'title', table: true },
+        { id: 'content_blocks', label: 'Tech Page: Content Blocks', hint: 'Text, lists, callouts and prompts', icon: 'text', title: 'title', table: true },
+        { id: 'videos', label: 'Tech Page: Videos', hint: 'Walkthrough videos', icon: 'video', title: 'title', table: true },
+        { id: 'video_chapters', label: 'Tech Page: Video Chapters', hint: 'Timestamps inside a video', icon: 'list-video', title: 'title', table: true }
       ];
       const TABLE_FIELDS = {
         articles: ['title', 'category', 'summary', 'article_body_text', 'author', 'published_at', 'cover_image_url', 'is_live', 'takeaway', 'try_tomorrow', 'script', 'read_time', 'featured', 'has_video_demo', 'tags'],
@@ -3521,11 +3530,33 @@
         quotes: ['quote', 'attribution', 'post_type', 'is_live'],
         studio: ['title', 'subject', 'dilemma', 'warm_feedback', 'cool_feedback', 'doc_url', 'is_live'],
         tech_tools: ['badge', 'title', 'link_label', 'url', 'description', 'teacher_workflow', 'student_workflow', 'is_live'],
-        image_library: ['category', 'label', 'image_url', 'is_live']
+        image_library: ['category', 'label', 'image_url', 'is_live'],
+        page_sections: ['page', 'kind', 'layout', 'title', 'intro', 'badge', 'sort_order', 'is_live'],
+        content_blocks: ['section_id', 'block_type', 'title', 'body', 'description', 'url', 'link_label', 'style', 'sort_order', 'is_live'],
+        videos: ['section_id', 'badge', 'title', 'description', 'url', 'link_label', 'sort_order', 'is_live'],
+        video_chapters: ['video_id', 'title', 'description', 'start_time', 'sort_order', 'is_live']
       };
-      const ID_KEYS = { articles: 'article_id', quick_wins: 'tip_id', directory: 'resource_id', quotes: 'quote_id', studio: 'studio_id', tech_tools: 'tool_id', image_library: 'image_id' };
+      const CUSTOM_ID_TABLES = new Set(['page_sections', 'videos']);
+      const CHOICES = {
+        kind: ['blocks', 'videos', 'tools'],
+        layout: ['stack', 'columns'],
+        block_type: ['text', 'list', 'callout', 'prompt'],
+        style: ['neutral', 'red', 'green', 'bullets', 'numbered']
+      };
+      const HELP = {
+        cover_image_url: 'Paste an image link, or type an Image ID / label from the Image Library (for example “eng-1”).',
+        section_id: 'Pick the section this belongs to.',
+        video_id: 'Pick the video this belongs to.',
+        start_time: 'm:ss, h:mm:ss or seconds.',
+        sort_order: 'Lower numbers appear first.',
+        is_live: 'Live items show on the site; hidden items stay only in the sheet.'
+      };
+      const ID_KEYS = { articles: 'article_id', quick_wins: 'tip_id', directory: 'resource_id', quotes: 'quote_id', studio: 'studio_id', tech_tools: 'tool_id', image_library: 'image_id', page_sections: 'section_id', content_blocks: 'block_id', videos: 'video_id', video_chapters: 'chapter_id' };
       const LONG = new Set(['summary', 'article_body_text', 'takeaway', 'try_tomorrow', 'script', 'tip', 'description', 'quote', 'dilemma', 'warm_feedback', 'cool_feedback', 'teacher_workflow', 'student_workflow', 'content']);
       const BOOL = new Set(['is_live', 'featured', 'has_video_demo']);
+      const LISTS = { cover_image_url: () => (data.tables.image_library || []).map(i => [i.image_id, i.label]),
+        section_id: () => (data.tables.page_sections || []).map(i => [i.section_id, i.title]),
+        video_id: () => (data.tables.videos || []).map(i => [i.video_id, i.title]) };
       const SAVE_MESSAGES = ['Writing to the Google Sheet…', 'Saving your changes…', 'Almost there…'];
       const LOAD_MESSAGES = ['Opening the Google Sheet…', 'Reading submissions…', 'Gathering site content…', 'Almost there…'];
 
@@ -3639,21 +3670,36 @@
         bodyEl.appendChild(grid);
       }
 
-      function field(key, value, onInput, long) {
+      let listCounter = 0;
+      function field(key, value, onInput, long, isId) {
         const wrap = el('label', 'block');
         wrap.appendChild(el('span', 'block font-semibold text-ink-800 mb-1', label(key)));
         let input;
         if (BOOL.has(key)) {
           input = el('select', 'w-full border border-cream-300 rounded-lg px-2.5 py-2 bg-white');
-          ['TRUE', 'FALSE'].forEach(v => { const o = el('option', '', v === 'TRUE' ? 'Yes (shown)' : 'No (hidden)'); o.value = v; input.appendChild(o); });
+          ['TRUE', 'FALSE'].forEach(v => { const o = el('option', '', key === 'is_live' ? (v === 'TRUE' ? 'Live' : 'Hidden') : (v === 'TRUE' ? 'Yes' : 'No')); o.value = v; input.appendChild(o); });
           input.value = String(value).toUpperCase() === 'TRUE' ? 'TRUE' : 'FALSE';
+        } else if (CHOICES[key]) {
+          input = el('select', 'w-full border border-cream-300 rounded-lg px-2.5 py-2 bg-white');
+          const opts = CHOICES[key].includes(value) || !value ? CHOICES[key] : [value, ...CHOICES[key]];
+          opts.forEach(v => { const o = el('option', '', v); o.value = v; input.appendChild(o); });
+          input.value = value || CHOICES[key][0];
         } else if (long || LONG.has(key)) {
           input = el('textarea', 'w-full border border-cream-300 rounded-lg px-2.5 py-2 min-h-[5rem]');
           input.rows = 4; input.value = value;
         } else {
           input = el('input', 'w-full border border-cream-300 rounded-lg px-2.5 py-2');
           input.type = 'text'; input.value = value;
+          if (LISTS[key] && !isId) {
+            const list = el('datalist');
+            list.id = `adminList-${key}-${++listCounter}`;
+            LISTS[key]().forEach(([v, l]) => { const o = el('option', '', l || ''); o.value = v; list.appendChild(o); });
+            wrap.appendChild(list);
+            input.setAttribute('list', list.id);
+          }
         }
+        if (isId) wrap.appendChild(el('span', 'block text-ink-400 text-[11px] mt-1', 'Short unique ID using letters, numbers and dashes. Other tabs refer to it, so it cannot change later.'));
+        else if (HELP[key]) wrap.appendChild(el('span', 'block text-ink-400 text-[11px] mt-1', HELP[key]));
         input.addEventListener('input', onInput);
         input.addEventListener('change', onInput);
         wrap.appendChild(input);
@@ -3736,12 +3782,16 @@
         function editorBox(item) {
           const isNew = !item;
           const values = {};
-          fields.forEach(k => { values[k] = item ? (item[k] ?? '') : (BOOL.has(k) ? 'TRUE' : ''); });
+          fields.forEach(k => { values[k] = item ? (item[k] ?? '') : (BOOL.has(k) ? 'TRUE' : (CHOICES[k] ? CHOICES[k][0] : '')); });
+          if (isNew && CUSTOM_ID_TABLES.has(name)) values[ID_KEYS[name]] = '';
           const dirty = new Set();
           const det = el('details', 'bg-white border border-cream-300 rounded-2xl');
           const sum = el('summary', 'px-4 py-3 cursor-pointer flex items-center justify-between gap-3 font-semibold text-ink-900');
           sum.appendChild(el('span', 'truncate', isNew ? 'New item' : itemTitle(sec, item)));
-          if (item && 'is_live' in item && String(item.is_live).toUpperCase() !== 'TRUE') sum.appendChild(el('span', 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-cream-100 text-ink-600', 'Hidden'));
+          if (item && 'is_live' in item) {
+            const live = String(item.is_live).trim().toUpperCase() === 'TRUE';
+            sum.appendChild(el('span', `shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full ${live ? 'bg-emerald-100 text-emerald-800' : 'bg-cream-100 text-ink-600'}`, live ? 'Live' : 'Hidden'));
+          }
           det.appendChild(sum);
           const form = el('div', 'px-4 pb-4 grid grid-cols-1 md:grid-cols-2 gap-3 border-t border-cream-200 pt-3');
           const save = actionBtn(isNew ? 'Create' : 'Save', 'primary', async () => {
@@ -3750,8 +3800,9 @@
             await run(() => api(isNew ? 'admin_add_row' : 'admin_save_row', params), isNew ? 'Item created.' : 'Changes saved.');
           });
           save.disabled = !isNew;
-          fields.forEach(k => {
-            const f = field(k, values[k], e => { values[k] = e.target.value; dirty.add(k); save.disabled = false; });
+          const shownFields = isNew && CUSTOM_ID_TABLES.has(name) ? [ID_KEYS[name], ...fields] : fields;
+          shownFields.forEach(k => {
+            const f = field(k, values[k], e => { values[k] = e.target.value; dirty.add(k); save.disabled = false; }, false, k === ID_KEYS[name]);
             if (LONG.has(k)) f.wrap.className += ' md:col-span-2';
             form.appendChild(f.wrap);
           });

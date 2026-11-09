@@ -640,7 +640,11 @@ const ADMIN_TABLES = {
   quotes: { sheet: 'lounge_quotes', columns: LOUNGE_QUOTE_COLUMNS, idKey: 'quote_id', prefix: 'quote' },
   studio: { sheet: 'peer_studio', columns: PEER_STUDIO_COLUMNS, idKey: 'studio_id', prefix: 'studio' },
   tech_tools: { sheet: 'tech_tools', columns: TECH_TOOL_COLUMNS, idKey: 'tool_id', prefix: 'tool' },
-  image_library: { sheet: 'image_library', columns: IMAGE_LIBRARY_COLUMNS, idKey: 'image_id', prefix: 'img' }
+  image_library: { sheet: 'image_library', columns: IMAGE_LIBRARY_COLUMNS, idKey: 'image_id', prefix: 'img' },
+  page_sections: { sheet: 'page_sections', columns: PAGE_SECTION_COLUMNS, idKey: 'section_id', prefix: 'sec', customId: true },
+  content_blocks: { sheet: 'content_blocks', columns: CONTENT_BLOCK_COLUMNS, idKey: 'block_id', prefix: 'blk' },
+  videos: { sheet: 'videos', columns: VIDEO_COLUMNS, idKey: 'video_id', prefix: 'vid', customId: true },
+  video_chapters: { sheet: 'video_chapters', columns: VIDEO_CHAPTER_COLUMNS, idKey: 'chapter_id', prefix: 'chap' }
 };
 
 const ADMIN_MAX_FAILURES = 5;
@@ -692,6 +696,7 @@ function adminLoad_() {
   const out = { ok: true, settings: [], tables: {}, submissions: [] };
 
   const settings = ss.getSheetByName('settings');
+  if (settings) seedDefaultSettings_(settings);
   if (settings && settings.getLastRow() > 1) {
     const rows = settings.getDataRange().getValues();
     const descIdx = String(rows[0][2] || '').trim().toLowerCase() === 'description' ? 2 : -1;
@@ -762,7 +767,12 @@ function adminSaveRow_(ss, name, id, fields, isNew) {
     const record = {};
     editable.forEach(c => { if (fields[c] !== undefined) record[c] = fields[c]; });
     if (record.is_live === undefined && t.cfg.columns.indexOf('is_live') >= 0) record.is_live = 'TRUE';
-    record[t.cfg.idKey] = t.cfg.prefix + '_' + Utilities.getUuid().slice(0, 8);
+    // Sections and videos are referenced by other tabs, so the admin may choose their ID.
+    const wanted = t.cfg.customId ? String(fields[t.cfg.idKey] || '').trim().replace(/[^A-Za-z0-9_-]/g, '-') : '';
+    if (wanted && liveRowsById_({ sheet: t.sheet, headers: t.headers, idKey: t.cfg.idKey }, wanted).length) {
+      throw new Error('The ID "' + wanted + '" is already used. Choose a different one.');
+    }
+    record[t.cfg.idKey] = wanted || t.cfg.prefix + '_' + Utilities.getUuid().slice(0, 8);
     appendRecordByHeaders_(t.sheet, t.headers, record);
     appendAuditLog_(ss, 'admin_add', t.cfg.sheet, record[t.cfg.idKey], record.title || '', 'Added from admin panel');
     return { ok: true, id: record[t.cfg.idKey] };
@@ -1232,7 +1242,74 @@ function seedDefaultSettings_(settingsSheet) {
     ['reader_video_button', 'Open the video page', 'Button on that callout'],
     ['reader_video_note', '', 'Optional note on that callout'],
     ['footer_left', 'Classroom Craft, Student Engagement, Teacher Support & Tech/AI', 'Footer description text'],
-    ['footer_right', 'Maize Middle School (USD 266)', 'Footer school name text']
+    ['footer_right', 'Maize Middle School (USD 266)', 'Footer school name text'],
+    ['menu_title', 'Site Navigation Menu', 'Small heading at the top of the site menu'],
+    ['menu_badge', 'Eagles Hub', 'Red badge in the site menu header'],
+    ['menu_home_title', 'Home: Main Editorial Feed', 'Menu item: Home title'],
+    ['menu_home_desc', 'All featured stories, playbooks & quick wins', 'Menu item: Home description'],
+    ['menu_section_heading', 'Building Wings & Special Sections', 'Menu heading above the special page links'],
+    ['menu_directory_title', 'Heart of MMS Directory', 'Menu item: Directory title'],
+    ['menu_directory_desc', 'Clean, searchable building links & forms', 'Menu item: Directory description'],
+    ['menu_bulletin_title', 'Flight Wire (School Updates)', 'Menu item: Flight Wire title'],
+    ['menu_bulletin_desc', 'News, social posts, calendars, and newsletter archive', 'Menu item: Flight Wire description'],
+    ['menu_studio_title', 'The Peer Lesson Studio', 'Menu item: Peer Lesson Studio title'],
+    ['menu_studio_desc', 'Warm & Cool feedback lab for lesson drafts', 'Menu item: Peer Lesson Studio description'],
+    ['menu_topics_heading', 'Editorial Topics', 'Menu heading above the topic shortcuts'],
+    ['menu_topic_engagement', 'Engagement', 'Menu topic shortcut: Student Engagement'],
+    ['menu_topic_management', 'Management', 'Menu topic shortcut: Classroom Management'],
+    ['menu_topic_support', 'Teacher Support', 'Menu topic shortcut: Teacher Support'],
+    ['menu_topic_tech', 'Tech & AI', 'Menu topic shortcut: Tech & AI'],
+    ['menu_share_tip', 'Share a Tip', 'Menu button: Share a Tip'],
+    ['menu_settings', 'Settings', 'Menu button: Settings'],
+    ['search_button_label', 'Search', 'Label on the top search bar button'],
+    ['topbar_all', 'All Featured & Latest', 'Topic bar: All'],
+    ['topbar_engagement', 'Student Engagement', 'Topic bar: Student Engagement'],
+    ['topbar_management', 'Classroom Management', 'Topic bar: Classroom Management'],
+    ['topbar_support', 'Teacher Support & Wellbeing', 'Topic bar: Teacher Support'],
+    ['topbar_tech', 'Tech & AI Tips', 'Topic bar: Tech & AI'],
+    ['feed_saved_note', 'Saved articles are stored in this browser. Clearing browser data/cache will remove your saved items.', 'Note shown on the Saved Reading List'],
+    ['article_search_button', 'Search Articles', 'Sidebar article search button'],
+    ['lounge_view_all_button', 'Visit the Staff Lounge →', 'Sidebar button linking to the Staff Lounge'],
+    ['lounge_add_button', '+ Post a Classroom Quote or Win', 'Sidebar button to post to the lounge'],
+    ['back_to_feed_label', 'Back to Editorial Feed', 'Back-to-feed button label (used on every page)'],
+    ['directory_footnote', 'Some resources require your USD 266 work account.', 'Note under the directory'],
+    ['lounge_page_heading', 'Staff Lounge', 'Staff Lounge page heading'],
+    ['lounge_page_subtitle', 'Share a classroom win, a funny quote, or a question. React to a colleague\'s post with appreciation, empathy, or respect.', 'Staff Lounge page description'],
+    ['lounge_new_post_button', '+ New Post', 'Staff Lounge: new post button'],
+    ['lounge_filter_all', 'All', 'Staff Lounge filter: All'],
+    ['lounge_filter_wins', 'Wins', 'Staff Lounge filter: Wins'],
+    ['lounge_filter_quotes', 'Quotes', 'Staff Lounge filter: Quotes'],
+    ['lounge_filter_questions', 'Questions', 'Staff Lounge filter: Questions'],
+    ['flight_page_heading', 'Flight Wire: School Updates', 'Flight Wire page heading'],
+    ['flight_page_subtitle', 'MMS updates first, with district posts and Smore newsletters in their own tabs.', 'Flight Wire page description'],
+    ['flight_tab_mms', 'MMS Updates', 'Flight Wire tab: MMS'],
+    ['flight_tab_district', 'District Updates', 'Flight Wire tab: District'],
+    ['flight_tab_smore', 'Smore Archive', 'Flight Wire tab: Smore'],
+    ['flight_older_note', 'Updates older than seven days are tucked away; items without a date remain visible.', 'Flight Wire note about older updates'],
+    ['flight_news_heading', 'News', 'Flight Wire: News heading'],
+    ['flight_news_note', 'Headlines link to the complete articles on the school website.', 'Flight Wire: News note'],
+    ['flight_social_heading', 'Social', 'Flight Wire: Social heading'],
+    ['flight_calendars_heading', 'Calendars', 'Flight Wire: Calendars heading'],
+    ['flight_calendars_note', 'These open the official calendars; events are not imported into this site.', 'Flight Wire: Calendars note'],
+    ['flight_district_news_heading', 'District News', 'Flight Wire: District News heading'],
+    ['flight_district_social_heading', 'District Social', 'Flight Wire: District Social heading'],
+    ['flight_district_note', 'District and other account updates are kept here rather than mixed into MMS Updates.', 'Flight Wire: District note'],
+    ['studio_form_heading', 'Post a Lesson Draft', 'Peer Lesson Studio form heading'],
+    ['studio_label_title', 'Lesson / Activity Title', 'Peer Lesson Studio form label'],
+    ['studio_label_subject', 'Department & Grade', 'Peer Lesson Studio form label'],
+    ['studio_label_dilemma', 'Feedback Focus Dilemma', 'Peer Lesson Studio form label'],
+    ['studio_label_link', 'Google Doc / Slides Link', 'Peer Lesson Studio form label'],
+    ['studio_submit_button', 'Submit for Review', 'Peer Lesson Studio submit button'],
+    ['article_try_tomorrow_label', 'Try This Tomorrow in Class', 'Article reader heading: Try This Tomorrow'],
+    ['article_script_label', 'Ready-to-Use Classroom Script / Prompt', 'Article reader heading: Script / Prompt'],
+    ['article_share_note', 'Found this helpful? Share it with your PLC or pin it to your reading list.', 'Article reader footer note'],
+    ['article_done_button', 'Done Reading', 'Article reader done button'],
+    ['tip_modal_heading', 'Share a Classroom Tip or Win', 'Share a Tip form heading'],
+    ['tip_modal_subtitle', 'Contribute a strategy, Tech/AI workflow, engagement hook, or student quote', 'Share a Tip form description'],
+    ['tip_submit_button', 'Submit for Review', 'Share a Tip submit button'],
+    ['lounge_modal_heading', 'Post to the Staff Lounge', 'Lounge post form heading'],
+    ['lounge_modal_subtitle', 'Share a classroom win, a quote you overheard, or a question. Posts are reviewed before they appear.', 'Lounge post form description'],
+    ['lounge_submit_button', 'Post', 'Lounge post submit button']
   ];
   const toAdd = defaults.filter(row => !existing.has(row[0]) && !(row[0] === 'smore_source_url' && existing.has('source_url')));
   if (toAdd.length) {
