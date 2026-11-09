@@ -53,3 +53,13 @@ test('approval carries images into articles and preserves older image-free submi
     assert.equal(status[0], 'published');
   }
 });
+
+test('approval keeps shared links on the article', () => {
+  const { context, saved } = backend();
+  context.smoreReadIssues_ = () => [{ row: 2, issue: {
+    id: 'submission', status: 'approved', submission_type: 'article',
+    title: 'Title', content: 'Body', links: 'https://example.com/resource'
+  } }];
+  context.publishApprovedSubmissions();
+  assert.equal(saved[0].links, 'https://example.com/resource');
+});

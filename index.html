@@ -1935,6 +1935,23 @@
 
       const pContainer = document.getElementById('readerParagraphs');
       pContainer.innerHTML = art.body.map(p => `<p class="whitespace-pre-line break-words">${escapeHtml(p)}</p>`).join('');
+      const sharedLinks = String(art.links || '').match(/https?:\/\/[^\s<>"']+/g) || [];
+      if (sharedLinks.length) {
+        const box = document.createElement('div');
+        box.className = 'mt-6 rounded-xl border border-cream-300 bg-cream-50 p-4';
+        const heading = document.createElement('p');
+        heading.className = 'font-bold text-sm text-ink-900 mb-2';
+        heading.textContent = 'Shared links';
+        box.append(heading);
+        sharedLinks.forEach(raw => {
+          const url = sanitizeHttpUrl(raw.replace(/[.,;:!?]+$/, ''));
+          if (!url) return;
+          const line = document.createElement('p');
+          appendLinkedText(line, url);
+          box.append(line);
+        });
+        pContainer.append(box);
+      }
 
       document.getElementById('articleReaderModal').classList.remove('hidden');
       lucide.createIcons();
@@ -2680,7 +2697,8 @@
         tryTomorrow: text('try_tomorrow'),
         script: text('script'),
         body: bodyText.replace(/\r\n?/g, '\n').split(/\n\s*\n/),
-        tags: rawTags
+        tags: rawTags,
+        links: text('links')
       };
     }
 
@@ -3794,7 +3812,7 @@
         { id: 'video_chapters', label: 'Video Lab: Video Chapters', hint: 'Timestamps inside a video', icon: 'list-video', title: 'title', table: true }
       ];
       const TABLE_FIELDS = {
-        articles: ['title', 'category', 'summary', 'article_body_text', 'author', 'published_at', 'cover_image_url', 'is_live', 'takeaway', 'try_tomorrow', 'script', 'read_time', 'featured', 'has_video_demo', 'tags'],
+        articles: ['title', 'category', 'summary', 'article_body_text', 'author', 'published_at', 'cover_image_url', 'is_live', 'takeaway', 'try_tomorrow', 'script', 'read_time', 'featured', 'has_video_demo', 'tags', 'links'],
         quick_wins: ['section', 'category_label', 'title', 'tip', 'is_live'],
         directory: ['title', 'category', 'description', 'url', 'tags', 'update_status', 'is_live'],
         quotes: ['quote', 'attribution', 'post_type', 'is_live'],
