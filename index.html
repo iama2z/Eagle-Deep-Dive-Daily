@@ -2752,6 +2752,7 @@
         const url = new URL(SUBMISSION_API_URL);
         url.searchParams.set('feed', 'site');
         const data = await fetchJsonWithTimeout(url.href);
+        if (data && data.ok === false && data.error) throw new Error('Site feed error: ' + data.error);
         if (!data || !data.ok || typeof data !== 'object') throw new Error('Unexpected site feed response');
 
         // An older deployment cannot provide backend-managed content; surface it rather than guess.
@@ -2885,7 +2886,7 @@
         siteLoadFailed = true;
         notice = err.name === 'TimeoutError'
           ? 'Site content took too long to load. Refresh to try again.'
-          : 'Site content could not be loaded. Refresh to try again.';
+          : 'Site content could not be loaded (' + (err && err.message || 'unknown error') + '). Refresh to try again.';
         if (container) setBulletinFeedMessage(container, 'The Flight Wire bulletin feed is temporarily unavailable. Please try again later.', 'error');
       } finally {
         try {
