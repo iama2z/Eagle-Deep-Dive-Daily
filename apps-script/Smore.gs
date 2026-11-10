@@ -453,8 +453,8 @@ function publishedArticles_() {
   }).map(row => Object.fromEntries(PUBLISHED_ARTICLE_COLUMNS.map(key => {
     const idx = headers.indexOf(key);
     let value = idx >= 0 ? row[idx] : '';
-    if ((key === 'article_body_text' || key === 'cover_image_url') && !String(value ?? '').trim()) {
-      const aliasIdx = headers.indexOf(key === 'article_body_text' ? 'body' : 'image_url');
+    if ((key === 'article_body_text' || key === 'cover_image_url' || key === 'links') && !String(value ?? '').trim()) {
+      const aliasIdx = headers.indexOf({ article_body_text: 'body', cover_image_url: 'image_url', links: 'link' }[key]);
       if (aliasIdx >= 0) value = row[aliasIdx];
     }
     if (key === 'is_live') return [key, true];
