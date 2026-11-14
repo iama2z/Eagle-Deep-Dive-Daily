@@ -173,7 +173,7 @@ The site is powered by a unified Google Apps Script (`apps-script/Smore.gs`) bou
 | Tab Name | Purpose | Required / Created Columns |
 | --- | --- | --- |
 | `settings` | Change any site heading, subtitle, badge, cover story ID, or video embed URL | `key`, `value`, `description` |
-| `published_articles` | All main feed articles & playbooks (set `is_live` to `TRUE` or `FALSE`) | `article_id`, `title`, `category`, `summary`, `article_body_text`, `author`, `published_at`, `cover_image_url`, `is_live`, `takeaway`, `try_tomorrow`, `script`, `read_time`, `featured`, `has_video_demo`, `tags` |
+| `published_articles` | All main feed articles (set `is_live` to `TRUE` or `FALSE`) | `article_id`, `title`, `category`, `summary`, `article_body_text`, `author`, `published_at`, `cover_image_url`, `is_live`, `takeaway`, `try_tomorrow`, `script`, `read_time`, `featured`, `has_video_demo`, `tags` |
 | `quick_wins` | Context-aware Quick Wins banner cards per section (`all`, `Student Engagement`, `Classroom Management`, `Teacher Support`, `Tech & AI`, `saved`, `view-directory`, `view-bulletin`, `view-studio`, `view-academy`) | `tip_id`, `section`, `category_label`, `title`, `tip`, `is_live` |
 | `directory_links` | Heart of MMS Building Directory cards | `resource_id`, `title`, `category`, `description`, `url`, `tags`, `update_status`, `is_live` |
 | `lounge_quotes` | Staff Lounge forum posts (wins, quotes, questions) shown in the sidebar and the Staff Lounge page; reaction counts are saved here | `quote_id`, `quote`, `attribution`, `is_live`, `post_type` (`win`/`quote`/`question`), `appreciate`, `empathy`, `respect` |
@@ -550,7 +550,7 @@ Spreadsheet edits after this setup do not require another deployment.
       live articles and the documented public fields are returned, not submissions
       or extra private columns.
 - [ ] **D. Verify display and search:** Refresh the site. Find the article under
-      Latest Articles and Teacher Support; open **Read Full Playbook** and check
+      Latest Articles and Teacher Support; open **Read Full Article** and check
       its complete body. In **Instant** search, find its title and then
       `silver eagle experiment`; select the result and verify the same reader.
       Bookmark it and verify it appears in Saved.

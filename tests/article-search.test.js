@@ -72,7 +72,7 @@ test('results show escaped article excerpts, disclose the limit, and open the se
   let opened = false;
   const results = Array.from({ length: 8 }, (_, i) => ({
     item: {
-      type: 'Article Playbook', title: `<Article ${i}>`, category: 'Teacher Support',
+      type: 'Article', title: `<Article ${i}>`, category: 'Teacher Support',
       desc: '<script>not markup</script>', action: () => { opened = true; }
     }
   }));
