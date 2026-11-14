@@ -276,6 +276,21 @@
       .hero-sub, #miniBar, #railTip, .stack-card, #siteRail, .fade-card, #sitePopupBody, .scroll-hint { transition: none !important; animation: none !important; }
       .fade-card { opacity: 1; transform: none; }
     }
+
+    /* Flashed on a card when a global search result deep-links to it, so the user
+       can see exactly which entry matched without searching again on that page. */
+    .search-jump-highlight {
+      animation: search-jump-flash 2.1s ease-out;
+      position: relative;
+      z-index: 1;
+    }
+    @keyframes search-jump-flash {
+      0%, 35% { box-shadow: 0 0 0 3px #dc2626, 0 0 24px rgba(220,38,38,.45); }
+      100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .search-jump-highlight { animation: none; box-shadow: 0 0 0 3px #dc2626; }
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-red-600 selection:text-white">
@@ -1596,7 +1611,17 @@
           category: r.category,
           desc: r.description,
           tags: (r.tags || []).join(' '),
-          action: () => switchView('view-directory')
+          action: () => {
+            // Clear any stale directory filters so the matched resource is guaranteed
+            // to render, then scroll straight to its card instead of its full list.
+            const directorySearch = document.getElementById('directorySearch');
+            const directoryCategory = document.getElementById('directoryCategory');
+            if (directorySearch) directorySearch.value = '';
+            if (directoryCategory) directoryCategory.value = 'all';
+            renderDirectory('all', '');
+            switchView('view-directory');
+            jumpToSearchMatch(`[data-resource-id="${CSS.escape(String(r.id))}"]`);
+          }
         });
       });
 
@@ -1608,7 +1633,10 @@
           category: t.badge || 'Tech & AI',
           desc: `${t.description || ''} ${t.teacherWorkflow || ''} ${t.studentWorkflow || ''}`.trim(),
           tags: 'tool',
-          action: () => switchView('view-academy')
+          action: () => {
+            switchView('view-academy');
+            jumpToSearchMatch(`[data-tool-id="${CSS.escape(String(t.id))}"]`);
+          }
         });
       });
 
@@ -2042,6 +2070,7 @@
       items.forEach(r => {
         const card = document.createElement('article');
         card.className = 'bg-white rounded-2xl border border-cream-300 p-5 shadow-2xs flex flex-col justify-between space-y-3';
+        card.dataset.resourceId = r.id;
         const safeUrl = sanitizeHttpUrl(r.url);
         const status = String(r.updateStatus || '').toLowerCase().replace(/[\s_]+/g, '-');
         const statusBadge = status === 'needs-update'
@@ -2213,6 +2242,7 @@
         const safeUrl = sanitizeHttpUrl(tool.url);
         const isPrimary = idx === 0;
         const card = document.createElement('div');
+        card.dataset.toolId = tool.id;
         card.className = isPrimary
           ? 'bg-white rounded-3xl border-2 border-red-300 p-6 shadow-sm space-y-3 flex flex-col justify-between'
           : 'bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-3 flex flex-col justify-between';
@@ -3307,6 +3337,22 @@
 
       window.closeSitePopups?.();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Scrolls a search result's matching card into view and flashes it, so a global search
+    // click lands on the exact entry instead of leaving the user to search again on that page.
+    function jumpToSearchMatch(selector, attempt = 0) {
+      const el = document.querySelector(selector);
+      if (!el) {
+        if (attempt < 10) setTimeout(() => jumpToSearchMatch(selector, attempt + 1), 80);
+        return;
+      }
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.remove('search-jump-highlight');
+      // Force a reflow so the animation restarts if the same element was just highlighted.
+      void el.offsetWidth;
+      el.classList.add('search-jump-highlight');
+      setTimeout(() => el.classList.remove('search-jump-highlight'), 2200);
     }
 
     // --- SHARED LOCAL KEYWORD SEARCH ---
