@@ -280,6 +280,8 @@
     @keyframes tray-in { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: none; } }
     .minimized-reader-pill { animation: pill-in .18s ease; }
     @keyframes pill-in { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: none; } }
+    /* Keep the minimized-reader tray clear of the persistent desktop icon rail */
+    @media (min-width: 1024px) { #minimizedReaderTray { left: 3.5rem; } }
     .scrollbar-none { scrollbar-width: none; }
     .scrollbar-none::-webkit-scrollbar { display: none; }
 
