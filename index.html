@@ -1015,8 +1015,10 @@
   <!-- ========================================== -->
   <div id="articleReaderModal" class="fixed inset-0 bg-ink-900/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
 
-    <!-- ALWAYS-VISIBLE READER CONTROLS (fixed to viewport so they stay reachable while scrolling) -->
-    <div class="fixed top-4 right-4 z-[60] flex items-center gap-2">
+    <!-- ALWAYS-VISIBLE READER CONTROLS (fixed to viewport so they stay reachable while scrolling, but
+         horizontally aligned to the visible article card's right edge via positionReaderControls(), not
+         the page corner) -->
+    <div id="articleReaderControls" class="fixed top-4 right-4 z-[60] flex items-center gap-2">
       <button id="minimizeArticleReaderBtn" title="Minimize to footer" aria-label="Minimize article" class="w-9 h-9 rounded-full bg-ink-900/80 hover:bg-ink-900 text-white flex items-center justify-center transition">
         <i data-lucide="minus" class="w-5 h-5"></i>
       </button>
@@ -1583,7 +1585,25 @@
     // Tracks the reader currently shown in the modal: { type: 'article'|'smore', id, title, image } or null.
     let currentReaderRef = null;
     // Minimized readers tray: list of { type, id, title, image } entries, most recent first.
+    // Persisted to this browser's localStorage so the tray survives a page refresh.
+    const MINIMIZED_READERS_STORAGE_KEY = 'edd_minimized_readers';
     let minimizedReaders = [];
+
+    function loadMinimizedReaders() {
+      try {
+        const raw = localStorage.getItem(MINIMIZED_READERS_STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        minimizedReaders = Array.isArray(parsed) ? parsed.filter(r => r && r.type && r.id) : [];
+      } catch (e) {
+        minimizedReaders = [];
+      }
+    }
+
+    function saveMinimizedReaders() {
+      try {
+        localStorage.setItem(MINIMIZED_READERS_STORAGE_KEY, JSON.stringify(minimizedReaders));
+      } catch (e) { /* storage unavailable (private mode, quota, etc.) — fail silently */ }
+    }
     let suggestionIndex = 0;
     let suggestionInterval = null;
 
@@ -2015,6 +2035,21 @@
 
     // --- ARTICLE READER MODAL: open / minimize / restore / tray ---
 
+    // Keeps the minimize/close buttons pinned to the visible article card's top-right
+    // corner (rather than the far page corner) at any viewport width.
+    function positionReaderControls() {
+      const modal = document.getElementById('articleReaderModal');
+      const card = document.getElementById('articleReaderCard');
+      const controls = document.getElementById('articleReaderControls');
+      if (!modal || !card || !controls || modal.classList.contains('hidden')) return;
+      const rect = card.getBoundingClientRect();
+      if (!rect.width) return;
+      const overlap = 8; // nudge the buttons slightly onto the card's corner
+      const rightGap = Math.max(16, window.innerWidth - rect.right + overlap);
+      controls.style.right = rightGap + 'px';
+    }
+    window.addEventListener('resize', positionReaderControls);
+
     function showReaderModal() {
       const modal = document.getElementById('articleReaderModal');
       const card = document.getElementById('articleReaderCard');
@@ -2024,6 +2059,7 @@
       card.classList.remove('reader-card-anim');
       void card.offsetWidth;
       card.classList.add('reader-card-anim');
+      requestAnimationFrame(positionReaderControls);
     }
 
     function closeReaderModal() {
@@ -2046,11 +2082,13 @@
       minimizedReaders.unshift(ref);
       if (minimizedReaders.length > 6) minimizedReaders.length = 6;
       renderMinimizedTray();
+      saveMinimizedReaders();
     }
 
     function removeMinimizedReader(type, id) {
       minimizedReaders = minimizedReaders.filter(r => !(r.type === type && r.id === id));
       renderMinimizedTray();
+      saveMinimizedReaders();
     }
 
     function dismissMinimizedReader(type, id, event) {
@@ -2067,6 +2105,7 @@
       }
       minimizedReaders = minimizedReaders.filter(r => !(r.type === type && r.id === id));
       renderMinimizedTray();
+      saveMinimizedReaders();
       if (type === 'smore') openSmoreReader(id);
       else openArticleReader(id);
     }
@@ -3692,6 +3731,11 @@
     document.addEventListener('DOMContentLoaded', () => {
       savedBookmarks = getStored('mms_saved_bookmarks', ['art-1', 'art-7']);
       document.getElementById('savedCountLabel').textContent = savedBookmarks.length;
+
+      // Restore the minimized-reader tray from this browser's storage so it stays
+      // visible across a refresh whenever it had articles in it.
+      loadMinimizedReaders();
+      renderMinimizedTray();
 
       initRevolvingSearchSuggestions();
       initNotifications();
