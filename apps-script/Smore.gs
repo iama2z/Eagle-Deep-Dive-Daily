@@ -1268,7 +1268,7 @@ function seedDefaultSettings_(settingsSheet) {
     ['hero_article_id', 'art-1', 'article_id of the featured cover story on the home feed'],
     ['hero_badge', 'Cover Story • Student Engagement', 'Badge shown on the cover story image'],
     ['hero_button_label', 'Read Full Story & Script', 'Button text on the cover story card'],
-    ['feed_heading_all', 'Latest Articles & Classroom Playbooks', 'Main heading above the articles grid'],
+    ['feed_heading_all', 'Latest Articles & Classroom Resources', 'Main heading above the articles grid'],
     ['article_search_heading', 'Find an Article', 'Sidebar article search title'],
     ['article_search_subtitle', 'Search published articles by keyword', 'Sidebar article search subtitle'],
     ['article_search_intro', 'Enter a topic or a few keywords, or choose a shortcut below. Minor typos are OK.', 'Sidebar article search description'],
@@ -1295,7 +1295,7 @@ function seedDefaultSettings_(settingsSheet) {
     ['menu_title', 'Site Navigation Menu', 'Small heading at the top of the site menu'],
     ['menu_badge', 'Eagles Hub', 'Red badge in the site menu header'],
     ['menu_home_title', 'Home: Main Editorial Feed', 'Menu item: Home title'],
-    ['menu_home_desc', 'All featured stories, playbooks & quick wins', 'Menu item: Home description'],
+    ['menu_home_desc', 'All featured stories, articles & quick wins', 'Menu item: Home description'],
     ['menu_section_heading', 'Building Wings & Special Sections', 'Menu heading above the special page links'],
     ['menu_directory_title', 'Directory', 'Menu item: Directory title'],
     ['menu_directory_desc', 'Clean, searchable building links & forms', 'Menu item: Directory description'],
@@ -1409,7 +1409,7 @@ function seedDefaultSettings_(settingsSheet) {
     ['quicktips_tech_heading', 'Tech Talk Quick Wins: Practical Classroom Tools', 'Quick Wins banner heading for Tech Talk'],
     ['quicktips_tech_subtitle', 'Zero-fluff workflows for NotebookLM, OrbitNote PDF markup, and classroom video creation', 'Quick Wins banner subtitle for Tech Talk'],
     ['quicktips_tech_badge', 'Tech Talk Focus', 'Quick Wins banner badge for Tech Talk'],
-    ['quicktips_saved_heading', 'Reading List Quick Wins: Put Your Saved Playbooks to Work', 'Quick Wins banner heading for Saved Reading List'],
+    ['quicktips_saved_heading', 'Reading List Quick Wins: Put Your Saved Articles to Work', 'Quick Wins banner heading for Saved Reading List'],
     ['quicktips_saved_subtitle', 'Simple ways to test bookmarked strategies with your PLC or next-hour class', 'Quick Wins banner subtitle for Saved Reading List'],
     ['quicktips_saved_badge', 'Your Personal Vault', 'Quick Wins banner badge for Saved Reading List'],
   ];
@@ -1788,7 +1788,7 @@ function defaultPageSectionsSeed_() {
   return [
     { section_id: 'tech-video', page: 'tech_ai', kind: 'videos', layout: 'stack', title: '', intro: '', badge: '', sort_order: 10, is_live: 'TRUE' },
     { section_id: 'tech-prompts', page: 'tech_ai', kind: 'blocks', layout: 'columns', title: 'Copy-Paste NotebookLM Workflows', intro: 'Upload your unit slides, lab sheets, or standards PDF into NotebookLM, then copy a prompt.', badge: 'Prompt Recipes', sort_order: 20, is_live: 'TRUE' },
-    { section_id: 'tech-playbook', page: 'tech_ai', kind: 'blocks', layout: 'columns', title: 'Classroom Video Playbook', intro: 'Ideas for teacher-made and student-created videos.', badge: 'Under 3 Minutes', sort_order: 30, is_live: 'TRUE' },
+    { section_id: 'tech-article', page: 'tech_ai', kind: 'blocks', layout: 'columns', title: 'Classroom Video Article', intro: 'Ideas for teacher-made and student-created videos.', badge: 'Under 3 Minutes', sort_order: 30, is_live: 'TRUE' },
     { section_id: 'tech-tools', page: 'tech_ai', kind: 'tools', layout: 'stack', title: 'Essential Classroom Tech Toolkit', intro: 'Tools that work smoothly on school Chromebooks.', badge: '', sort_order: 40, is_live: 'TRUE' }
   ];
 }
@@ -1811,16 +1811,16 @@ function defaultContentBlocksSeed_() {
     prompt('prompt-listening-station', 40, 'Audio Overview Listening Station Sheet',
       'Pairs with NotebookLM\'s 2-host podcast generator for active listening stations.',
       'Create a 1-page student station guide with 4 key vocabulary look-fors, 2 diagram sketching boxes, and 3 pause-and-predict questions to accompany the NotebookLM Audio Overview for this unit.'),
-    { block_id: 'playbook-teacher', section_id: 'tech-playbook', block_type: 'list', title: 'Making Short, Content-Focused Videos for Your Students',
+    { block_id: 'article-teacher', section_id: 'tech-article', block_type: 'list', title: 'Making Short, Content-Focused Videos for Your Students',
       body: 'The Lab Setup & Safety Loop: record a 90-second walkthrough of equipment setup and post it in Google Classroom.\nThe Worked-Example Replay: record yourself solving one tough problem so students or parents can replay it at home.\nMissing-Student Slide Narration: record a 2-minute voiceover over a catch-up outline for absent students.',
       description: '', url: '', link_label: '', style: 'numbered', sort_order: 10 },
-    { block_id: 'playbook-student', section_id: 'tech-playbook', block_type: 'list', title: 'Having Students Make Videos to Prove Mastery',
+    { block_id: 'article-student', section_id: 'tech-article', block_type: 'list', title: 'Having Students Make Videos to Prove Mastery',
       body: 'Box 1 (0-15s) The Hook & Claim: state the mystery question and your team\'s claim.\nBox 2 (15-60s) Visual Diagram Proof: point to your model or graph and explain why using 3 unit vocabulary words.\nBox 3 (60-90s) Bust the Myth: explain the #1 common trap and why the evidence disproves it.',
       description: '', url: '', link_label: '', style: 'bullets', sort_order: 20 },
-    { block_id: 'playbook-tip', section_id: 'tech-playbook', block_type: 'callout', title: 'Pro Tip',
+    { block_id: 'article-tip', section_id: 'tech-article', block_type: 'callout', title: 'Pro Tip',
       body: 'Never re-record over a tiny verbal stumble. Authentic one-take videos feel like real teaching.',
       description: '', url: '', link_label: '', style: 'green', sort_order: 30 },
-    { block_id: 'playbook-student-rubric', section_id: 'tech-playbook', block_type: 'prompt', title: 'Student Video Directions & 3-Box Rubric',
+    { block_id: 'article-student-rubric', section_id: 'tech-article', block_type: 'prompt', title: 'Student Video Directions & 3-Box Rubric',
       body: 'Student 90-Second Video Rubric & Directions: 1) Complete your 3-Box Paper Storyboard first and get a teacher stamp. 2) Record a 60-90 second One-Take Video (Paper Slide or Chromebook Screencast). 3) Must include: Visual diagram on screen, all 3 target vocabulary words used in context, and 1 busted misconception.',
       description: '', url: '', link_label: 'Copy directions', style: 'neutral', sort_order: 40 }
   ];
