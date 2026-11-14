@@ -449,6 +449,21 @@
           </div>
         </div>
 
+        <!-- WHAT'S NEW NOTIFICATIONS -->
+        <div class="relative shrink-0">
+          <button id="notifyBellBtn" type="button" aria-label="What's new since your last visit" aria-haspopup="true" aria-expanded="false" title="What's new" class="relative w-10 h-10 rounded-full bg-white border border-cream-300 hover:bg-cream-100 flex items-center justify-center text-ink-900 transition">
+            <i data-lucide="bell" class="w-4 h-4"></i>
+            <span id="notifyBadge" class="hidden absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center border-2 border-white">0</span>
+          </button>
+          <div id="notifyPanel" class="hidden absolute right-0 top-full mt-3 w-80 max-w-[90vw] bg-white rounded-2xl shadow-2xl border border-cream-300 z-50">
+            <div class="px-4 py-3 border-b border-cream-200 flex items-center justify-between">
+              <span class="text-[10px] font-extrabold uppercase tracking-widest text-ink-400">What's new</span>
+              <button id="notifyClearBtn" type="button" class="text-[11px] font-bold text-red-600 hover:text-red-700">Mark all read</button>
+            </div>
+            <ul id="notifyList" class="max-h-96 overflow-y-auto divide-y divide-cream-200"></ul>
+          </div>
+        </div>
+
 
 
       </div>
@@ -2121,6 +2136,7 @@
         if (!result?.ok) throw new Error(result?.error || 'The server could not save this reaction. Redeploy the updated Apps Script and reload.');
         if (!Number.isInteger(result.count) || result.count < 0) throw new Error('Invalid reaction response. Reload to check the saved count.');
         post.reactions[key] = result.count;
+        if (typeof syncNotifySnapshotPost === 'function') syncNotifySnapshotPost(postId);
       } catch (error) {
         // Roll back so the shown count matches what was actually saved.
         post.reactions[key] = previousCount;
@@ -3055,6 +3071,7 @@
         if (!data || !data.ok || !Array.isArray(data.quotes)) throw new Error('Unexpected lounge response');
         APP_DATA.loungeQuotes = mapLoungeQuotes(data.quotes);
         renderLoungeQuotes();
+        checkForUpdates();
         status.textContent = `Lounge updated at ${new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}.`;
       } catch (err) {
         console.warn('Lounge refresh failed:', err);
@@ -3226,6 +3243,7 @@
           renderAcademyPage();
           initFuse();
         } finally {
+          if (!siteLoadFailed) checkForUpdates();
           stopLoadingMessages();
           status.textContent = notice;
           status.hidden = !notice;
@@ -3321,11 +3339,138 @@
     }
 
     // --- EVENT LISTENERS ---
+    // NOTIFICATIONS START
+    const NOTIFY_SNAPSHOT_KEY = 'mms_notify_snapshot';
+    const NOTIFY_ITEMS_KEY = 'mms_notify_items';
+    const NOTIFY_MAX_ITEMS = 30;
+    const NOTIFY_REACTION_ICONS = { appreciate: '🙏', empathy: '💛', respect: '👏' };
+
+    function notifyShort(text) {
+      const t = String(text || '').trim();
+      return t.length > 60 ? t.slice(0, 57) + '…' : t;
+    }
+
+    function buildNotifySnapshot(articles, quotes) {
+      const snap = { a: {}, l: {} };
+      (articles || []).filter(a => a.source === 'published_articles').forEach(a => { snap.a[a.id] = a.title; });
+      (quotes || []).forEach(q => { snap.l[q.id] = { q: q.quote, r: { ...q.reactions } }; });
+      return snap;
+    }
+
+    function diffNotifySnapshots(prev, cur, now) {
+      const items = [];
+      Object.keys(cur.a).forEach(id => {
+        if (!(id in prev.a)) items.push({ ts: now, view: 'view-editorial', articleId: id, text: `New article: ${notifyShort(cur.a[id])}` });
+      });
+      Object.keys(cur.l).forEach(id => {
+        const post = cur.l[id];
+        const old = prev.l[id];
+        if (!old) {
+          items.push({ ts: now, view: 'view-lounge', text: `New in the Staff Lounge: “${notifyShort(post.q)}”` });
+          return;
+        }
+        const gains = Object.keys(NOTIFY_REACTION_ICONS)
+          .map(k => [k, (post.r[k] || 0) - ((old.r || {})[k] || 0)])
+          .filter(([, n]) => n > 0)
+          .map(([k, n]) => `${NOTIFY_REACTION_ICONS[k]} +${n}`);
+        if (gains.length) items.push({ ts: now, view: 'view-lounge', text: `${gains.join(' ')} on “${notifyShort(post.q)}”` });
+      });
+      return items;
+    }
+
+    function checkForUpdates() {
+      const cur = buildNotifySnapshot(APP_DATA.articles, APP_DATA.loungeQuotes);
+      const prev = getStored(NOTIFY_SNAPSHOT_KEY, null);
+      if (prev && prev.a && prev.l) {
+        const fresh = diffNotifySnapshots(prev, cur, Date.now());
+        if (fresh.length) setStored(NOTIFY_ITEMS_KEY, [...fresh, ...getStored(NOTIFY_ITEMS_KEY, [])].slice(0, NOTIFY_MAX_ITEMS));
+      }
+      if (prev && prev.s) cur.s = prev.s;
+      setStored(NOTIFY_SNAPSHOT_KEY, cur);
+      renderNotifications();
+    }
+
+    function diffSubmissions(prevSeen, submissions, now) {
+      return submissions
+        .filter(s => s.id && !(s.id in prevSeen) && String(s.status).toLowerCase() === 'pending')
+        .map(s => ({ ts: now, text: `New submission awaiting review: ${notifyShort(s.title || s.submission_type || s.id)}` }));
+    }
+
+    // Called by the admin console after it loads with the passcode; the passcode is never stored,
+    // so pending submissions are only ever surfaced to a browser that has just unlocked admin.
+    function reportAdminSubmissions(submissions) {
+      const snap = getStored(NOTIFY_SNAPSHOT_KEY, null);
+      if (!snap || !Array.isArray(submissions)) return;
+      if (snap.s) {
+        const fresh = diffSubmissions(snap.s, submissions, Date.now());
+        if (fresh.length) setStored(NOTIFY_ITEMS_KEY, [...fresh, ...getStored(NOTIFY_ITEMS_KEY, [])].slice(0, NOTIFY_MAX_ITEMS));
+      }
+      snap.s = {};
+      submissions.forEach(x => { if (x.id) snap.s[x.id] = 1; });
+      setStored(NOTIFY_SNAPSHOT_KEY, snap);
+      renderNotifications();
+    }
+
+    // Keeps your own reactions from being reported back to you as news.
+    function syncNotifySnapshotPost(postId) {
+      const snap = getStored(NOTIFY_SNAPSHOT_KEY, null);
+      const post = (APP_DATA.loungeQuotes || []).find(q => q.id === postId);
+      if (!snap || !snap.l || !post) return;
+      snap.l[postId] = { q: post.quote, r: { ...post.reactions } };
+      setStored(NOTIFY_SNAPSHOT_KEY, snap);
+    }
+
+    function renderNotifications() {
+      const items = getStored(NOTIFY_ITEMS_KEY, []);
+      const badge = document.getElementById('notifyBadge');
+      const list = document.getElementById('notifyList');
+      if (!badge || !list) return;
+      badge.textContent = items.length > 9 ? '9+' : String(items.length);
+      badge.classList.toggle('hidden', !items.length);
+      list.innerHTML = items.length ? items.map((n, i) => `
+        <li><button type="button" data-notify-index="${i}" class="w-full text-left px-4 py-2.5 hover:bg-cream-100">
+          <div class="text-xs text-ink-900">${escapeHtml(n.text)}</div>
+          <div class="text-[10px] text-ink-400 mt-0.5">${escapeHtml(new Date(n.ts).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }))}</div>
+        </button></li>`).join('')
+        : '<li class="px-4 py-6 text-xs text-ink-600 text-center">You\'re all caught up.</li>';
+    }
+
+    function initNotifications() {
+      const bell = document.getElementById('notifyBellBtn');
+      const panel = document.getElementById('notifyPanel');
+      if (!bell || !panel) return;
+      const setOpen = open => {
+        panel.classList.toggle('hidden', !open);
+        bell.setAttribute('aria-expanded', String(open));
+      };
+      bell.addEventListener('click', event => { event.stopPropagation(); setOpen(panel.classList.contains('hidden')); });
+      document.addEventListener('click', event => { if (!panel.contains(event.target)) setOpen(false); });
+      document.getElementById('notifyClearBtn').addEventListener('click', () => {
+        setStored(NOTIFY_ITEMS_KEY, []);
+        renderNotifications();
+      });
+      document.getElementById('notifyList').addEventListener('click', event => {
+        const row = event.target.closest('[data-notify-index]');
+        if (!row) return;
+        const items = getStored(NOTIFY_ITEMS_KEY, []);
+        const [item] = items.splice(Number(row.dataset.notifyIndex), 1);
+        setStored(NOTIFY_ITEMS_KEY, items);
+        renderNotifications();
+        setOpen(false);
+        if (!item) return;
+        if (item.articleId && typeof openArticleReader === 'function') openArticleReader(item.articleId);
+        else if (item.view) switchView(item.view);
+      });
+      renderNotifications();
+    }
+    // NOTIFICATIONS END
+
     document.addEventListener('DOMContentLoaded', () => {
       savedBookmarks = getStored('mms_saved_bookmarks', ['art-1', 'art-7']);
       document.getElementById('savedCountLabel').textContent = savedBookmarks.length;
 
       initRevolvingSearchSuggestions();
+      initNotifications();
       document.querySelectorAll('[data-sheet-region]').forEach(region => {
         region.inert = true;
         region.setAttribute('aria-busy', 'true');
@@ -3932,6 +4077,7 @@
 
       async function loadData() {
         data = await api('admin_load', {}, LOAD_MESSAGES);
+        if (typeof reportAdminSubmissions === 'function') reportAdminSubmissions(data.submissions);
       }
 
       function pendingCount() {
