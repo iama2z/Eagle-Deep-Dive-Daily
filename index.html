@@ -1054,7 +1054,10 @@
         </div>
 
         <div class="pt-4 border-t border-cream-300 flex items-center justify-between">
-          <span data-text="article_share_note" class="text-xs text-ink-600">Found this helpful? Share it with your PLC or pin it to your reading list.</span>
+          <button id="readerSaveBtn" type="button" class="bookmark-btn flex items-center gap-2 text-left text-xs text-ink-600 hover:text-red-600 transition" data-id="" title="Save to reading list">
+            <i data-lucide="bookmark" class="w-4 h-4 shrink-0"></i>
+            <span id="readerSaveLabel" data-text="article_share_note">Found this helpful? Share it with your PLC or pin it to your reading list.</span>
+          </button>
           <button data-text="article_done_button" id="closeArticleReaderBottomBtn" class="px-5 py-2 rounded-full bg-ink-900 text-white text-xs font-bold hover:bg-ink-800 transition">
             Done Reading
           </button>
@@ -1928,6 +1931,24 @@
       lucide.createIcons();
     }
 
+    function syncReaderSaveBtn(id) {
+      const btn = document.getElementById('readerSaveBtn');
+      if (!btn) return;
+      btn.dataset.id = id || '';
+      btn.classList.toggle('hidden', !id);
+      if (!id) return;
+      const saved = savedBookmarks.includes(id);
+      const icon = btn.querySelector('svg, i');
+      if (icon) {
+        const el = document.createElement('i');
+        el.setAttribute('data-lucide', 'bookmark');
+        el.setAttribute('class', 'w-4 h-4 shrink-0 ' + (saved ? 'fill-red-600 text-red-600' : ''));
+        icon.replaceWith(el);
+        if (window.lucide) lucide.createIcons();
+      }
+      btn.title = saved ? 'Remove from reading list' : 'Save to reading list';
+    }
+
     function openArticleReader(articleId) {
       const art = APP_DATA.articles.find(a => a.id === articleId);
       if (!art) return;
@@ -1946,6 +1967,7 @@
       document.getElementById('readerTryTomorrow').textContent = art.tryTomorrow;
       document.getElementById('readerScript').textContent = `"${art.script}"`;
       currentReaderScript = art.script;
+      syncReaderSaveBtn(art.id);
 
       renderReaderVideoCallout(art);
 
@@ -2780,6 +2802,7 @@
       document.getElementById('readerScriptBox').classList.add('hidden');
       document.getElementById('readerVideoDemoBox').classList.add('hidden');
       currentReaderScript = '';
+      syncReaderSaveBtn('');
       const paragraphs = document.getElementById('readerParagraphs');
       paragraphs.replaceChildren();
       const body = issue.article_body_text || 'Full newsletter content is not available yet. Open the original Smore below.';
@@ -3558,6 +3581,7 @@
         setStored('mms_saved_bookmarks', savedBookmarks);
         document.getElementById('savedCountLabel').textContent = savedBookmarks.length;
         renderArticlesGrid(activeCategory);
+        syncReaderSaveBtn(document.getElementById('readerSaveBtn').dataset.id);
       });
 
       // Top-Left Icon Navigation Menu
