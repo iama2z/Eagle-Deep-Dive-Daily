@@ -981,7 +981,21 @@
           </form>
         </div>
 
-        <div class="lg:col-span-2 space-y-4" id="tuningSubmissionsContainer"></div>
+        <div class="lg:col-span-2 space-y-4">
+          <div class="flex flex-wrap items-center gap-2 text-xs">
+            <label for="studioFilterSubject" class="font-bold text-ink-800">Subject</label>
+            <select id="studioFilterSubject" class="px-3 py-2 rounded-xl border border-cream-300 bg-white">
+              <option value="all">All subjects</option>
+            </select>
+            <label for="studioFilterSort" class="font-bold text-ink-800 ml-2">Sort by date</label>
+            <select id="studioFilterSort" class="px-3 py-2 rounded-xl border border-cream-300 bg-white">
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+            </select>
+            <span class="text-ink-500">Click a draft to open its feedback forum</span>
+          </div>
+          <div class="space-y-4" id="tuningSubmissionsContainer"></div>
+        </div>
       </div>
     </div>
 
@@ -1227,6 +1241,61 @@
             <button type="button" id="cancelLoungePostBtn" class="px-4 py-2 rounded-full border border-cream-300 text-ink-600 font-bold">Cancel</button>
             <button data-text="lounge_submit_button" type="submit" class="px-5 py-2 rounded-full bg-ink-900 hover:bg-ink-800 text-white font-bold">Post</button>
           </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: PEER FEEDBACK FORUM (comment thread for a lesson draft) -->
+  <!-- ========================================== -->
+  <div id="studioForumModal" class="fixed inset-0 bg-ink-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl border border-cream-300 max-w-2xl w-full p-6 sm:p-8 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-3 pb-3 border-b border-cream-200">
+        <div class="space-y-1">
+          <h3 id="studioForumTitle" class="font-editorial font-bold text-xl text-ink-900"></h3>
+          <p id="studioForumMeta" class="text-xs text-ink-600"></p>
+          <a id="studioForumDocLink" href="#" target="_blank" rel="noopener noreferrer" class="hidden text-xs font-bold text-red-600 hover:underline items-center gap-1">
+            <span>Open Lesson Document</span> <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
+        <button id="closeStudioForumBtn" type="button" aria-label="Close" class="text-ink-400 hover:text-ink-900 p-1 shrink-0"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div id="studioForumTally" class="flex flex-wrap gap-2 text-[11px]"></div>
+
+      <div class="flex flex-wrap gap-1.5" id="studioForumFilters">
+        <button type="button" data-forum-filter="all" class="studio-forum-filter px-3 py-1.5 rounded-full text-xs font-bold bg-ink-900 text-white">All Feedback</button>
+        <button type="button" data-forum-filter="warm" class="studio-forum-filter px-3 py-1.5 rounded-full text-xs font-bold bg-cream-100 text-ink-600">Warm</button>
+        <button type="button" data-forum-filter="cool" class="studio-forum-filter px-3 py-1.5 rounded-full text-xs font-bold bg-cream-100 text-ink-600">Cool</button>
+        <button type="button" data-forum-filter="mixed" class="studio-forum-filter px-3 py-1.5 rounded-full text-xs font-bold bg-cream-100 text-ink-600">Mixed</button>
+      </div>
+
+      <div id="studioForumComments" class="space-y-3"></div>
+
+      <form id="studioForumForm" class="space-y-3 text-xs pt-3 border-t border-cream-200">
+        <h4 class="font-editorial font-bold text-sm text-ink-900">Add to the conversation</h4>
+        <div class="flex flex-wrap gap-3">
+          <div class="flex-1 min-w-[160px]">
+            <label for="studioForumAuthor" class="block font-bold text-ink-800 mb-1">Your name / department</label>
+            <input id="studioForumAuthor" type="text" placeholder="e.g., 8th Grade Science" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" required />
+          </div>
+          <div class="w-36">
+            <label for="studioForumTag" class="block font-bold text-ink-800 mb-1">Feedback type</label>
+            <select id="studioForumTag" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 bg-white">
+              <option value="warm">Warm</option>
+              <option value="cool">Cool</option>
+              <option value="mixed">Mixed</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label for="studioForumText" class="block font-bold text-ink-800 mb-1">Your feedback</label>
+          <textarea id="studioForumText" rows="3" maxlength="1000" class="w-full p-3.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" required></textarea>
+        </div>
+        <div class="flex items-center justify-between gap-2">
+          <p id="studioForumStatus" class="text-xs" role="status" aria-live="polite"></p>
+          <button type="submit" class="px-5 py-2 rounded-full bg-ink-900 hover:bg-ink-800 text-white font-bold">Post Feedback</button>
         </div>
       </form>
     </div>
@@ -1563,6 +1632,7 @@
       resources: window.MMS_DIRECTORY_RESOURCES || [],
       loungeQuotes: [],
       studioItems: [],
+      studioComments: [],
       techTools: []
     };
 
@@ -2377,35 +2447,197 @@
       }
     }
 
+    const studioListState = { subject: 'all', sort: 'newest' };
+
+    function studioCommentCounts(studioId) {
+      const counts = { warm: 0, cool: 0, mixed: 0 };
+      (APP_DATA.studioComments || []).forEach(c => { if (c.studioId === studioId && counts[c.tag] !== undefined) counts[c.tag]++; });
+      return counts;
+    }
+
+    function populateStudioSubjectFilter() {
+      const select = document.getElementById('studioFilterSubject');
+      if (!select) return;
+      const subjects = [...new Set((APP_DATA.studioItems || []).map(i => i.subject).filter(Boolean))].sort();
+      const current = studioListState.subject;
+      select.innerHTML = '<option value="all">All subjects</option>' +
+        subjects.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+      select.value = subjects.includes(current) ? current : 'all';
+      studioListState.subject = select.value;
+    }
+
     function renderStudioItems() {
       const studioContainer = document.getElementById('tuningSubmissionsContainer');
       if (!studioContainer) return;
+      populateStudioSubjectFilter();
       studioContainer.innerHTML = siteLoadFailed ? LOAD_FAILURE_HTML : '';
-      (APP_DATA.studioItems || []).forEach(item => {
+      let items = [...(APP_DATA.studioItems || [])];
+      if (studioListState.subject !== 'all') items = items.filter(i => i.subject === studioListState.subject);
+      items.sort((a, b) => {
+        const diff = new Date(a.submittedAt || 0) - new Date(b.submittedAt || 0);
+        return studioListState.sort === 'oldest' ? diff : -diff;
+      });
+      if (!items.length) {
+        studioContainer.innerHTML = siteLoadFailed ? LOAD_FAILURE_HTML : '<div class="bg-white rounded-3xl border border-dashed border-cream-300 p-8 text-center text-ink-600 text-xs">No lesson drafts match these filters yet.</div>';
+        return;
+      }
+      items.forEach(item => {
         const docUrl = sanitizeHttpUrl(item.docUrl);
+        const counts = studioCommentCounts(item.id);
         const card = document.createElement('div');
-        card.className = 'bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-3 text-xs';
+        card.className = 'bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-3 text-xs cursor-pointer hover:border-red-300 transition';
+        card.dataset.studioId = item.id;
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
         card.innerHTML = `
           <div class="flex items-center justify-between gap-2">
             <span class="font-editorial font-bold text-base text-ink-900">${escapeHtml(item.title)}</span>
             <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-bold text-[10px]">${escapeHtml(item.subject)}</span>
           </div>
           <p class="text-ink-600"><strong>Focus Dilemma:</strong> ${escapeHtml(item.dilemma)}</p>
-          <div class="p-3.5 rounded-2xl bg-cream-100 space-y-1">
-            ${item.warmFeedback ? `<p><strong>Warm Feedback:</strong> “${escapeHtml(item.warmFeedback)}”</p>` : ''}
-            ${item.coolFeedback ? `<p><strong>Cool Feedback:</strong> “${escapeHtml(item.coolFeedback)}”</p>` : ''}
+          <div class="p-3.5 rounded-2xl bg-cream-100 flex flex-wrap gap-2 text-[11px] font-bold">
+            <span class="px-2.5 py-1 rounded-full bg-orange-100 text-orange-900">Warm Feedback: ${counts.warm}</span>
+            <span class="px-2.5 py-1 rounded-full bg-sky-100 text-sky-900">Cool Feedback: ${counts.cool}</span>
+            <span class="px-2.5 py-1 rounded-full bg-violet-100 text-violet-900">Mixed: ${counts.mixed}</span>
           </div>
-          ${docUrl ? `
-            <div class="pt-2 flex justify-end">
-              <a href="${escapeHtml(docUrl)}" target="_blank" rel="noopener noreferrer" class="font-bold text-red-600 hover:underline flex items-center gap-1">
+          <div class="pt-2 flex items-center justify-between gap-2">
+            <span class="text-ink-500 font-semibold">Click to open the feedback forum</span>
+            ${docUrl ? `
+              <a href="${escapeHtml(docUrl)}" target="_blank" rel="noopener noreferrer" data-studio-doc-link class="font-bold text-red-600 hover:underline flex items-center gap-1 shrink-0">
                 <span>Open Lesson Document</span> <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
               </a>
-            </div>
-          ` : ''}
+            ` : ''}
+          </div>
         `;
         studioContainer.appendChild(card);
       });
       lucide.createIcons();
+    }
+
+    // ---------------------------------------------------------------
+    // Peer Feedback Forum: comment thread modal (warm / cool / mixed tags, agree/disagree votes)
+    // ---------------------------------------------------------------
+    const STUDIO_FORUM_TAG_LABELS = { warm: 'Warm', cool: 'Cool', mixed: 'Mixed' };
+    const STUDIO_FORUM_TAG_CLASSES = { warm: 'bg-orange-100 text-orange-900', cool: 'bg-sky-100 text-sky-900', mixed: 'bg-violet-100 text-violet-900' };
+    let currentForumStudioId = null;
+    let studioForumFilter = 'all';
+    const pendingStudioCommentReactions = new Set();
+
+    function loadMyStudioCommentVotes() {
+      try { return JSON.parse(localStorage.getItem('studioCommentReactions') || '{}') || {}; } catch { return {}; }
+    }
+
+    function openStudioForum(studioId) {
+      const item = (APP_DATA.studioItems || []).find(i => i.id === studioId);
+      if (!item) return;
+      currentForumStudioId = studioId;
+      studioForumFilter = 'all';
+      document.querySelectorAll('.studio-forum-filter').forEach(b => {
+        const active = b.dataset.forumFilter === 'all';
+        b.classList.toggle('bg-ink-900', active);
+        b.classList.toggle('text-white', active);
+        b.classList.toggle('bg-cream-100', !active);
+        b.classList.toggle('text-ink-600', !active);
+      });
+      document.getElementById('studioForumTitle').textContent = item.title;
+      document.getElementById('studioForumMeta').textContent = `${item.subject} • ${item.dilemma}`;
+      const docLink = document.getElementById('studioForumDocLink');
+      const docUrl = sanitizeHttpUrl(item.docUrl);
+      if (docUrl) {
+        docLink.href = docUrl;
+        docLink.classList.remove('hidden');
+        docLink.classList.add('inline-flex');
+      } else {
+        docLink.classList.add('hidden');
+        docLink.classList.remove('inline-flex');
+      }
+      const form = document.getElementById('studioForumForm');
+      form.reset();
+      document.getElementById('studioForumStatus').textContent = '';
+      renderStudioForum();
+      const modal = document.getElementById('studioForumModal');
+      modal.classList.remove('hidden');
+    }
+
+    function closeStudioForum() {
+      document.getElementById('studioForumModal').classList.add('hidden');
+      currentForumStudioId = null;
+    }
+
+    function renderStudioForum() {
+      const tallyEl = document.getElementById('studioForumTally');
+      const listEl = document.getElementById('studioForumComments');
+      if (!tallyEl || !listEl || !currentForumStudioId) return;
+      const counts = studioCommentCounts(currentForumStudioId);
+      tallyEl.innerHTML = `
+        <span class="px-2.5 py-1 rounded-full font-bold bg-orange-100 text-orange-900">Warm: ${counts.warm}</span>
+        <span class="px-2.5 py-1 rounded-full font-bold bg-sky-100 text-sky-900">Cool: ${counts.cool}</span>
+        <span class="px-2.5 py-1 rounded-full font-bold bg-violet-100 text-violet-900">Mixed: ${counts.mixed}</span>
+      `;
+      const mine = loadMyStudioCommentVotes();
+      const comments = (APP_DATA.studioComments || [])
+        .filter(c => c.studioId === currentForumStudioId && (studioForumFilter === 'all' || c.tag === studioForumFilter))
+        .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      if (!comments.length) {
+        listEl.innerHTML = '<p class="text-xs text-ink-600">No comments yet in this category. Be the first to share feedback!</p>';
+        return;
+      }
+      listEl.innerHTML = '';
+      comments.forEach(c => {
+        const myVote = mine[c.id];
+        const card = document.createElement('div');
+        card.className = 'p-3.5 rounded-2xl bg-cream-50 border border-cream-200 space-y-2';
+        const myVotes = mine[c.id] || [];
+        card.innerHTML = `
+          <div class="flex items-center justify-between gap-2 text-[11px]">
+            <span class="px-2 py-0.5 rounded-full font-bold ${STUDIO_FORUM_TAG_CLASSES[c.tag]}">${STUDIO_FORUM_TAG_LABELS[c.tag]}</span>
+            <span class="text-ink-500 font-semibold">${escapeHtml(c.author)}${c.createdAt ? ' • ' + escapeHtml(formatDateLabel(c.createdAt)) : ''}</span>
+          </div>
+          <p class="text-xs text-ink-900 leading-relaxed whitespace-pre-line">${escapeHtml(c.text)}</p>
+          <div class="flex gap-2">
+            <button type="button" data-forum-react="agree" data-comment="${escapeHtml(c.id)}" aria-pressed="${myVotes.includes('agree')}" ${pendingStudioCommentReactions.has(c.id) ? 'disabled' : ''} class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold border ${myVotes.includes('agree') ? 'bg-emerald-50 border-emerald-300 text-emerald-700' : 'bg-white border-cream-300 text-ink-700 hover:bg-cream-100'}">👍 Agree <span>${c.agree}</span></button>
+            <button type="button" data-forum-react="disagree" data-comment="${escapeHtml(c.id)}" aria-pressed="${myVotes.includes('disagree')}" ${pendingStudioCommentReactions.has(c.id) ? 'disabled' : ''} class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold border ${myVotes.includes('disagree') ? 'bg-red-50 border-red-300 text-red-700' : 'bg-white border-cream-300 text-ink-700 hover:bg-cream-100'}">👎 Disagree <span>${c.disagree}</span></button>
+          </div>
+        `;
+        listEl.appendChild(card);
+      });
+    }
+
+    // Mirrors toggleLoungeReaction: one toggleable vote per browser per reaction key.
+    async function toggleStudioCommentReaction(commentId, key) {
+      const comment = (APP_DATA.studioComments || []).find(c => c.id === commentId);
+      if (!comment || pendingStudioCommentReactions.has(commentId)) return;
+      const status = document.getElementById('studioForumStatus');
+      if (status) status.textContent = '';
+      pendingStudioCommentReactions.add(commentId);
+      const mine = loadMyStudioCommentVotes();
+      const list = mine[commentId] || [];
+      const undo = list.includes(key);
+      const previousCount = comment[key] || 0;
+      mine[commentId] = undo ? list.filter(k => k !== key) : [...list, key];
+      comment[key] = Math.max(0, previousCount + (undo ? -1 : 1));
+      try { localStorage.setItem('studioCommentReactions', JSON.stringify(mine)); } catch {}
+      renderStudioForum();
+      try {
+        const res = await fetch(SUBMISSION_API_URL, {
+          method: 'POST',
+          body: new URLSearchParams({ action: 'react_studio_comment', comment_id: commentId, reaction: key, undo: String(undo) })
+        });
+        if (!res.ok) throw new Error(`Request failed (${res.status}).`);
+        const result = await res.json();
+        if (!result?.ok) throw new Error(result?.error || 'The server could not save this vote.');
+        comment[key] = result.count;
+      } catch (error) {
+        comment[key] = previousCount;
+        const currentMine = loadMyStudioCommentVotes();
+        currentMine[commentId] = list;
+        try { localStorage.setItem('studioCommentReactions', JSON.stringify(currentMine)); } catch {}
+        console.warn('Peer Feedback Forum reaction could not be saved.', error);
+        if (status) status.textContent = error instanceof TypeError ? 'Could not connect to save your vote. Please try again.' : error.message || 'Could not save your vote. Please try again.';
+      } finally {
+        pendingStudioCommentReactions.delete(commentId);
+        renderStudioForum();
+      }
     }
 
     function renderTechTools() {
@@ -3344,7 +3576,7 @@
         }
 
         if (('settings' in data && (!data.settings || typeof data.settings !== 'object' || Array.isArray(data.settings))) ||
-            ['articles', 'quick_wins', 'directory', 'quotes', 'studio', 'tech_tools', 'smore', 'image_library',
+            ['articles', 'quick_wins', 'directory', 'quotes', 'studio', 'studio_comments', 'tech_tools', 'smore', 'image_library',
               'page_sections', 'content_blocks', 'videos', 'video_chapters']
               .some(key => key in data && (!Array.isArray(data[key]) ||
                 data[key].some(row => !row || typeof row !== 'object' || Array.isArray(row))))) {
@@ -3417,11 +3649,26 @@
             title: String(s.title || '').trim(),
             subject: String(s.subject || 'MMS Staff').trim(),
             dilemma: String(s.dilemma || '').trim(),
-            warmFeedback: String(s.warm_feedback || '').trim(),
-            coolFeedback: String(s.cool_feedback || '').trim(),
-            docUrl: sanitizeHttpUrl(s.doc_url)
+            docUrl: sanitizeHttpUrl(s.doc_url),
+            submittedAt: String(s.submitted_at || '').trim()
           })).filter(s => s.title);
           APP_DATA.studioItems = studio;
+          renderStudioItems();
+        }
+
+        if (Array.isArray(data.studio_comments)) {
+          const validIds = new Set((APP_DATA.studioItems || []).map(s => s.id));
+          const comments = data.studio_comments.map((c, i) => ({
+            id: String(c.comment_id || `sc-${i + 1}`).trim(),
+            studioId: String(c.studio_id || '').trim(),
+            author: String(c.author || 'MMS Staff').trim(),
+            tag: ['warm', 'cool', 'mixed'].includes(String(c.tag || '').trim().toLowerCase()) ? String(c.tag).trim().toLowerCase() : 'mixed',
+            text: String(c.text || '').trim(),
+            agree: parseInt(c.agree_count, 10) || 0,
+            disagree: parseInt(c.disagree_count, 10) || 0,
+            createdAt: String(c.created_at || '').trim()
+          })).filter(c => c.studioId && c.text && (!validIds.size || validIds.has(c.studioId)));
+          APP_DATA.studioComments = comments;
           renderStudioItems();
         }
 
@@ -4036,6 +4283,103 @@
           submitButton.disabled = false;
         }
       });
+
+      // Peer Feedback Forum: filters on the submission list
+      document.getElementById('studioFilterSubject')?.addEventListener('change', (e) => {
+        studioListState.subject = e.target.value;
+        renderStudioItems();
+      });
+      document.getElementById('studioFilterSort')?.addEventListener('change', (e) => {
+        studioListState.sort = e.target.value;
+        renderStudioItems();
+      });
+
+      // Peer Feedback Forum: open the forum when a submission card is clicked (not its doc link)
+      document.getElementById('tuningSubmissionsContainer')?.addEventListener('click', (e) => {
+        if (e.target.closest('[data-studio-doc-link]')) return;
+        const card = e.target.closest('[data-studio-id]');
+        if (card) openStudioForum(card.dataset.studioId);
+      });
+      document.getElementById('tuningSubmissionsContainer')?.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        const card = e.target.closest('[data-studio-id]');
+        if (!card) return;
+        e.preventDefault();
+        openStudioForum(card.dataset.studioId);
+      });
+
+      // Peer Feedback Forum modal: close, filter tabs, agree/disagree votes, add-comment form
+      const studioForumModal = document.getElementById('studioForumModal');
+      document.getElementById('closeStudioForumBtn')?.addEventListener('click', closeStudioForum);
+      studioForumModal?.addEventListener('click', (e) => { if (e.target === studioForumModal) closeStudioForum(); });
+      document.getElementById('studioForumFilters')?.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-forum-filter]');
+        if (!btn) return;
+        studioForumFilter = btn.dataset.forumFilter;
+        document.querySelectorAll('.studio-forum-filter').forEach(b => {
+          const active = b === btn;
+          b.classList.toggle('bg-ink-900', active);
+          b.classList.toggle('text-white', active);
+          b.classList.toggle('bg-cream-100', !active);
+          b.classList.toggle('text-ink-600', !active);
+        });
+        renderStudioForum();
+      });
+      document.getElementById('studioForumComments')?.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-forum-react]');
+        if (btn) toggleStudioCommentReaction(btn.dataset.comment, btn.dataset.forumReact);
+      });
+      document.getElementById('studioForumForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const form = e.currentTarget;
+        const submitButton = form.querySelector('button[type="submit"]');
+        if (submitButton.disabled || !currentForumStudioId) return;
+        const author = document.getElementById('studioForumAuthor').value.trim();
+        const tag = document.getElementById('studioForumTag').value;
+        const text = document.getElementById('studioForumText').value.trim();
+        const status = document.getElementById('studioForumStatus');
+        const setStatus = (msg, isError = false) => {
+          status.textContent = msg;
+          status.className = `text-xs ${isError ? 'text-red-700' : 'text-emerald-700'}`;
+        };
+        if (!author || !text) {
+          setStatus('Please enter your name / department and your feedback.', true);
+          return;
+        }
+        submitButton.disabled = true;
+        setStatus('Posting your feedback…');
+        try {
+          const response = await fetch(SUBMISSION_API_URL, {
+            method: 'POST',
+            body: new URLSearchParams({ action: 'add_studio_comment', studio_id: currentForumStudioId, author, tag, text })
+          });
+          if (!response.ok) throw new Error(`Request failed (${response.status}).`);
+          const result = await response.json();
+          if (!result?.ok) throw new Error(result?.error || 'Your feedback could not be saved.');
+          const c = result.comment || {};
+          APP_DATA.studioComments.push({
+            id: String(c.comment_id || `sc-${Date.now()}`),
+            studioId: currentForumStudioId,
+            author: String(c.author || author),
+            tag: String(c.tag || tag),
+            text: String(c.text || text),
+            agree: 0,
+            disagree: 0,
+            createdAt: String(c.created_at || new Date().toISOString())
+          });
+          const keepAuthor = author;
+          form.reset();
+          document.getElementById('studioForumAuthor').value = keepAuthor;
+          setStatus('Thanks! Your feedback was posted.');
+          renderStudioForum();
+          renderStudioItems();
+        } catch (error) {
+          setStatus(error instanceof TypeError ? 'Could not connect. Please try again.' : error.message || 'Could not post your feedback. Please try again.', true);
+        } finally {
+          submitButton.disabled = false;
+        }
+      });
+
       document.getElementById('closeShareTipModalBtn')?.addEventListener('click', () => tipModal.classList.add('hidden'));
       document.getElementById('cancelShareTipBtn')?.addEventListener('click', () => tipModal.classList.add('hidden'));
 
@@ -4256,6 +4600,7 @@
         { id: 'directory', label: 'Heart of MMS Links', hint: 'Forms, maps, and operational links', icon: 'link', title: 'title', table: true },
         { id: 'quotes', label: 'Lounge Posts', hint: 'Shout Outs and staff lounge posts', icon: 'message-square', title: 'quote', table: true },
         { id: 'studio', label: 'Peer Feedback Forum', hint: 'Lesson drafts for feedback', icon: 'users', title: 'title', table: true },
+        { id: 'studio_comments', label: 'Peer Feedback Comments', hint: 'Moderate forum comments and reactions', icon: 'message-circle', title: 'text', table: true },
         { id: 'tech_tools', label: 'AI & Tech Tools', hint: 'Tool cards on the Video Lab page', icon: 'cpu', title: 'title', table: true },
         { id: 'image_library', label: 'Image Library', hint: 'Approved cover images', icon: 'image', title: 'label', table: true },
         { id: 'page_sections', label: 'Video Lab: Sections', hint: 'Section headings, intros and order', icon: 'layout-list', title: 'title', table: true },
@@ -4268,7 +4613,8 @@
         quick_wins: ['section', 'category_label', 'title', 'tip', 'is_live'],
         directory: ['title', 'category', 'description', 'url', 'tags', 'update_status', 'is_live'],
         quotes: ['quote', 'attribution', 'post_type', 'is_live'],
-        studio: ['title', 'subject', 'dilemma', 'warm_feedback', 'cool_feedback', 'doc_url', 'is_live'],
+        studio: ['title', 'subject', 'dilemma', 'doc_url', 'is_live'],
+        studio_comments: ['studio_id', 'author', 'tag', 'text', 'agree_count', 'disagree_count', 'is_live'],
         tech_tools: ['badge', 'title', 'link_label', 'url', 'description', 'teacher_workflow', 'student_workflow', 'is_live'],
         image_library: ['category', 'label', 'image_url', 'is_live'],
         page_sections: ['page', 'kind', 'layout', 'title', 'intro', 'badge', 'sort_order', 'is_live'],
@@ -4281,14 +4627,14 @@
       const ADVANCED = {
         articles: ['published_at', 'takeaway', 'try_tomorrow', 'script', 'read_time', 'featured', 'has_video_demo', 'tags'],
         directory: ['tags', 'update_status'],
-        studio: ['warm_feedback', 'cool_feedback'],
+        studio_comments: ['agree_count', 'disagree_count'],
         tech_tools: ['badge', 'link_label', 'teacher_workflow', 'student_workflow'],
         page_sections: ['badge', 'layout'],
         content_blocks: ['description', 'url', 'link_label'],
         videos: ['badge', 'link_label', 'description']
       };
-      const GROUP_BY = { articles: 'category', directory: 'category', quick_wins: 'section', quotes: 'post_type', image_library: 'category', content_blocks: 'section_id', video_chapters: 'video_id' };
-      const TABLE_CHOICES = { articles: { category: CATEGORIES }, quotes: { post_type: ['quote', 'win', 'question'] } };
+      const GROUP_BY = { articles: 'category', directory: 'category', quick_wins: 'section', quotes: 'post_type', image_library: 'category', content_blocks: 'section_id', video_chapters: 'video_id', studio_comments: 'studio_id' };
+      const TABLE_CHOICES = { articles: { category: CATEGORIES }, quotes: { post_type: ['quote', 'win', 'question'] }, studio_comments: { tag: ['warm', 'cool', 'mixed'] } };
       const choicesFor = (table, key) => (table && TABLE_CHOICES[table]?.[key]) || CHOICES[key];
       const openState = new Set();
       const filters = {};
@@ -4309,8 +4655,8 @@
         category: 'Choose the topic page this article appears on.',
         is_live: 'Live items show on the site; hidden items stay only in the sheet.'
       };
-      const ID_KEYS = { articles: 'article_id', quick_wins: 'tip_id', directory: 'resource_id', quotes: 'quote_id', studio: 'studio_id', tech_tools: 'tool_id', image_library: 'image_id', page_sections: 'section_id', content_blocks: 'block_id', videos: 'video_id', video_chapters: 'chapter_id' };
-      const LONG = new Set(['summary', 'article_body_text', 'takeaway', 'try_tomorrow', 'script', 'tip', 'description', 'quote', 'dilemma', 'warm_feedback', 'cool_feedback', 'teacher_workflow', 'student_workflow', 'content']);
+      const ID_KEYS = { articles: 'article_id', quick_wins: 'tip_id', directory: 'resource_id', quotes: 'quote_id', studio: 'studio_id', studio_comments: 'comment_id', tech_tools: 'tool_id', image_library: 'image_id', page_sections: 'section_id', content_blocks: 'block_id', videos: 'video_id', video_chapters: 'chapter_id' };
+      const LONG = new Set(['summary', 'article_body_text', 'takeaway', 'try_tomorrow', 'script', 'tip', 'description', 'quote', 'dilemma', 'text', 'teacher_workflow', 'student_workflow', 'content']);
       const BOOL = new Set(['is_live', 'featured', 'has_video_demo']);
       const LISTS = { cover_image_url: () => (data.tables.image_library || []).map(i => [i.image_id, i.label]),
         section_id: () => (data.tables.page_sections || []).map(i => [i.section_id, i.title]),
