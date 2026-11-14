@@ -54,6 +54,47 @@ test('manual posts gain stable IDs and reactions persist across feed reads', () 
   assert.equal(isLocked(), false);
 });
 
+test('staff lounge post types are available, labeled, and preserved in feed data', () => {
+  const { context: api } = backend();
+  const types = vm.runInContext('LOUNGE_POST_TYPES', api);
+  const page = fs.readFileSync('index.html', 'utf8');
+  const selectStart = page.indexOf('<select id="loungePostType"');
+  const selectEnd = page.indexOf('</select>', selectStart);
+  const options = [...page.slice(selectStart, selectEnd).matchAll(/<option value="([^"]+)">([^<]+)<\/option>/g)]
+    .map(([, value, label]) => [value, label]);
+  const labelsStart = page.indexOf('    const LOUNGE_TYPE_LABELS');
+  const labelsEnd = page.indexOf('    let loungeFilter', labelsStart);
+  const mapperStart = page.indexOf('    function mapLoungeQuotes');
+  const mapperEnd = page.indexOf('    async function refreshLounge', mapperStart);
+  const frontend = vm.createContext({});
+  vm.runInContext(`
+    ${page.slice(labelsStart, labelsEnd)}
+    ${page.slice(mapperStart, mapperEnd)}
+    globalThis.labels = LOUNGE_TYPE_LABELS;
+    globalThis.mapQuotes = mapLoungeQuotes;
+  `, frontend);
+
+  assert.deepEqual(Array.from(types), ['win', 'quote', 'question', 'random_delight', 'venting', 'shout_out']);
+  assert.deepEqual(options, [
+    ['win', 'Win'],
+    ['quote', 'Quote'],
+    ['question', 'Question'],
+    ['random_delight', 'Random Delight'],
+    ['venting', 'Venting'],
+    ['shout_out', 'Shout Out']
+  ]);
+  assert.deepEqual(
+    Array.from(types, type => [type, frontend.labels[type]]),
+    options
+  );
+  assert.deepEqual(
+    Array.from(frontend.mapQuotes(types.map(post_type => ({ post_type, quote: post_type }))), post => post.type),
+    Array.from(types)
+  );
+  assert.equal(frontend.labels.shout_out, 'Shout Out');
+  assert.equal(frontend.mapQuotes([{ post_type: 'legacy', quote: 'Old post' }])[0].type, 'quote');
+});
+
 function frontend(fetch) {
   const page = fs.readFileSync('index.html', 'utf8');
   const code = page.slice(page.indexOf('    const LOUNGE_REACTIONS'), page.indexOf('    function renderStudioItems'));

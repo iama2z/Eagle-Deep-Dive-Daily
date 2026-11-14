@@ -36,6 +36,7 @@ const LOUNGE_QUOTE_COLUMNS = [
 ];
 
 const LOUNGE_REACTIONS = ['appreciate', 'empathy', 'respect'];
+const LOUNGE_POST_TYPES = ['win', 'quote', 'question', 'random_delight', 'venting', 'shout_out'];
 
 // warm_feedback / cool_feedback are no longer free text: the site now shows a tally of comment tags
 // from peer_studio_comments. The columns stay for backward-compatible sheets but are unused.
@@ -1088,7 +1089,7 @@ function publishApprovedSubmissions() {
           quote: content,
           attribution: author + (title && title !== 'Staff Lounge Post' ? ' (' + title + ')' : ''),
           is_live: 'TRUE',
-          post_type: ['win', 'quote', 'question'].indexOf(String(category).toLowerCase()) >= 0 ? String(category).toLowerCase() : 'quote',
+          post_type: LOUNGE_POST_TYPES.indexOf(String(category).toLowerCase()) >= 0 ? String(category).toLowerCase() : 'quote',
           appreciate: 0,
           empathy: 0,
           respect: 0
@@ -1478,11 +1479,11 @@ function seedDefaultSettings_(settingsSheet) {
     ['feed_saved_note', 'Saved articles are stored in this browser. Clearing browser data/cache will remove your saved items.', 'Note shown on the Saved Reading List'],
     ['article_search_button', 'Search Articles', 'Sidebar article search button'],
     ['lounge_view_all_button', 'Visit the Staff Lounge →', 'Sidebar button linking to the Staff Lounge'],
-    ['lounge_add_button', '+ Post a Classroom Quote or Win', 'Sidebar button to post to the lounge'],
+    ['lounge_add_button', '+ Post to the Staff Lounge', 'Sidebar button to post to the lounge'],
     ['back_to_feed_label', 'Back to Editorial Feed', 'Back-to-feed button label (used on every page)'],
     ['directory_footnote', 'Some resources require your USD 266 work account.', 'Note under the directory'],
     ['lounge_page_heading', 'Staff Lounge', 'Staff Lounge page heading'],
-    ['lounge_page_subtitle', 'Share a classroom win, a funny quote, or a question. React to a colleague\'s post with appreciation, empathy, or respect.', 'Staff Lounge page description'],
+    ['lounge_page_subtitle', 'Share a win, quote, question, random delight, vent, or shout out. React to a colleague\'s post with appreciation, empathy, or respect.', 'Staff Lounge page description'],
     ['lounge_new_post_button', '+ New Post', 'Staff Lounge: new post button'],
     ['lounge_filter_all', 'All', 'Staff Lounge filter: All'],
     ['lounge_filter_wins', 'Wins', 'Staff Lounge filter: Wins'],
@@ -1513,11 +1514,11 @@ function seedDefaultSettings_(settingsSheet) {
     ['article_script_label', 'Ready-to-Use Classroom Script / Prompt', 'Article reader heading: Script / Prompt'],
     ['article_share_note', 'Found this helpful? Share it with your PLC or pin it to your reading list.', 'Article reader footer note'],
     ['article_done_button', 'Done Reading', 'Article reader done button'],
-    ['tip_modal_heading', 'Share a Classroom Tip or Win', 'Share a Tip form heading'],
-    ['tip_modal_subtitle', 'Contribute a strategy, Tech/AI workflow, engagement hook, or student quote', 'Share a Tip form description'],
+    ['tip_modal_heading', 'Contribute', 'Share a Tip form heading'],
+    ['tip_modal_subtitle', 'Choose what you\'d like to submit.', 'Share a Tip form description'],
     ['tip_submit_button', 'Submit for Review', 'Share a Tip submit button'],
     ['lounge_modal_heading', 'Post to the Staff Lounge', 'Lounge post form heading'],
-    ['lounge_modal_subtitle', 'Share a classroom win, a quote you overheard, or a question. Posts are reviewed before they appear.', 'Lounge post form description'],
+    ['lounge_modal_subtitle', 'Share a win, quote, question, random delight, vent, or shout out. Posts are reviewed before they appear.', 'Lounge post form description'],
     ['lounge_submit_button', 'Post', 'Lounge post submit button'],
     ['menu_directory_tip', 'The Heart of MMS', 'Hover text on the Directory menu item'],
     ['topic_tech_heading', 'Tech Talk', 'Heading on the Tech topic page'],
@@ -1526,7 +1527,7 @@ function seedDefaultSettings_(settingsSheet) {
     ['nav_find_label', 'Find an Article', 'Landing card and toolbar name: Find an Article'],
     ['nav_find_hint', 'Search by keyword', 'Landing card hint under Find an Article'],
     ['nav_shoutouts_label', 'Shout Outs', 'Landing card and toolbar name: Shout Outs'],
-    ['nav_shoutouts_hint', 'Quotes & classroom wins', 'Landing card hint under Shout Outs'],
+    ['nav_shoutouts_hint', 'Staff Lounge posts', 'Landing card hint under Shout Outs'],
     ['nav_directory_label', 'Directory', 'Landing card and toolbar name: Directory'],
     ['nav_directory_hint', 'The Heart of MMS', 'Landing card hint under Directory'],
     ['nav_updates_label', 'School Updates', 'Landing card and toolbar name: School Updates'],

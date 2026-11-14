@@ -790,7 +790,7 @@
 
             <button data-text="lounge_view_all_button" id="loungeViewAllBtn" type="button" class="w-full text-xs font-bold text-red-600 hover:text-red-900 text-left">Visit the Staff Lounge &rarr;</button>
             <button data-text="lounge_add_button" id="sidebarAddQuoteBtn" class="w-full py-2 rounded-xl border border-cream-300 hover:bg-cream-100 text-xs font-bold text-ink-800 transition">
-              + Post a Classroom Quote or Win
+              + Post to the Staff Lounge
             </button>
           </div>
 
@@ -839,7 +839,7 @@
     <div id="view-lounge" class="view-section hidden space-y-6">
       <section class="space-y-3">
         <h1 data-text="lounge_page_heading" class="font-editorial font-extrabold text-2xl sm:text-3xl text-ink-900">Staff Lounge</h1>
-        <p data-text="lounge_page_subtitle" class="text-sm text-ink-600">Share a classroom win, a funny quote, or a question. React to a colleague's post with appreciation, empathy, or respect.</p>
+        <p data-text="lounge_page_subtitle" class="text-sm text-ink-600">Share a win, quote, question, random delight, vent, or shout out. React to a colleague's post with appreciation, empathy, or respect.</p>
         <div class="flex flex-wrap items-center gap-3">
           <button data-text="lounge_new_post_button" type="button" id="loungeNewPostBtn" class="px-4 py-2 rounded-full bg-ink-900 hover:bg-ink-800 text-white text-xs font-bold">+ New Post</button>
           <button type="button" id="loungeRefreshBtn" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-cream-100 hover:bg-cream-200 border border-cream-300 text-ink-900 text-xs font-bold disabled:opacity-60">
@@ -1132,8 +1132,8 @@
     <div class="bg-white rounded-3xl shadow-2xl border border-cream-300 max-w-lg w-full p-6 sm:p-8 space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-cream-200">
         <div>
-          <h3 data-text="tip_modal_heading" class="font-editorial font-bold text-xl text-ink-900">Share a Classroom Tip or Win</h3>
-          <p data-text="tip_modal_subtitle" class="text-xs text-ink-600">Contribute a strategy, Tech/AI workflow, engagement hook, or student quote</p>
+          <h3 data-text="tip_modal_heading" class="font-editorial font-bold text-xl text-ink-900">Contribute</h3>
+          <p data-text="tip_modal_subtitle" class="text-xs text-ink-600">Choose what you'd like to submit.</p>
         </div>
         <button id="closeShareTipModalBtn" class="text-ink-400 hover:text-ink-900 p-1">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -1144,9 +1144,10 @@
         <div>
           <label for="tipType" class="block font-bold text-ink-800 mb-1">Contribution Type</label>
           <select id="tipType" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 bg-white">
-            <option value="article">Classroom Strategy / Tech Tip / Article</option>
-            <option value="quote">Overheard in the Hallway (Student Quote)</option>
-            <option value="video">Video for the Video Lab</option>
+            <option value="article">Article</option>
+            <option value="lounge">Lounge</option>
+            <option value="video">Video</option>
+            <option value="feedback_submission">Feedback Submission</option>
           </select>
         </div>
 
@@ -1211,7 +1212,7 @@
       <div class="flex items-center justify-between pb-3 border-b border-cream-200">
         <div>
           <h3 data-text="lounge_modal_heading" class="font-editorial font-bold text-xl text-ink-900">Post to the Staff Lounge</h3>
-          <p data-text="lounge_modal_subtitle" class="text-xs text-ink-600">Share a classroom win, a quote you overheard, or a question. Posts are reviewed before they appear.</p>
+          <p data-text="lounge_modal_subtitle" class="text-xs text-ink-600">Share a win, quote, question, random delight, vent, or shout out. Posts are reviewed before they appear.</p>
         </div>
         <button id="closeLoungePostBtn" type="button" aria-label="Close" class="text-ink-400 hover:text-ink-900 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
@@ -1219,9 +1220,12 @@
         <div>
           <label for="loungePostType" class="block font-bold text-ink-800 mb-1">Post type</label>
           <select id="loungePostType" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 bg-white">
-            <option value="win">Classroom Win</option>
-            <option value="quote">Overheard Quote</option>
-            <option value="question">Question for Colleagues</option>
+            <option value="win">Win</option>
+            <option value="quote">Quote</option>
+            <option value="question">Question</option>
+            <option value="random_delight">Random Delight</option>
+            <option value="venting">Venting</option>
+            <option value="shout_out">Shout Out</option>
           </select>
         </div>
         <div>
@@ -2365,7 +2369,14 @@
       { key: 'empathy', label: 'Empathy', icon: '💛' },
       { key: 'respect', label: 'Respect', icon: '👏' }
     ];
-    const LOUNGE_TYPE_LABELS = { win: 'Win', quote: 'Quote', question: 'Question' };
+    const LOUNGE_TYPE_LABELS = {
+      win: 'Win',
+      quote: 'Quote',
+      question: 'Question',
+      random_delight: 'Random Delight',
+      venting: 'Venting',
+      shout_out: 'Shout Out'
+    };
     let loungeFilter = 'all';
     const pendingLoungeReactions = new Set();
 
@@ -3511,7 +3522,7 @@
         id: String(q.quote_id || `quote-${i + 1}`).trim(),
         quote: String(q.quote || '').trim(),
         attribution: String(q.attribution || 'MMS Classroom').trim(),
-        type: ['win', 'quote', 'question'].includes(String(q.post_type || '').trim().toLowerCase()) ? String(q.post_type).trim().toLowerCase() : 'quote',
+        type: ['win', 'quote', 'question', 'random_delight', 'venting', 'shout_out'].includes(String(q.post_type || '').trim().toLowerCase()) ? String(q.post_type).trim().toLowerCase() : 'quote',
         reactions: {
           appreciate: parseInt(q.appreciate, 10) || 0,
           empathy: parseInt(q.empathy, 10) || 0,
@@ -4381,13 +4392,23 @@
       document.getElementById('cancelShareTipBtn')?.addEventListener('click', () => tipModal.classList.add('hidden'));
 
       document.getElementById('tipType')?.addEventListener('change', (e) => {
-        const isArticle = e.target.value === 'article';
-        const isVideo = e.target.value === 'video';
+        const type = e.target.value;
+        const isArticle = type === 'article';
+        const isVideo = type === 'video';
         document.getElementById('tipCoverImageField').classList.toggle('hidden', !isArticle);
         document.getElementById('tipCoverImage').disabled = !isArticle;
         document.getElementById('tipLink').required = isVideo;
         document.getElementById('tipLinkLabel').textContent = isVideo ? 'Video link (required)' : 'Link (optional)';
         document.getElementById('tipVideoHelp').classList.toggle('hidden', !isVideo);
+        if (type === 'lounge') {
+          tipModal.classList.add('hidden');
+          openLoungeModal();
+        } else if (type === 'feedback_submission') {
+          tipModal.classList.add('hidden');
+          switchView('view-studio');
+          document.getElementById('lessonTuneForm')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          document.getElementById('tuneTitle')?.focus({ preventScroll: true });
+        }
       });
       document.getElementById('shareTipForm')?.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -4631,7 +4652,7 @@
         videos: ['badge', 'link_label', 'description']
       };
       const GROUP_BY = { articles: 'category', directory: 'category', quick_wins: 'section', quotes: 'post_type', image_library: 'category', content_blocks: 'section_id', video_chapters: 'video_id', studio_comments: 'studio_id' };
-      const TABLE_CHOICES = { articles: { category: CATEGORIES }, quotes: { post_type: ['quote', 'win', 'question'] }, studio_comments: { tag: ['warm', 'cool', 'mixed'] } };
+      const TABLE_CHOICES = { articles: { category: CATEGORIES }, quotes: { post_type: ['quote', 'win', 'question', 'random_delight', 'venting', 'shout_out'] }, studio_comments: { tag: ['warm', 'cool', 'mixed'] } };
       const choicesFor = (table, key) => (table && TABLE_CHOICES[table]?.[key]) || CHOICES[key];
       const openState = new Set();
       const filters = {};
@@ -5378,7 +5399,7 @@
   // Text comes from the nav_<key>_label / _hint / _tip settings so the admin console can edit it.
   const ITEMS = [
     { key: 'nav_find', label: 'Find an Article', hint: 'Search by keyword', icon: 'search', popup: 'finderWidget' },
-    { key: 'nav_shoutouts', label: 'Shout Outs', hint: 'Quotes & classroom wins', icon: 'megaphone', popup: 'loungeWidget' },
+    { key: 'nav_shoutouts', label: 'Shout Outs', hint: 'Staff Lounge posts', icon: 'megaphone', popup: 'loungeWidget' },
     { key: 'nav_directory', label: 'Directory', hint: 'The Heart of MMS', tip: 'The Heart of MMS', icon: 'map-pin', run: () => click('.menu-nav-item[data-view="view-directory"]') },
     { key: 'nav_updates', label: 'School Updates', hint: 'News, social & newsletters', icon: 'newspaper', run: () => click('.menu-nav-item[data-view="view-bulletin"]') },
     { key: 'nav_academy', label: () => academyTitle(), hint: 'Tutorial video library', icon: 'clapperboard', run: () => click('.menu-nav-item[data-view="view-academy"]') },
