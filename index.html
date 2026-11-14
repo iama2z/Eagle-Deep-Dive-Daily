@@ -3910,6 +3910,7 @@
       const loungeModal = document.getElementById('loungePostModal');
       const loungeStatus = document.getElementById('loungePostStatus');
       const openLoungeModal = () => {
+        window.closeSitePopups?.();
         loungeStatus.textContent = '';
         loungeModal.classList.remove('hidden');
       };
