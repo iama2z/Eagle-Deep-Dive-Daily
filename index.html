@@ -1271,6 +1271,7 @@
           <h2 id="adminTitle" class="font-editorial font-bold text-lg text-ink-900 truncate">Admin Console</h2>
         </div>
         <div class="flex items-center gap-2 shrink-0">
+          <button id="adminSaveAllBtn" type="button" disabled class="px-3 py-1.5 rounded-full bg-red-600 text-white font-semibold disabled:opacity-40 whitespace-nowrap">Save all</button>
           <button id="adminReloadBtn" class="px-3 py-1.5 rounded-full border border-cream-300 hover:bg-cream-100 font-semibold flex items-center gap-1.5"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i><span>Reload</span></button>
           <button id="adminLockBtn" class="px-3 py-1.5 rounded-full bg-ink-900 text-white font-semibold flex items-center gap-1.5"><i data-lucide="lock" class="w-3.5 h-3.5"></i><span>Lock &amp; Close</span></button>
         </div>
@@ -4017,6 +4018,41 @@
       let data = null;
       let view = 'home';
       let busyCount = 0, busyTimer = null, toastTimer = null;
+      const editors = new Set();
+      const saveAllBtn = $('adminSaveAllBtn');
+
+      function updateSaveAll() {
+        const count = [...editors].filter(editor => editor.dirty()).length;
+        saveAllBtn.disabled = busyCount > 0 || !count;
+        saveAllBtn.textContent = count ? `Save all (${count})` : 'Save all';
+      }
+
+      function registerEditor(dirty, save) {
+        const editor = { dirty, save };
+        editors.add(editor);
+        updateSaveAll();
+        return editor;
+      }
+
+      async function saveAll() {
+        if (busyCount) return;
+        const pending = [...editors].filter(editor => editor.dirty());
+        if (!pending.length) return;
+        let saved = 0;
+        setBusy(true, SAVE_MESSAGES);
+        try {
+          for (const editor of pending) {
+            await editor.save();
+            saved++;
+          }
+          toast('All changes saved.');
+        } catch (err) {
+          toast(`${saved} of ${pending.length} changes saved. ${err.message} Unsaved edits are still here; retry Save all.`, true);
+        } finally {
+          setBusy(false);
+          updateSaveAll();
+        }
+      }
 
       function el(tag, cls, text) {
         const node = document.createElement(tag);
@@ -4037,6 +4073,7 @@
 
       function setBusy(on, messages) {
         busyCount = Math.max(0, busyCount + (on ? 1 : -1));
+        updateSaveAll();
         const overlay = $('adminBusy'), bar = $('adminBusyBar');
         if (busyCount > 0) {
           if (!on) return;
@@ -4087,6 +4124,8 @@
       function show(next) { view = next; openState.clear(); render(); consoleEl.scrollTo({ top: 0 }); }
 
       function render() {
+        editors.clear();
+        updateSaveAll();
         bodyEl.replaceChildren();
         const section = SECTIONS.find(s => s.id === view);
         titleEl.textContent = section ? section.label : 'Admin Console';
@@ -4096,6 +4135,7 @@
         else if (view === 'submissions') renderSubmissions();
         else if (view === 'settings') renderSettings();
         else renderTable(view);
+        updateSaveAll();
         icons();
       }
 
@@ -4228,13 +4268,18 @@
         }
         live.forEach(a => { const o = el('option', '', `${a.title} — ${a.category}`); o.value = a.article_id; select.appendChild(o); });
         select.value = current;
-        const save = actionBtn('Set cover story', 'primary', async () => {
+        const persist = async () => {
           const value = select.value;
-          const ok = await run(() => api('admin_save_setting', { key: 'hero_article_id', value }), 'Cover story saved.', SAVE_MESSAGES, false);
-          if (ok) { current = value; if (setting) setting.value = value; save.disabled = true; }
-        });
+          await api('admin_save_setting', { key: 'hero_article_id', value });
+          current = value;
+          if (setting) setting.value = value;
+          save.disabled = true;
+          updateSaveAll();
+        };
+        const save = actionBtn('Set cover story', 'primary', () => run(persist, 'Cover story saved.', SAVE_MESSAGES, false));
         save.disabled = true;
-        select.addEventListener('change', () => { save.disabled = select.value === current; });
+        registerEditor(() => select.value !== current, persist);
+        select.addEventListener('change', () => { save.disabled = select.value === current; updateSaveAll(); });
         box.appendChild(select);
         box.appendChild(save);
         return box;
@@ -4313,7 +4358,7 @@
       }
 
       function renderSettings() {
-        bodyEl.appendChild(el('p', 'text-ink-600 mb-3', 'Choose a page below to jump to its text, or search for a field. Each field saves on its own.'));
+        bodyEl.appendChild(el('p', 'text-ink-600 mb-3', 'Choose a page below to jump to its text, or search for a field. Save fields individually or use Save all for every changed field in this section.'));
         const groups = {};
         data.settings.forEach(s => { (groups[settingGroup(s.key)] ||= []).push(s); });
         const names = [...SETTING_GROUPS.map(g => g[0]), 'Other Settings'].filter(n => groups[n]);
@@ -4340,12 +4385,17 @@
             const row = el('div', 'space-y-1');
             row.title = settingHint(s);
             let current = s.value;
-            const save = actionBtn('Save', 'primary', async () => {
-              const ok = await run(() => api('admin_save_setting', { key: s.key, value: current }), `Saved “${label(s.key)}”.`, SAVE_MESSAGES, false);
-              if (ok) { s.value = current; save.disabled = true; }
-            });
+            const persist = async () => {
+              const value = current;
+              await api('admin_save_setting', { key: s.key, value });
+              s.value = value;
+              save.disabled = current === s.value;
+              updateSaveAll();
+            };
+            const save = actionBtn('Save', 'primary', () => run(persist, `Saved “${label(s.key)}”.`, SAVE_MESSAGES, false));
             save.disabled = true;
-            const f = field(s.key, s.value, e => { current = e.target.value; save.disabled = current === s.value; }, s.value.length > 60 || s.key === 'loading_messages');
+            registerEditor(() => current !== s.value, persist);
+            const f = field(s.key, s.value, e => { current = e.target.value; save.disabled = current === s.value; updateSaveAll(); }, s.value.length > 60 || s.key === 'loading_messages');
             f.input.title = row.title;
             row.appendChild(f.wrap);
             if (s.description) row.appendChild(el('p', 'text-ink-400 text-[11px]', s.description));
@@ -4434,11 +4484,12 @@
         }
 
         function editorBox(item) {
-          const isNew = !item;
-          const id = isNew ? '__new__' : item[ID_KEYS[name]];
+          let isNew = !item;
+          let id = isNew ? '__new__' : item[ID_KEYS[name]];
           const values = {};
           allFields.forEach(k => { values[k] = item ? (item[k] ?? '') : (BOOL.has(k) ? 'TRUE' : (choicesFor(name, k) ? choicesFor(name, k)[0] : '')); });
           if (isNew && CUSTOM_ID_TABLES.has(name)) values[ID_KEYS[name]] = '';
+          const savedValues = { ...values };
           const dirty = new Set();
           const summary = [el('span', 'truncate', isNew ? 'New item' : itemTitle(sec, item))];
           if (item && groupKey && item[groupKey]) summary.push(el('span', 'hidden sm:inline text-ink-400 font-normal truncate ml-auto', item[groupKey]));
@@ -4448,14 +4499,48 @@
           }
           const det = collapsible(`${name}:${id}`, summary);
           const form = el('div', 'px-4 pb-4 grid grid-cols-1 md:grid-cols-2 gap-3 border-t border-cream-200 pt-3');
-          const save = actionBtn(isNew ? 'Create' : 'Save', 'primary', async () => {
+          const persist = async () => {
             const changed = isNew ? { ...values } : Object.fromEntries([...dirty].map(k => [k, values[k]]));
             const params = isNew ? { table: name, fields: JSON.stringify(changed) } : { table: name, id, fields: JSON.stringify(changed) };
-            await run(() => api(isNew ? 'admin_add_row' : 'admin_save_row', params), isNew ? 'Item created.' : 'Changes saved.');
-          });
+            const result = await api(isNew ? 'admin_add_row' : 'admin_save_row', params);
+            if (isNew) {
+              id = result.id;
+              item = { ...values, [ID_KEYS[name]]: id };
+              items.push(item);
+              isNew = false;
+              form.querySelectorAll('input').forEach(input => {
+                if (input === idInput) input.disabled = true;
+              });
+              cancel.remove();
+            } else {
+              Object.assign(item, changed);
+            }
+            Object.assign(savedValues, changed);
+            dirty.clear();
+            summary[0].textContent = itemTitle(sec, item);
+            if (groupKey && summary[1] && item[groupKey]) summary[1].textContent = item[groupKey];
+            const livePill = summary.find(node => node.textContent === 'Live' || node.textContent === 'Hidden');
+            if (livePill) {
+              const live = String(item.is_live).trim().toUpperCase() === 'TRUE';
+              livePill.textContent = live ? 'Live' : 'Hidden';
+              livePill.className = pill(livePill.textContent, live ? 'bg-emerald-100 text-emerald-800' : 'bg-cream-100 text-ink-600').className;
+            }
+            save.textContent = 'Save';
+            save.disabled = true;
+            updateSaveAll();
+          };
+          const save = actionBtn(isNew ? 'Create' : 'Save', 'primary', () => run(persist, 'Changes saved.', SAVE_MESSAGES, false));
           save.disabled = !isNew;
+          const editor = registerEditor(() => isNew || dirty.size > 0, persist);
+          let idInput, cancel;
           const addField = (host, k) => {
-            const f = field(k, values[k], e => { values[k] = e.target.value; dirty.add(k); save.disabled = false; }, false, k === ID_KEYS[name], name);
+            const f = field(k, values[k], e => {
+              values[k] = e.target.value;
+              if (values[k] === savedValues[k]) dirty.delete(k); else dirty.add(k);
+              save.disabled = !isNew && !dirty.size;
+              updateSaveAll();
+            }, false, k === ID_KEYS[name], name);
+            if (k === ID_KEYS[name]) idInput = f.input;
             if (LONG.has(k)) f.wrap.className += ' md:col-span-2';
             host.appendChild(f.wrap);
           };
@@ -4475,7 +4560,8 @@
               await run(() => api('admin_delete_row', { table: name, id }), 'Item deleted.');
             }));
           } else {
-            actions.appendChild(actionBtn('Cancel', 'plain', () => det.remove()));
+            cancel = actionBtn('Cancel', 'plain', () => { editors.delete(editor); det.remove(); updateSaveAll(); });
+            actions.appendChild(cancel);
           }
           form.appendChild(actions);
           det.appendChild(form);
@@ -4542,6 +4628,8 @@
       }
 
       function lock() {
+        editors.clear();
+        updateSaveAll();
         passcode = '';
         data = null;
         consoleEl.classList.add('hidden');
@@ -4550,6 +4638,7 @@
       }
 
       backBtn.addEventListener('click', () => show('home'));
+      saveAllBtn.addEventListener('click', saveAll);
       $('adminLockBtn').addEventListener('click', lock);
       $('adminReloadBtn').addEventListener('click', async () => {
         try { await loadData(); toast('Reloaded from the sheet.'); } catch (err) { toast(err.message, true); }
