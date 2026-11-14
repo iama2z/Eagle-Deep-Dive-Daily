@@ -2577,7 +2577,7 @@
         let body = '';
         if (kind === 'videos') {
           body = pageContent.videos.filter(v => v.section_id === section.section_id).map(renderVideoPanel).join('');
-          body = body && `<div class="space-y-6">${body}</div>`;
+          body = body && `<div class="grid grid-cols-1 md:grid-cols-2 gap-6">${body}</div>`;
         } else if (kind === 'tools') {
           if ((APP_DATA.techTools || []).length && !toolsGridUsed) {
             toolsGridUsed = true;
