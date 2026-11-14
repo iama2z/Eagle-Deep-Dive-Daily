@@ -194,6 +194,10 @@ function applyStatusDropdown_(sheet, headers) {
 }
 
 function liveTarget_(ss, type) {
+  if (type === 'video') {
+    const sheet = ss.getSheetByName('videos');
+    return { sheet, headers: smoreHeaders_(sheet, VIDEO_COLUMNS, true), idKey: 'video_id' };
+  }
   if (type === 'quote' || type === 'lounge_quote') {
     const sheet = ss.getSheetByName('lounge_quotes');
     return { sheet, headers: smoreHeaders_(sheet, LOUNGE_QUOTE_COLUMNS, true), idKey: 'quote_id' };
@@ -584,7 +588,7 @@ function doPost(e) {
     if (String(body.action || '').indexOf('admin_') === 0) {
       return smoreJson_(handleAdminAction_(body));
     }
-    if (body.action) {
+    if (body.action && body.action !== 'submit_video') {
       return smoreJson_({ ok: false, error: 'Unknown action' });
     }
 
@@ -606,6 +610,12 @@ function doPost(e) {
 
     if (!submissionType || !title || !content) {
       return smoreJson_({ ok: false, error: 'Missing required fields: submission_type, title, content' });
+    }
+    if (body.action === 'submit_video' && submissionType.toLowerCase() !== 'video') {
+      return smoreJson_({ ok: false, error: 'Invalid video submission type.' });
+    }
+    if (submissionType.toLowerCase() === 'video' && !validSubmissionVideoUrl_(links)) {
+      return smoreJson_({ ok: false, error: 'Video link must be a single http:// or https:// URL.' });
     }
 
     const id = 'sub_' + Utilities.getUuid();
@@ -851,6 +861,10 @@ function cleanSubmissionText_(value) {
     .trim();
 }
 
+function validSubmissionVideoUrl_(value) {
+  return /^https?:\/\/[^\s/?#@:]+(?::\d+)?(?:[/?#][^\s]*)?$/i.test(String(value || '').trim());
+}
+
 function publishApprovedSubmissions() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   setupSiteSheet();
@@ -903,6 +917,15 @@ function publishApprovedSubmissions() {
 
       if (status !== 'approved' && status !== 'publish') return;
 
+      if (type === 'video') {
+        if (!validSubmissionVideoUrl_(r.issue.links)) throw new Error('Video submission "' + r.issue.title + '" needs a valid video link.');
+        const sections = ss.getSheetByName('page_sections');
+        const section = smoreReadIssues_(sections, smoreHeaders_(sections, PAGE_SECTION_COLUMNS, true))
+          .find(row => row.issue.section_id === 'tech-video' && row.issue.page === 'tech_ai' &&
+            row.issue.kind === 'videos' && String(row.issue.is_live).toLowerCase() === 'true');
+        if (!section) throw new Error('Enable the tech-video videos section on the Video Lab page before publishing video submissions.');
+      }
+
       const id = r.issue.id || ('item_' + Utilities.getUuid().slice(0, 8));
       const existing = r.issue.id ? liveRowsById_(liveTarget_(ss, type), id) : [];
       if (existing.length) {
@@ -920,7 +943,21 @@ function publishApprovedSubmissions() {
       const category = canonicalCategory_(r.issue.category) || 'Teacher Support';
       const links = r.issue.links || '';
 
-      if (type === 'quote' || type === 'lounge_quote') {
+      if (type === 'video') {
+        const videoSheet = ss.getSheetByName('videos');
+        const videoHeaders = smoreHeaders_(videoSheet, VIDEO_COLUMNS, true);
+        appendRecordByHeaders_(videoSheet, videoHeaders, {
+          video_id: id,
+          section_id: 'tech-video',
+          badge: 'Submitted by ' + author,
+          title: title,
+          description: content,
+          url: links,
+          link_label: 'Open video',
+          is_live: 'TRUE'
+        });
+        appendAuditLog_(ss, 'published_video', tabName, id, title, 'Published to videos');
+      } else if (type === 'quote' || type === 'lounge_quote') {
         const qSheet = ss.getSheetByName('lounge_quotes');
         const qHeaders = smoreHeaders_(qSheet, LOUNGE_QUOTE_COLUMNS, true);
         appendRecordByHeaders_(qSheet, qHeaders, {
