@@ -972,6 +972,7 @@
           </div>
           <p id="academySubtitleText" class="text-sm text-ink-600 mt-1"></p>
         </div>
+        <button id="submitVideoBtn" type="button" class="px-5 py-2 rounded-full bg-ink-900 hover:bg-ink-800 text-white text-xs font-bold">Submit a video</button>
       </div>
 
       <p id="academyStatus" role="status" class="hidden rounded-2xl border p-4 text-sm"></p>
@@ -1084,10 +1085,11 @@
 
       <form id="shareTipForm" class="space-y-3.5 text-xs">
         <div>
-          <label class="block font-bold text-ink-800 mb-1">Contribution Type</label>
+          <label for="tipType" class="block font-bold text-ink-800 mb-1">Contribution Type</label>
           <select id="tipType" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 bg-white">
             <option value="article">Classroom Strategy / Tech Tip / Article</option>
             <option value="quote">Overheard in the Hallway (Student Quote)</option>
+            <option value="video">Video for the Video Lab</option>
           </select>
         </div>
 
@@ -1107,8 +1109,9 @@
         </div>
 
         <div>
-          <label for="tipLink" class="block font-bold text-ink-800 mb-1">Link (optional)</label>
-          <input id="tipLink" type="url" placeholder="https://..." class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" />
+          <label id="tipLinkLabel" for="tipLink" class="block font-bold text-ink-800 mb-1">Link (optional)</label>
+          <input id="tipLink" type="url" placeholder="https://..." aria-describedby="tipVideoHelp" class="w-full px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:ring-2 focus:ring-red-600/30" />
+          <p id="tipVideoHelp" class="hidden mt-1 text-ink-600">Share a video link, not a file upload. YouTube, Vimeo, Loom and Google Drive links can embed; other web links open separately. Ensure viewers have access and you have permission to publish.</p>
         </div>
 
         <div id="tipCoverImageField">
@@ -3685,12 +3688,20 @@
       document.getElementById('contributeTopicBtn')?.addEventListener('click', () => {
         resetTipStatus();
         document.getElementById('tipType').value = 'article';
+        document.getElementById('tipType').dispatchEvent(new Event('change'));
         document.getElementById('tipCategory').value = activeCategory;
         tipModal.classList.remove('hidden');
       });
       document.getElementById('openShareTipModalBtn')?.addEventListener('click', () => {
         resetTipStatus();
         document.getElementById('tipType').value = 'article';
+        document.getElementById('tipType').dispatchEvent(new Event('change'));
+        tipModal.classList.remove('hidden');
+      });
+      document.getElementById('submitVideoBtn')?.addEventListener('click', () => {
+        resetTipStatus();
+        document.getElementById('tipType').value = 'video';
+        document.getElementById('tipType').dispatchEvent(new Event('change'));
         tipModal.classList.remove('hidden');
       });
       const loungeModal = document.getElementById('loungePostModal');
@@ -3770,8 +3781,12 @@
 
       document.getElementById('tipType')?.addEventListener('change', (e) => {
         const isArticle = e.target.value === 'article';
+        const isVideo = e.target.value === 'video';
         document.getElementById('tipCoverImageField').classList.toggle('hidden', !isArticle);
         document.getElementById('tipCoverImage').disabled = !isArticle;
+        document.getElementById('tipLink').required = isVideo;
+        document.getElementById('tipLinkLabel').textContent = isVideo ? 'Video link (required)' : 'Link (optional)';
+        document.getElementById('tipVideoHelp').classList.toggle('hidden', !isVideo);
       });
       document.getElementById('shareTipForm')?.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -3801,6 +3816,10 @@
           showTipStatus('Please use an http:// or https:// cover image link.', true);
           return;
         }
+        if (type === 'video' && !sanitizeHttpUrl(link)) {
+          showTipStatus('Please enter an http:// or https:// video link.', true);
+          return;
+        }
 
         submitButton.disabled = true;
         submitButton.textContent = 'Submitting…';
@@ -3817,6 +3836,7 @@
             links: link,
             cover_image_url: coverImage
           });
+          if (type === 'video') payload.set('action', 'submit_video');
           const response = await fetch(SUBMISSION_API_URL, {
             method: 'POST',
             body: payload
@@ -3833,7 +3853,9 @@
           form.reset();
           document.getElementById('tipType').dispatchEvent(new Event('change'));
           document.getElementById('tipCategory').value = cat;
-          showTipStatus('Saved for review in the Google Sheet (status: pending).');
+          showTipStatus(type === 'video'
+            ? 'Saved for review. Once approved, the video will appear in the Video Lab.'
+            : 'Saved for review in the Google Sheet (status: pending).');
         } catch (error) {
           const message = error instanceof TypeError
             ? 'Could not connect to the submission service. Please check your connection and try again.'
