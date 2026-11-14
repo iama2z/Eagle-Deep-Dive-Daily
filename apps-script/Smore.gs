@@ -37,9 +37,19 @@ const LOUNGE_QUOTE_COLUMNS = [
 
 const LOUNGE_REACTIONS = ['appreciate', 'empathy', 'respect'];
 
+// warm_feedback / cool_feedback are no longer free text: the site now shows a tally of comment tags
+// from peer_studio_comments. The columns stay for backward-compatible sheets but are unused.
 const PEER_STUDIO_COLUMNS = [
-  'studio_id', 'title', 'subject', 'dilemma', 'warm_feedback', 'cool_feedback', 'doc_url', 'is_live'
+  'studio_id', 'title', 'subject', 'dilemma', 'warm_feedback', 'cool_feedback', 'doc_url', 'is_live', 'submitted_at'
 ];
+
+// Forum-style comment thread attached to a peer_studio row. Comments post immediately (no moderation queue).
+const PEER_STUDIO_COMMENT_COLUMNS = [
+  'comment_id', 'studio_id', 'author', 'tag', 'text', 'agree_count', 'disagree_count', 'created_at', 'is_live'
+];
+
+const STUDIO_COMMENT_TAGS = ['warm', 'cool', 'mixed'];
+const STUDIO_COMMENT_REACTIONS = ['agree', 'disagree'];
 
 const TECH_TOOL_COLUMNS = [
   'tool_id', 'badge', 'title', 'link_label', 'url', 'description', 'teacher_workflow', 'student_workflow', 'is_live'
@@ -146,6 +156,13 @@ function setupSiteSheet() {
   const studioHeaders = smoreHeaders_(studioSheet, PEER_STUDIO_COLUMNS, true);
   if (studioSheetWasEmpty) {
     seedSheetRows_(studioSheet, studioHeaders, unpublishedSamples_(defaultStudioSeed_()));
+  }
+
+  const studioCommentsSheet = ss.getSheetByName('peer_studio_comments') || ss.insertSheet('peer_studio_comments');
+  const studioCommentsSheetWasEmpty = !studioCommentsSheet.getLastRow();
+  const studioCommentsHeaders = smoreHeaders_(studioCommentsSheet, PEER_STUDIO_COMMENT_COLUMNS, true);
+  if (studioCommentsSheetWasEmpty) {
+    seedSheetRows_(studioCommentsSheet, studioCommentsHeaders, unpublishedSamples_(defaultStudioCommentsSeed_()));
   }
 
   const techSheet = ss.getSheetByName('tech_tools') || ss.insertSheet('tech_tools');
@@ -401,6 +418,7 @@ function doGet(e) {
         directory: publicTableItems_('directory_links', DIRECTORY_LINK_COLUMNS, ['title', 'url']),
         quotes: publicTableItems_('lounge_quotes', LOUNGE_QUOTE_COLUMNS, ['quote']),
         studio: publicTableItems_('peer_studio', PEER_STUDIO_COLUMNS, ['title']),
+        studio_comments: publicTableItems_('peer_studio_comments', PEER_STUDIO_COMMENT_COLUMNS, ['studio_id', 'text']),
         tech_tools: publicTableItems_('tech_tools', TECH_TOOL_COLUMNS, ['title']),
         image_library: publicTableItems_('image_library', IMAGE_LIBRARY_COLUMNS, ['image_url'], true),
         page_sections: publicTableItems_('page_sections', PAGE_SECTION_COLUMNS, ['section_id'], false, true),
@@ -566,6 +584,85 @@ function addLoungeReaction_(quoteId, reaction, undo) {
   }
 }
 
+// Peer Feedback Forum: a new comment on a lesson draft. Posts immediately, no moderation queue.
+function addStudioComment_(body) {
+  const studioId = String(body.studio_id || '').trim();
+  const author = cleanSubmissionText_(body.author || '');
+  const tag = String(body.tag || '').trim().toLowerCase();
+  const text = cleanSubmissionText_(body.text || '');
+  if (!studioId) return { ok: false, error: 'Missing submission.' };
+  if (!author) return { ok: false, error: 'Please enter your name / department.' };
+  if (STUDIO_COMMENT_TAGS.indexOf(tag) < 0) return { ok: false, error: 'Choose a warm, cool, or mixed feedback tag.' };
+  if (!text) return { ok: false, error: 'Please enter your feedback.' };
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const studioSheet = ss.getSheetByName('peer_studio');
+  if (!studioSheet) return { ok: false, error: 'Peer Feedback Forum is not set up yet.' };
+  const studioHeaders = smoreHeaders_(studioSheet, PEER_STUDIO_COLUMNS, true);
+  const liveStudio = liveRowsById_({ sheet: studioSheet, headers: studioHeaders, idKey: 'studio_id' }, studioId)
+    .find(r => String(r.issue.is_live || '').toLowerCase() !== 'false');
+  if (!liveStudio) return { ok: false, error: 'That submission no longer exists. Reload and try again.' };
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sheet = ss.getSheetByName('peer_studio_comments') || ss.insertSheet('peer_studio_comments');
+    const headers = smoreHeaders_(sheet, PEER_STUDIO_COMMENT_COLUMNS, true);
+    const commentId = 'sc_' + Utilities.getUuid();
+    const createdAt = new Date().toISOString();
+    const record = {
+      comment_id: commentId,
+      studio_id: studioId,
+      author: author,
+      tag: tag,
+      text: text,
+      agree_count: 0,
+      disagree_count: 0,
+      created_at: createdAt,
+      is_live: 'TRUE'
+    };
+    appendRecordByHeaders_(sheet, headers, record);
+    SpreadsheetApp.flush();
+    appendAuditLog_(ss, 'studio_comment_added', 'peer_studio_comments', commentId, liveStudio.issue.title, 'Tag: ' + tag);
+    return { ok: true, comment: record };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// Peer Feedback Forum: agree/disagree on a comment. Toggleable, mirrors addLoungeReaction_.
+function reactStudioComment_(commentId, reaction, undo) {
+  commentId = String(commentId || '').trim();
+  reaction = String(reaction || '').trim().toLowerCase();
+  if (!commentId || STUDIO_COMMENT_REACTIONS.indexOf(reaction) < 0) {
+    return { ok: false, error: 'Invalid reaction.' };
+  }
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('peer_studio_comments');
+  if (!sheet) return { ok: false, error: 'Peer Feedback Forum is not set up yet.' };
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const headers = smoreHeaders_(sheet, PEER_STUDIO_COMMENT_COLUMNS, true);
+    const idCol = headers.indexOf('comment_id') + 1;
+    const countCol = headers.indexOf(reaction + '_count') + 1;
+    const lastRow = sheet.getLastRow();
+    if (lastRow < 2) return { ok: false, error: 'Comment not found.' };
+    const ids = sheet.getRange(2, idCol, lastRow - 1, 1).getValues();
+    for (let i = 0; i < ids.length; i++) {
+      if (String(ids[i][0]).trim() === commentId) {
+        const cell = sheet.getRange(i + 2, countCol);
+        const next = Math.max(0, (Number(cell.getValue()) || 0) + (undo ? -1 : 1));
+        cell.setValue(next);
+        SpreadsheetApp.flush();
+        return { ok: true, comment_id: commentId, reaction: reaction, count: next };
+      }
+    }
+    return { ok: false, error: 'Comment not found.' };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function doPost(e) {
   try {
     let body = {};
@@ -584,6 +681,12 @@ function doPost(e) {
     }
     if (body.action === 'react') {
       return smoreJson_(addLoungeReaction_(body.quote_id, body.reaction, body.undo === 'true'));
+    }
+    if (body.action === 'add_studio_comment') {
+      return smoreJson_(addStudioComment_(body));
+    }
+    if (body.action === 'react_studio_comment') {
+      return smoreJson_(reactStudioComment_(body.comment_id, body.reaction, body.undo === 'true'));
     }
     if (String(body.action || '').indexOf('admin_') === 0) {
       return smoreJson_(handleAdminAction_(body));
@@ -657,6 +760,7 @@ const ADMIN_TABLES = {
   directory: { sheet: 'directory_links', columns: DIRECTORY_LINK_COLUMNS, idKey: 'resource_id', prefix: 'res' },
   quotes: { sheet: 'lounge_quotes', columns: LOUNGE_QUOTE_COLUMNS, idKey: 'quote_id', prefix: 'quote' },
   studio: { sheet: 'peer_studio', columns: PEER_STUDIO_COLUMNS, idKey: 'studio_id', prefix: 'studio' },
+  studio_comments: { sheet: 'peer_studio_comments', columns: PEER_STUDIO_COMMENT_COLUMNS, idKey: 'comment_id', prefix: 'sc' },
   tech_tools: { sheet: 'tech_tools', columns: TECH_TOOL_COLUMNS, idKey: 'tool_id', prefix: 'tool' },
   image_library: { sheet: 'image_library', columns: IMAGE_LIBRARY_COLUMNS, idKey: 'image_id', prefix: 'img' },
   page_sections: { sheet: 'page_sections', columns: PAGE_SECTION_COLUMNS, idKey: 'section_id', prefix: 'sec', customId: true },
@@ -830,6 +934,16 @@ function adminDeleteRow_(ss, name, id) {
   if (!matches.length) throw new Error('That item no longer exists. Reload the panel.');
   matches.map(m => m.row).sort((a, b) => b - a).forEach(n => t.sheet.deleteRow(n));
   appendAuditLog_(ss, 'admin_delete', t.cfg.sheet, id, '', 'Deleted from admin panel');
+  // Deleting a lesson draft also removes its forum comment thread.
+  if (name === 'studio') {
+    const commentsSheet = ss.getSheetByName('peer_studio_comments');
+    if (commentsSheet) {
+      const commentsHeaders = smoreHeaders_(commentsSheet, PEER_STUDIO_COMMENT_COLUMNS, true);
+      smoreReadIssues_(commentsSheet, commentsHeaders)
+        .filter(r => r.issue.studio_id === String(id || ''))
+        .map(r => r.row).sort((a, b) => b - a).forEach(n => commentsSheet.deleteRow(n));
+    }
+  }
   return { ok: true };
 }
 
@@ -901,6 +1015,15 @@ function publishApprovedSubmissions() {
         if (status === 'delete') {
           live.map(l => l.row).sort((a, b) => b - a).forEach(n => target.sheet.deleteRow(n));
           if (live.length) appendAuditLog_(ss, 'deleted_live_item', tabName, r.issue.id, r.issue.title, 'Removed from live tab');
+          if ((type === 'lesson_draft' || type === 'studio') && live.length) {
+            const commentsSheet = ss.getSheetByName('peer_studio_comments');
+            if (commentsSheet) {
+              const commentsHeaders = smoreHeaders_(commentsSheet, PEER_STUDIO_COMMENT_COLUMNS, true);
+              smoreReadIssues_(commentsSheet, commentsHeaders)
+                .filter(c => c.issue.studio_id === r.issue.id)
+                .map(c => c.row).sort((a, b) => b - a).forEach(n => commentsSheet.deleteRow(n));
+            }
+          }
           rowsToDelete.push(r.row);
           deletedCount++;
         } else {
@@ -979,10 +1102,9 @@ function publishApprovedSubmissions() {
           title: title,
           subject: author || 'MMS Classroom',
           dilemma: content,
-          warm_feedback: 'Open the attached lesson link to share warm feedback with your colleague.',
-          cool_feedback: 'What is one "I wonder if..." adjustment that could make this lesson even smoother?',
           doc_url: links,
-          is_live: 'TRUE'
+          is_live: 'TRUE',
+          submitted_at: now
         });
         appendAuditLog_(ss, 'published_studio', tabName, id, title, 'Published to peer_studio');
       } else {
@@ -1704,9 +1826,40 @@ function defaultStudioSeed_() {
       title: '8th Grade Plate Tectonics CER Lab Prompt',
       subject: '8th Science',
       dilemma: 'Opening Hook & Student Buy-In',
-      warm_feedback: 'Opening with the sonar map mystery hooked even reluctant readers immediately.',
-      cool_feedback: 'I wonder if trimming the background paragraph to 3 bullet points would get them into the data faster.',
+      warm_feedback: '',
+      cool_feedback: '',
       doc_url: '',
+      is_live: 'TRUE',
+      submitted_at: new Date().toISOString()
+    }
+  ];
+}
+
+// Sample forum comments for the placeholder submission (studio-1). Real comments post immediately with no moderation.
+function defaultStudioCommentsSeed_() {
+  const now = new Date();
+  const minutesAgo = m => new Date(now.getTime() - m * 60000).toISOString();
+  return [
+    {
+      comment_id: 'sc-1',
+      studio_id: 'studio-1',
+      author: '7th Grade Science',
+      tag: 'warm',
+      text: 'Opening with the sonar map mystery hooked even reluctant readers immediately.',
+      agree_count: 0,
+      disagree_count: 0,
+      created_at: minutesAgo(120),
+      is_live: 'TRUE'
+    },
+    {
+      comment_id: 'sc-2',
+      studio_id: 'studio-1',
+      author: '6th Grade Science',
+      tag: 'cool',
+      text: 'I wonder if trimming the background paragraph to 3 bullet points would get them into the data faster.',
+      agree_count: 0,
+      disagree_count: 0,
+      created_at: minutesAgo(90),
       is_live: 'TRUE'
     }
   ];
