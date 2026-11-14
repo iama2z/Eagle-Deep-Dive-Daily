@@ -2541,6 +2541,15 @@
         </div>`;
     }
 
+    // Hiding a video panel with CSS (display:none) does NOT stop the embedded iframe from
+    // playing — the audio keeps running even though the video is no longer visible. Clearing
+    // the iframe's src is the only reliable way to stop playback when a view is hidden/left.
+    function stopVideoIframes(scope) {
+      (scope || document).querySelectorAll('[data-video-panel] iframe').forEach(iframe => {
+        if (iframe.src) iframe.src = '';
+      });
+    }
+
     function renderAcademyPage() {
       const root = document.getElementById('academySections');
       const status = document.getElementById('academyStatus');
@@ -3437,6 +3446,7 @@
 
     // --- VIEW NAVIGATION (HIDES QUICK WINS IN EXTRA SECTIONS) ---
     function switchView(viewId, optionalCategory = null) {
+      if (viewId !== activeView) stopVideoIframes(document.getElementById(activeView));
       activeView = viewId;
       document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
       document.getElementById(viewId)?.classList.remove('hidden');
@@ -3659,6 +3669,13 @@
       renderNotifications();
     }
     // NOTIFICATIONS END
+
+    // If the browser restores this page from the back/forward cache (bfcache), any video
+    // iframe that was mid-playback resumes running while the page looks freshly loaded,
+    // producing audio with no visible video. Stop it defensively on restore.
+    window.addEventListener('pageshow', event => {
+      if (event.persisted) stopVideoIframes();
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
       savedBookmarks = getStored('mms_saved_bookmarks', ['art-1', 'art-7']);
