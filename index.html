@@ -272,9 +272,21 @@
     @keyframes popup-in { from { opacity: 0; transform: translateY(12px) scale(.97); } to { opacity: 1; transform: none; } }
     #sitePopupClose { position: absolute; top: .6rem; right: .6rem; z-index: 2; width: 2rem; height: 2rem; border-radius: 9999px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; }
 
+    /* Article reader open / minimize / restore animations */
+    #articleReaderCard.reader-card-anim { animation: popup-in .25s ease; }
+    #articleReaderCard.reader-card-minimizing { animation: reader-minimize-out .22s ease forwards; }
+    @keyframes reader-minimize-out { to { opacity: 0; transform: translateY(60px) scale(.9); } }
+    #minimizedReaderTray.tray-in { animation: tray-in .22s ease; }
+    @keyframes tray-in { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: none; } }
+    .minimized-reader-pill { animation: pill-in .18s ease; }
+    @keyframes pill-in { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: none; } }
+    .scrollbar-none { scrollbar-width: none; }
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+
     @media (prefers-reduced-motion: reduce) {
       .hero-sub, #miniBar, #railTip, .stack-card, #siteRail, .fade-card, #sitePopupBody, .scroll-hint { transition: none !important; animation: none !important; }
       .fade-card { opacity: 1; transform: none; }
+      #articleReaderCard, #minimizedReaderTray, .minimized-reader-pill { animation: none !important; }
     }
   </style>
 </head>
@@ -984,14 +996,22 @@
   <!-- FULL ARTICLE READER MODAL -->
   <!-- ========================================== -->
   <div id="articleReaderModal" class="fixed inset-0 bg-ink-900/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-cream-50 rounded-3xl shadow-2xl border border-cream-300 max-w-3xl w-full my-8 overflow-hidden">
+
+    <!-- ALWAYS-VISIBLE READER CONTROLS (fixed to viewport so they stay reachable while scrolling) -->
+    <div class="fixed top-4 right-4 z-[60] flex items-center gap-2">
+      <button id="minimizeArticleReaderBtn" title="Minimize to footer" aria-label="Minimize article" class="w-9 h-9 rounded-full bg-ink-900/80 hover:bg-ink-900 text-white flex items-center justify-center transition">
+        <i data-lucide="minus" class="w-5 h-5"></i>
+      </button>
+      <button id="closeArticleReaderBtn" title="Close" aria-label="Close article" class="w-9 h-9 rounded-full bg-ink-900/80 hover:bg-ink-900 text-white flex items-center justify-center transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+
+    <div id="articleReaderCard" class="reader-card-anim bg-cream-50 rounded-3xl shadow-2xl border border-cream-300 max-w-3xl w-full my-8 overflow-hidden">
       
       <!-- MODAL IMAGE HEADER -->
       <div class="relative h-56 sm:h-64 bg-ink-900">
         <img id="readerHeroImg" src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80" onerror="this.onerror=null; this.src=IMG_SUPPORT;" alt="Article header" class="w-full h-full object-cover opacity-90" />
-        <button id="closeArticleReaderBtn" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-ink-900/80 hover:bg-ink-900 text-white flex items-center justify-center transition">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
         <div class="absolute bottom-4 left-6">
           <span id="readerCategoryBadge" class="px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-red-600 text-white">
             Student Engagement
@@ -1065,6 +1085,13 @@
       </div>
 
     </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MINIMIZED ARTICLE READER TRAY (persistent footer) -->
+  <!-- ========================================== -->
+  <div id="minimizedReaderTray" class="hidden fixed bottom-0 inset-x-0 z-40 bg-ink-900/95 backdrop-blur-sm border-t border-ink-700 shadow-[0_-8px_24px_rgba(0,0,0,.25)]">
+    <div id="minimizedReaderList" class="flex items-center gap-2 overflow-x-auto px-3 py-2 scrollbar-none"></div>
   </div>
 
   <!-- ========================================== -->
@@ -1533,6 +1560,10 @@
     let fuse = null;
     let articleFuse = null;
     let currentReaderScript = '';
+    // Tracks the reader currently shown in the modal: { type: 'article'|'smore', id, title, image } or null.
+    let currentReaderRef = null;
+    // Minimized readers tray: list of { type, id, title, image } entries, most recent first.
+    let minimizedReaders = [];
     let suggestionIndex = 0;
     let suggestionInterval = null;
 
@@ -1949,9 +1980,98 @@
       btn.title = saved ? 'Remove from reading list' : 'Save to reading list';
     }
 
+    // --- ARTICLE READER MODAL: open / minimize / restore / tray ---
+
+    function showReaderModal() {
+      const modal = document.getElementById('articleReaderModal');
+      const card = document.getElementById('articleReaderCard');
+      modal.classList.remove('hidden');
+      card.classList.remove('reader-card-minimizing');
+      // Restart the entrance animation even if the modal was already open.
+      card.classList.remove('reader-card-anim');
+      void card.offsetWidth;
+      card.classList.add('reader-card-anim');
+    }
+
+    function closeReaderModal() {
+      document.getElementById('articleReaderModal').classList.add('hidden');
+      currentReaderRef = null;
+    }
+
+    function minimizeArticleReader() {
+      if (!currentReaderRef) return;
+      const ref = currentReaderRef;
+      const card = document.getElementById('articleReaderCard');
+      const modal = document.getElementById('articleReaderModal');
+      card.classList.add('reader-card-minimizing');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        card.classList.remove('reader-card-minimizing');
+      }, 220);
+      currentReaderRef = null;
+      minimizedReaders = minimizedReaders.filter(r => !(r.type === ref.type && r.id === ref.id));
+      minimizedReaders.unshift(ref);
+      if (minimizedReaders.length > 6) minimizedReaders.length = 6;
+      renderMinimizedTray();
+    }
+
+    function removeMinimizedReader(type, id) {
+      minimizedReaders = minimizedReaders.filter(r => !(r.type === type && r.id === id));
+      renderMinimizedTray();
+    }
+
+    function dismissMinimizedReader(type, id, event) {
+      event?.stopPropagation();
+      removeMinimizedReader(type, id);
+    }
+
+    function restoreMinimizedReader(type, id) {
+      const entry = minimizedReaders.find(r => r.type === type && r.id === id);
+      if (!entry) return;
+      // If another reader is currently open, send it back to the tray first.
+      if (currentReaderRef && !(currentReaderRef.type === type && currentReaderRef.id === id)) {
+        minimizeArticleReader();
+      }
+      minimizedReaders = minimizedReaders.filter(r => !(r.type === type && r.id === id));
+      renderMinimizedTray();
+      if (type === 'smore') openSmoreReader(id);
+      else openArticleReader(id);
+    }
+
+    function renderMinimizedTray() {
+      const tray = document.getElementById('minimizedReaderTray');
+      const list = document.getElementById('minimizedReaderList');
+      if (!tray || !list) return;
+      if (!minimizedReaders.length) {
+        tray.classList.add('hidden');
+        tray.classList.remove('tray-in');
+        list.innerHTML = '';
+        return;
+      }
+      list.innerHTML = minimizedReaders.map(r => `
+        <button type="button" class="minimized-reader-pill shrink-0 flex items-center gap-2 pl-1.5 pr-2 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition max-w-[13rem]" data-reader-type="${escapeHtml(r.type)}" data-reader-id="${escapeHtml(r.id)}" title="Resume reading: ${escapeHtml(r.title)}">
+          <span class="w-6 h-6 rounded-full bg-ink-700 overflow-hidden shrink-0 flex items-center justify-center">
+            ${r.image ? `<img src="${escapeHtml(r.image)}" alt="" class="w-full h-full object-cover" />` : '<i data-lucide="newspaper" class="w-3.5 h-3.5 text-cream-200"></i>'}
+          </span>
+          <span class="text-xs font-semibold truncate">${escapeHtml(r.title)}</span>
+          <span class="dismiss-minimized-reader w-5 h-5 rounded-full flex items-center justify-center text-cream-300 hover:text-white hover:bg-white/10 shrink-0" data-reader-type="${escapeHtml(r.type)}" data-reader-id="${escapeHtml(r.id)}" title="Remove">
+            <i data-lucide="x" class="w-3 h-3"></i>
+          </span>
+        </button>
+      `).join('');
+      tray.classList.remove('hidden');
+      tray.classList.remove('tray-in');
+      void tray.offsetWidth;
+      tray.classList.add('tray-in');
+      lucide.createIcons();
+    }
+
     function openArticleReader(articleId) {
       const art = APP_DATA.articles.find(a => a.id === articleId);
       if (!art) return;
+
+      removeMinimizedReader('article', art.id);
+      currentReaderRef = { type: 'article', id: art.id, title: art.title, image: art.image };
 
       document.getElementById('readerTryTomorrowBox').classList.toggle('hidden', !art.tryTomorrow);
       document.getElementById('readerScriptBox').classList.toggle('hidden', !art.script);
@@ -1991,7 +2111,7 @@
         pContainer.append(box);
       }
 
-      document.getElementById('articleReaderModal').classList.remove('hidden');
+      showReaderModal();
       lucide.createIcons();
     }
 
@@ -2787,6 +2907,8 @@
     function openSmoreReader(issueUrl) {
       const issue = smoreIssues.find(item => item.issue_url === issueUrl);
       if (!issue) return;
+      removeMinimizedReader('smore', issue.issue_url);
+      currentReaderRef = { type: 'smore', id: issue.issue_url, title: issue.issue_title, image: issue.cover_image_url };
       const image = document.getElementById('readerHeroImg');
       image.classList.toggle('hidden', !issue.cover_image_url);
       if (issue.cover_image_url) setArticleImage(image, issue.cover_image_url);
@@ -2810,7 +2932,7 @@
       const original = document.getElementById('readerOriginalSmore');
       original.href = issue.issue_url;
       original.classList.remove('hidden');
-      document.getElementById('articleReaderModal').classList.remove('hidden');
+      showReaderModal();
     }
 
     function appendLinkedText(el, text) {
@@ -3528,7 +3650,7 @@
       document.getElementById('openEdTechLabFromBannerBtn')?.addEventListener('click', () => switchView('view-academy'));
       document.getElementById('sidebarNotebookLmCard')?.addEventListener('click', () => switchView('view-academy'));
       document.getElementById('jumpToVideoLabFromReaderBtn')?.addEventListener('click', () => {
-        document.getElementById('articleReaderModal').classList.add('hidden');
+        closeReaderModal();
         switchView('view-academy');
       });
 
@@ -3542,10 +3664,26 @@
 
       // Close Article Reader
       document.getElementById('closeArticleReaderBtn')?.addEventListener('click', () => {
-        document.getElementById('articleReaderModal').classList.add('hidden');
+        closeReaderModal();
       });
       document.getElementById('closeArticleReaderBottomBtn')?.addEventListener('click', () => {
-        document.getElementById('articleReaderModal').classList.add('hidden');
+        closeReaderModal();
+      });
+
+      // Minimize Article Reader to the persistent footer tray
+      document.getElementById('minimizeArticleReaderBtn')?.addEventListener('click', () => {
+        minimizeArticleReader();
+      });
+
+      // Minimized reader tray: click a pill to resume, click its x to dismiss
+      document.getElementById('minimizedReaderList')?.addEventListener('click', (e) => {
+        const dismissEl = e.target.closest('.dismiss-minimized-reader');
+        if (dismissEl) {
+          dismissMinimizedReader(dismissEl.dataset.readerType, dismissEl.dataset.readerId, e);
+          return;
+        }
+        const pill = e.target.closest('[data-reader-type]');
+        if (pill) restoreMinimizedReader(pill.dataset.readerType, pill.dataset.readerId);
       });
 
       // Copy Script inside Reader
