@@ -427,7 +427,7 @@
 
             <div class="pt-1.5 mt-1 border-t border-cream-200 px-2 py-1.5 flex items-center justify-between gap-2">
               <button id="openShareTipModalBtn" class="text-[11px] font-bold text-red-600 hover:text-red-700 flex items-center gap-1.5 px-2 py-1 rounded-lg hover:bg-red-50 transition">
-                <i data-lucide="pen-tool" class="w-3.5 h-3.5"></i>
+                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                 <span data-text="menu_share_tip">Share a Tip</span>
               </button>
               <button id="openSettingsModalBtn" class="text-[11px] font-semibold text-ink-600 hover:text-ink-900 flex items-center gap-1.5 px-2 py-1 rounded-lg hover:bg-cream-100 transition">
@@ -781,7 +781,7 @@
           <div id="loungeWidget" class="bg-white rounded-3xl border border-cream-300 p-6 shadow-sm space-y-4">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <i data-lucide="coffee" class="w-4 h-4 text-red-600"></i>
+                <i data-lucide="megaphone" class="w-4 h-4 text-red-600"></i>
                 <h3 class="font-editorial font-bold text-base text-ink-900"><button type="button" id="loungeHeadingLink" class="hover:text-red-600 hover:underline text-left" title="Open the Staff Lounge"><span id="loungeHeadingText">Shout Outs</span></button></h3>
               </div>
               <span id="loungeBadgeText" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-50 text-rose-700">Staff Lounge</span>
@@ -4943,18 +4943,18 @@
   // Text comes from the nav_<key>_label / _hint / _tip settings so the admin console can edit it.
   const ITEMS = [
     { key: 'nav_find', label: 'Find an Article', hint: 'Search by keyword', icon: 'search', popup: 'finderWidget' },
-    { key: 'nav_shoutouts', label: 'Shout Outs', hint: 'Quotes & classroom wins', icon: 'coffee', popup: 'loungeWidget' },
+    { key: 'nav_shoutouts', label: 'Shout Outs', hint: 'Quotes & classroom wins', icon: 'megaphone', popup: 'loungeWidget' },
     { key: 'nav_directory', label: 'Directory', hint: 'The Heart of MMS', tip: 'The Heart of MMS', icon: 'map-pin', run: () => click('.menu-nav-item[data-view="view-directory"]') },
     { key: 'nav_updates', label: 'School Updates', hint: 'News, social & newsletters', icon: 'newspaper', run: () => click('.menu-nav-item[data-view="view-bulletin"]') },
-    { key: 'nav_academy', label: () => academyTitle(), hint: 'Tutorial video library', icon: 'graduation-cap', run: () => click('.menu-nav-item[data-view="view-academy"]') },
+    { key: 'nav_academy', label: () => academyTitle(), hint: 'Tutorial video library', icon: 'clapperboard', run: () => click('.menu-nav-item[data-view="view-academy"]') },
     { key: 'nav_studio', label: 'Peer Feedback Forum', hint: 'Warm & cool feedback', icon: 'users', run: () => click('.menu-nav-item[data-view="view-studio"]') },
-    { key: 'nav_lounge', label: 'Staff Lounge', hint: 'Hang out & share', icon: 'message-square', run: () => window.switchView('view-lounge') },
-    { key: 'nav_engagement', label: 'Student Engagement', hint: 'Articles', icon: 'sparkles', run: () => click('.topleft-editorial-item[data-category="Student Engagement"]') },
-    { key: 'nav_management', label: 'Classroom Management', hint: 'Articles', icon: 'layout-dashboard', run: () => click('.topleft-editorial-item[data-category="Classroom Management"]') },
+    { key: 'nav_lounge', label: 'Staff Lounge', hint: 'Hang out & share', icon: 'coffee', run: () => window.switchView('view-lounge') },
+    { key: 'nav_engagement', label: 'Student Engagement', hint: 'Articles', icon: 'graduation-cap', run: () => click('.topleft-editorial-item[data-category="Student Engagement"]') },
+    { key: 'nav_management', label: 'Classroom Management', hint: 'Articles', icon: 'ruler', run: () => click('.topleft-editorial-item[data-category="Classroom Management"]') },
     { key: 'nav_support', label: 'Teacher Support', hint: 'Articles', icon: 'heart-handshake', run: () => click('.topleft-editorial-item[data-category="Teacher Support"]') },
     { key: 'nav_tech', label: 'Tech', hint: 'Tech Talk articles', icon: 'cpu', run: () => click('.topleft-editorial-item[data-category="Tech & AI"]') },
     { key: 'nav_saved', label: 'Saved Reading List', hint: 'Your bookmarks', icon: 'bookmark', run: () => click('.topic-pill[data-category="saved"]') },
-    { key: 'nav_share_tip', label: 'Share a Tip', hint: 'Submit for review', icon: 'lightbulb', run: () => click('#openShareTipModalBtn') }
+    { key: 'nav_share_tip', label: 'Share a Tip', hint: 'Submit for review', icon: 'pencil', run: () => click('#openShareTipModalBtn') }
   ];
   const labelOf = it => S(it.key + '_label', typeof it.label === 'function' ? it.label() : it.label);
   const hintOf = it => S(it.key + '_hint', it.hint || '');
