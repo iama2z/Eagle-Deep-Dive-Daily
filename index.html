@@ -188,8 +188,14 @@
     .landing-hero.hidden { display: none; }
     .landing-inner { position: relative; z-index: 1; width: 100%; max-width: 72rem; }
     .landing-blob { position: absolute; border-radius: 9999px; filter: blur(60px); opacity: 0.45; pointer-events: none; }
-    .landing-blob-a { width: 24rem; height: 24rem; background: #fecaca; top: -6rem; left: -6rem; }
-    .landing-blob-b { width: 28rem; height: 28rem; background: #cbd5e1; bottom: -8rem; right: -6rem; }
+    .landing-blob-a { width: 24rem; height: 24rem; background: #fecaca; top: -6rem; left: -6rem; animation: landing-blob-drift-a 34s ease-in-out infinite alternate; }
+    .landing-blob-b { width: 28rem; height: 28rem; background: #cbd5e1; bottom: -8rem; right: -6rem; animation: landing-blob-drift-b 42s ease-in-out infinite alternate; }
+    @keyframes landing-blob-drift-a {
+      to { transform: translate(1.25rem, 0.75rem) scale(1.04); }
+    }
+    @keyframes landing-blob-drift-b {
+      to { transform: translate(-1rem, -1.25rem) scale(1.05); }
+    }
 
     .stack-wrap { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1.25rem; }
     .stack-scene { position: relative; flex: 1; max-width: 62rem; height: 22rem; perspective: 1400px; outline: none; touch-action: pan-y pinch-zoom; user-select: none; overflow: visible; }
@@ -286,7 +292,7 @@
     .scrollbar-none::-webkit-scrollbar { display: none; }
 
     @media (prefers-reduced-motion: reduce) {
-      .hero-sub, #miniBar, #railTip, .stack-card, #siteRail, .fade-card, #sitePopupBody, .scroll-hint { transition: none !important; animation: none !important; }
+      .hero-sub, #miniBar, #railTip, .stack-card, #siteRail, .fade-card, #sitePopupBody, .scroll-hint, .landing-blob { transition: none !important; animation: none !important; }
       .fade-card { opacity: 1; transform: none; }
       #articleReaderCard, #minimizedReaderTray, .minimized-reader-pill { animation: none !important; }
     }
