@@ -8,6 +8,15 @@ uses plain HTML and has no build tools or runtime dependencies.
 Open `index.html` in a web browser. Add the site's content and assets there as
 they are ready.
 
+### What's new notifications
+
+The bell beside **Contribute** stays visible on the landing page and inner views,
+on desktop and mobile. Its badge and tray show new published articles, new Staff
+Lounge posts, and increased lounge reactions since this browser's previous
+successful visit or refresh. The first visit establishes a baseline; unread items
+survive refreshes until opened or cleared with **Mark all read**. Pending submission
+alerts remain restricted to browsers that unlock the admin console.
+
 ### Sheet-first loading
 
 On refresh, skeleton placeholders cover the Sheet-controlled page regions until
