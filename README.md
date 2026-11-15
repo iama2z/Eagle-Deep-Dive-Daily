@@ -8,6 +8,19 @@ uses plain HTML and has no build tools or runtime dependencies.
 Open `index.html` in a web browser. Add the site's content and assets there as
 they are ready.
 
+### Desktop Tools (in development on the `desktop-tools` branch)
+
+The **Desktop Tools** page (menu and rail) holds classroom widgets. The first is a
+**Timer** (`tools-timer.js`): it opens as a pop-up that persists across the site
+until you press **Exit** or it finishes. While it is open, press `1`-`9` for that
+many minutes or `0` for 10; pressing the same key again within 1 second doubles
+the time, otherwise it resets. The last 10 seconds tick, and finishing plays a
+"celebration" sound with confetti. `F` or the **Full screen** button toggles full screen.
+
+Test before merging: `git checkout desktop-tools`, run `python3 -m http.server`
+and open `http://localhost:8000/index.html` (or open `index.html` directly), then
+run `node --test tests/`. Add `?timertest` to the URL to make each minute last 5 seconds, so the countdown, sound and confetti are quick to check. Merge to `main` only when happy.
+
 ### What's new notifications
 
 The bell beside **Contribute** stays visible on the landing page and inner views,
