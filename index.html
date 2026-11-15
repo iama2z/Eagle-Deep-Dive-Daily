@@ -416,6 +416,15 @@
                   <div data-text="menu_studio_desc" class="text-[11px] text-ink-600">Warm &amp; Cool feedback lab for lesson drafts</div>
                 </div>
               </button>
+              <button class="menu-nav-item w-full text-left px-3 py-2.5 rounded-xl hover:bg-cream-100 flex items-start gap-3 transition" data-view="view-tools">
+                <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
+                  <i data-lucide="wrench" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-ink-900">Desktop Tools</div>
+                  <div class="text-[11px] text-ink-600">Timer and other handy classroom widgets</div>
+                </div>
+              </button>
             </div>
 
             <div class="px-3 pt-2 pb-1 border-t border-cream-200">
@@ -993,6 +1002,20 @@
           </div>
           <div class="space-y-4" id="tuningSubmissionsContainer"></div>
         </div>
+      </div>
+    </div>
+
+    <div id="view-tools" class="view-section hidden space-y-6">
+      <div class="pb-5 border-b border-cream-300">
+        <h2 class="font-editorial text-3xl font-extrabold text-ink-900">Desktop Tools</h2>
+        <p class="text-sm text-ink-600 mt-1">Handy widgets for your classroom desktop. More are on the way.</p>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <button type="button" data-open-timer class="text-left bg-white border border-cream-300 rounded-2xl p-5 hover:shadow-lg transition">
+          <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center mb-3"><i data-lucide="timer" class="w-5 h-5"></i></div>
+          <div class="font-bold text-ink-900">Timer</div>
+          <div class="text-xs text-ink-600 mt-1">Pop-up countdown that follows you around the site. Press 1&ndash;9 or 0 (10 min) to set it; press F for full screen.</div>
+        </button>
       </div>
     </div>
 
@@ -5404,6 +5427,7 @@
     { key: 'nav_updates', label: 'School Updates', hint: 'News, social & newsletters', icon: 'newspaper', run: () => click('.menu-nav-item[data-view="view-bulletin"]') },
     { key: 'nav_academy', label: () => academyTitle(), hint: 'Tutorial video library', icon: 'clapperboard', run: () => click('.menu-nav-item[data-view="view-academy"]') },
     { key: 'nav_studio', label: 'Peer Feedback Forum', hint: 'Warm & cool feedback', icon: 'users', run: () => click('.menu-nav-item[data-view="view-studio"]') },
+    { key: 'nav_tools', label: 'Desktop Tools', hint: 'Timer & more', icon: 'timer', run: () => window.switchView('view-tools') },
     { key: 'nav_lounge', label: 'Staff Lounge', hint: 'Hang out & share', icon: 'coffee', run: () => window.switchView('view-lounge') },
     { key: 'nav_engagement', label: 'Student Engagement', hint: 'Articles', icon: 'graduation-cap', run: () => click('.topleft-editorial-item[data-category="Student Engagement"]') },
     { key: 'nav_management', label: 'Classroom Management', hint: 'Articles', icon: 'ruler', run: () => click('.topleft-editorial-item[data-category="Classroom Management"]') },
@@ -5641,5 +5665,6 @@
   if (window.lucide) lucide.createIcons();
 })();
   </script>
+  <script src="tools-timer.js"></script>
 </body>
 </html>
