@@ -19,7 +19,7 @@ the time, otherwise it resets. The last 10 seconds tick, and finishing plays a
 
 Test before merging: `git checkout desktop-tools`, run `python3 -m http.server`
 and open `http://localhost:8000/index.html` (or open `index.html` directly), then
-run `node --test tests/`. Merge to `main` only when happy.
+run `node --test tests/`. Add `?timertest` to the URL to make each minute last 5 seconds, so the countdown, sound and confetti are quick to check. Merge to `main` only when happy.
 
 ### What's new notifications
 

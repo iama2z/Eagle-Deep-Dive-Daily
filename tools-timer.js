@@ -207,7 +207,8 @@
     if (!next) return;
     e.preventDefault();
     lastPress = next;
-    setSeconds(next.seconds, true);
+    // ?timertest on the URL shrinks each minute to 5 seconds so the ending can be checked quickly.
+    setSeconds(/[?&]timertest\b/.test(location.search) ? next.seconds / 12 : next.seconds, true);
   }
 
   // Browser Esc exits the Fullscreen API on its own; keep the layout class in sync.
