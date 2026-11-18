@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>document.documentElement.classList.add('site-loading');</script>
+  <script>try { const d = document.documentElement; if (localStorage.getItem('edd_site_style') !== 'advanced') d.classList.add('simple-mode'); if (localStorage.getItem('edd_theme') === 'dark') d.classList.add('dark'); } catch (e) { document.documentElement.classList.add('simple-mode'); }</script>
   <script>if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; window.scrollTo(0, 0); document.addEventListener('DOMContentLoaded', () => window.scrollTo(0, 0)); window.addEventListener('pageshow', () => window.scrollTo(0, 0)); window.addEventListener('load', () => window.scrollTo(0, 0));</script>
   <title>Eagle Deep Dive Daily | Maize Middle School Classroom Craft, Engagement, Support &amp; Tech</title>
   <!-- Google Fonts: Montserrat Alternates for body text, DM Serif Display for headlines, Source Sans 3 for rotating messages, and Arsenal SC for short emphasis -->
@@ -319,6 +320,56 @@
     @media (prefers-reduced-motion: reduce) {
       .search-jump-highlight { animation: none; box-shadow: 0 0 0 3px #dc2626; }
     }
+
+    /* ===== Site style (simplified is the default; advanced is the full site) and dark mode ===== */
+    #simpleHome, #simpleLogoBtn, #simpleMenu { display: none; }
+    html.simple-mode #simpleLogoBtn { display: flex; }
+    html.simple-mode #simpleHome { display: block; }
+    html.simple-mode #simpleMenu.open { display: block; }
+    html.simple-mode #siteRail, html.simple-mode #railMobileBtn, html.simple-mode #railBackdrop,
+    html.simple-mode #railTip, html.simple-mode #miniBar { display: none !important; }
+    html.simple-mode .stack-wrap, html.simple-mode #stackLabel, html.simple-mode #heroSearchHost { display: none; }
+    html.simple-mode body.mini-on { padding-top: 0; }
+    @media (min-width: 1024px) {
+      html.simple-mode body { padding-left: 0; }
+      html.simple-mode #minimizedReaderTray { left: 0; }
+    }
+    #simpleLogoBtn { position: fixed; top: 0.75rem; left: 0.75rem; z-index: 46; width: 2.75rem; height: 2.75rem; border-radius: 0.9rem; align-items: center; justify-content: center; background: #fff; border: 1px solid #e2e8f0; box-shadow: 0 8px 20px rgba(15,23,42,.18); transition: box-shadow .2s ease, transform .2s ease; }
+    #simpleLogoBtn:hover, #simpleLogoBtn:focus-visible { box-shadow: 0 0 0 2px #09090B, 0 8px 20px rgba(15,23,42,.18); transform: scale(1.05); }
+    #simpleLogoBtn img { width: 2rem; height: auto; }
+    #simpleMenu { position: fixed; top: 4rem; left: 0.75rem; z-index: 47; width: 20rem; max-width: calc(100vw - 1.5rem); max-height: calc(100vh - 5rem); overflow-y: auto; background: #fff; border: 1px solid #e2e8f0; border-radius: 1rem; box-shadow: 0 24px 60px rgba(15,23,42,.3); padding: 0.6rem; }
+    #simpleMenu .menu-heading { padding: 0.5rem 0.6rem 0.25rem; font-size: 0.625rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #71717a; }
+    #simpleMenu .menu-row { width: 100%; display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.6rem; border-radius: 0.7rem; font-size: 0.75rem; font-weight: 700; text-align: left; color: #09090B; }
+    #simpleMenu .menu-row:hover, #simpleMenu .menu-row:focus-visible { background: #f1f5f9; }
+    #simpleMenu .menu-row svg { width: 1rem; height: 1rem; color: #dc2626; flex: none; }
+    #simpleMenu .menu-row .menu-check { margin-left: auto; opacity: 0; }
+    #simpleMenu .menu-row[aria-pressed="true"] { background: #fee2e2; }
+    #simpleMenu .menu-row[aria-pressed="true"] .menu-check { opacity: 1; }
+    #simpleMenu .menu-sep { height: 1px; background: #e2e8f0; margin: 0.4rem 0; }
+    #simpleMenu .menu-search { padding: 0.25rem 0.2rem; }
+    #simpleMenu .menu-search > div { max-width: none; margin: 0; }
+    #themeSwitch { margin-left: auto; width: 2.2rem; height: 1.25rem; border-radius: 9999px; background: #cbd5e1; position: relative; flex: none; transition: background .2s ease; }
+    #themeSwitch::after { content: ''; position: absolute; top: 0.15rem; left: 0.15rem; width: 0.95rem; height: 0.95rem; border-radius: 9999px; background: #fff; transition: transform .2s ease; }
+    #themeSwitch[aria-checked="true"] { background: #dc2626; }
+    #themeSwitch[aria-checked="true"]::after { transform: translateX(0.95rem); }
+
+    #simpleHome { margin-top: 1.5rem; }
+    .simple-shout { max-width: 36rem; margin: 0 auto; }
+    .simple-shout #loungeWidget { box-shadow: 0 2px 4px rgba(15,23,42,.06), 0 16px 36px rgba(15,23,42,.14), 0 36px 70px rgba(15,23,42,.12); border-color: #fca5a5; }
+    .simple-shout #loungeQuotesContainer { max-height: 16rem; overflow-y: auto; }
+    .simple-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; max-width: 56rem; margin: 1.5rem auto 0; }
+    @media (min-width: 768px) { .simple-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    .simple-card { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; padding: 1.25rem 0.75rem; text-align: center; background: #fff; border: 1px solid #e2e8f0; border-radius: 1.25rem; box-shadow: 0 2px 4px rgba(15,23,42,.06), 0 12px 24px rgba(15,23,42,.10); transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+    .simple-card:hover, .simple-card:focus-visible { transform: translateY(-3px); border-color: #dc2626; box-shadow: 0 2px 4px rgba(15,23,42,.08), 0 18px 36px rgba(15,23,42,.16); }
+    .simple-card .simple-icon { width: 3.5rem; height: 3.5rem; border-radius: 1.1rem; display: flex; align-items: center; justify-content: center; background: #fee2e2; color: #b91c1c; }
+    .simple-card .simple-icon svg { width: 1.75rem; height: 1.75rem; }
+    .simple-card .simple-title { font-weight: 700; font-size: 0.95rem; line-height: 1.2; color: #09090B; }
+    .simple-card .simple-hint { font-size: 0.7rem; color: #52525b; }
+
+    /* Dark mode inverts the page and flips media back so photos, video and the logo keep their colors */
+    html.dark { filter: invert(1) hue-rotate(180deg); }
+    html.dark img, html.dark video, html.dark iframe, html.dark canvas { filter: invert(1) hue-rotate(180deg); }
+    @media (prefers-reduced-motion: reduce) { .simple-card, #simpleLogoBtn, #themeSwitch, #themeSwitch::after { transition: none; } }
   </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-red-600 selection:text-white">
@@ -603,6 +654,10 @@
         <button type="button" id="stackNext" class="stack-arrow" aria-label="Next option"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
       </div>
       <p id="stackLabel" class="stack-label" aria-live="polite"></p>
+      <div id="simpleHome">
+        <div id="simpleShoutHost" class="simple-shout"></div>
+        <div id="simpleGrid" class="simple-grid"></div>
+      </div>
       <button type="button" id="scrollHint" class="scroll-hint">
         Scroll to see the latest articles
         <i data-lucide="chevron-down" class="w-5 h-5"></i>
@@ -5379,6 +5434,21 @@
       });
     })();
   </script>
+  <button type="button" id="simpleLogoBtn" aria-label="Open site menu" aria-haspopup="true" aria-expanded="false" aria-controls="simpleMenu" title="Site menu"><img src="eagle-logo.svg" alt=""></button>
+  <div id="simpleMenu" role="menu" aria-label="Site menu">
+    <button type="button" id="simpleHomeBtn" class="menu-row" role="menuitem"><i data-lucide="home"></i><span>Home</span></button>
+    <div class="menu-sep"></div>
+    <div class="menu-heading">Site Style</div>
+    <button type="button" class="menu-row" data-site-style="simple" aria-pressed="true"><i data-lucide="layout-grid"></i><span>Simplified</span><i data-lucide="check" class="menu-check"></i></button>
+    <button type="button" class="menu-row" data-site-style="advanced" aria-pressed="false"><i data-lucide="layout-dashboard"></i><span>Advanced</span><i data-lucide="check" class="menu-check"></i></button>
+    <button type="button" class="menu-row" data-site-style="custom"><i data-lucide="sliders-horizontal"></i><span>Custom</span><span class="ml-auto text-[10px] font-bold uppercase tracking-wider text-ink-400">Soon</span></button>
+    <div class="menu-sep"></div>
+    <div class="menu-heading">Search</div>
+    <div id="simpleSearchHost" class="menu-search"></div>
+    <div class="menu-sep"></div>
+    <button type="button" id="themeToggleRow" class="menu-row" role="menuitemcheckbox" aria-checked="false"><i data-lucide="moon"></i><span>Dark mode</span><span id="themeSwitch" role="presentation" aria-checked="false"></span></button>
+    <button type="button" id="feedbackBtn" class="menu-row" role="menuitem"><i data-lucide="message-square-plus"></i><span>Submit feedback</span></button>
+  </div>
   <div id="railBackdrop"></div>
   <nav id="siteRail" aria-label="Site menu"></nav>
   <div id="railTip" role="presentation"></div>
@@ -5412,6 +5482,11 @@
   const click = sel => document.querySelector(sel)?.click();
   const academyTitle = () => $('academyNavTitleText')?.textContent.trim() || 'Video Lab';
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const root = document.documentElement;
+  const isSimple = () => root.classList.contains('simple-mode');
+  const isDark = () => root.classList.contains('dark');
+  const store_ = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* storage unavailable */ } };
+  const FEEDBACK_FORM_URL = ''; // Paste the Google Form link here (or set feedback_form_url in site settings)
 
   const S = (key, fallback) => {
     const v = typeof siteSettings === 'object' && siteSettings ? String(siteSettings[key] ?? '').trim() : '';
@@ -5537,7 +5612,9 @@
     setTimeout(() => $('globalSearchInput')?.focus(), 150);
   } };
   const settingsItem = { key: 'nav_settings', label: 'Settings', icon: 'settings', run: () => click('#openSettingsModalBtn') };
-  const railEntries = [homeItem, searchItem, 'sep', ...ITEMS, 'sep', settingsItem];
+  const styleItem = { key: 'nav_style', label: 'Simplified view', icon: 'layout-grid', run: () => applyStyle('simple') };
+  const themeItem = { key: 'nav_theme', label: () => isDark() ? 'Light mode' : 'Dark mode', icon: 'moon', run: () => setTheme(!isDark()) };
+  const railEntries = [homeItem, searchItem, 'sep', ...ITEMS, 'sep', styleItem, themeItem, settingsItem];
   const railButtons = [];
   railEntries.forEach(it => {
     if (it === 'sep') { const d = document.createElement('div'); d.className = 'rail-sep'; rail.appendChild(d); return; }
@@ -5589,9 +5666,14 @@
     'You can search for posted articles, school updates, or The Heart of MMS.',
     'Save any article by clicking the "save to reading list" icon.'
   ];
+  const DEFAULT_TIPS_SIMPLE = [
+    'What do you want to explore?',
+    'Search for articles from the Eagle menu in the top left.',
+    'Save any article by clicking the "save to reading list" icon.'
+  ];
   const tipList = () => {
     const custom = S('landing_tips', '').split(/\r?\n/).map(t => t.trim()).filter(Boolean);
-    return custom.length ? custom : DEFAULT_TIPS;
+    return custom.length ? custom : (isSimple() ? DEFAULT_TIPS_SIMPLE : DEFAULT_TIPS);
   };
   const sub = $('landingSubtitle');
   let tipIndex = 0;
@@ -5609,7 +5691,7 @@
   const heroHost = $('heroSearchHost'), miniHost = $('miniSearchHost'), miniBar = $('miniBar');
   function placeSearch(inHero) {
     if (!searchBox) return;
-    const host = inHero ? heroHost : miniHost;
+    const host = isSimple() ? $('simpleSearchHost') : (inHero ? heroHost : miniHost);
     if (searchBox.parentElement !== host) {
       const hadFocus = document.activeElement === $('globalSearchInput');
       host.appendChild(searchBox);
@@ -5657,9 +5739,81 @@
     watch();
   }
 
+  // ---- Simplified home cards, site style, dark mode, and the Eagle logo menu ----
+  const SIMPLE_ITEMS = [
+    { key: 'simple_articles', label: 'Articles', hint: 'Latest articles & resources', icon: 'newspaper', run: () => $('view-editorial').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' }) },
+    { key: 'simple_videos', label: 'Videos', hint: 'Tutorial video library', icon: 'clapperboard', run: () => click('.menu-nav-item[data-view="view-academy"]') },
+    { key: 'simple_submit', label: 'Submit an Article', hint: 'Share it for review', icon: 'pencil', run: () => click('#openShareTipModalBtn') },
+    { key: 'nav_saved', label: 'Saved Reading List', hint: 'Your bookmarks', icon: 'bookmark', run: () => click('.topic-pill[data-category="saved"]') }
+  ];
+  SIMPLE_ITEMS.forEach(it => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'simple-card';
+    b.innerHTML = '<span class="simple-icon"><i data-lucide="' + it.icon + '"></i></span><span class="simple-title"></span><span class="simple-hint"></span>';
+    b.querySelector('.simple-title').textContent = labelOf(it);
+    b.querySelector('.simple-hint').textContent = hintOf(it);
+    b.addEventListener('click', it.run);
+    $('simpleGrid').appendChild(b);
+  });
+
+  const menu = $('simpleMenu'), logoBtn = $('simpleLogoBtn');
+  function closeSimpleMenu() { menu.classList.remove('open'); logoBtn.setAttribute('aria-expanded', 'false'); }
+  logoBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    const open = !menu.classList.contains('open');
+    menu.classList.toggle('open', open);
+    logoBtn.setAttribute('aria-expanded', String(open));
+  });
+  menu.addEventListener('click', e => e.stopPropagation());
+  document.addEventListener('click', closeSimpleMenu);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSimpleMenu(); });
+  // Picking a search result navigates away, so tuck the menu back in
+  $('searchResultsList')?.addEventListener('click', () => setTimeout(closeSimpleMenu, 0));
+  $('simpleHomeBtn').addEventListener('click', () => { closeSimpleMenu(); homeItem.run(); });
+  $('feedbackBtn').addEventListener('click', () => {
+    closeSimpleMenu();
+    const url = S('feedback_form_url', FEEDBACK_FORM_URL);
+    if (/^https?:\/\//i.test(url)) window.open(url, '_blank', 'noopener');
+    else alert('The feedback form is coming soon.');
+  });
+  menu.querySelectorAll('[data-site-style]').forEach(b => b.addEventListener('click', () => {
+    const style = b.dataset.siteStyle;
+    if (style === 'custom') location.href = 'under-construction.html';
+    else applyStyle(style);
+  }));
+  $('themeToggleRow').addEventListener('click', () => setTheme(!isDark()));
+
+  function setTheme(dark, persist = true) {
+    root.classList.toggle('dark', dark);
+    if (persist) store_('edd_theme', dark ? 'dark' : 'light');
+    $('themeToggleRow').setAttribute('aria-checked', String(dark));
+    $('themeSwitch').setAttribute('aria-checked', String(dark));
+    refreshRailLabels();
+  }
+
+  // The Shout Outs widget lives inline on the simplified home and goes back to the popup store otherwise
+  function applyStyle(style, persist = true) {
+    const simple = style !== 'advanced';
+    closePopup();
+    closeRail();
+    closeSimpleMenu();
+    root.classList.toggle('simple-mode', simple);
+    if (persist) store_('edd_site_style', simple ? 'simple' : 'advanced');
+    const lounge = $('loungeWidget');
+    if (lounge) (simple ? $('simpleShoutHost') : store)?.appendChild(lounge);
+    menu.querySelectorAll('[data-site-style="simple"],[data-site-style="advanced"]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.siteStyle === (simple ? 'simple' : 'advanced'))));
+    tipIndex = 0;
+    sub.textContent = tipList()[0];
+    updateMini();
+    layout();
+  }
+
   placeSearch(true);
   layout();
   refreshRailLabels();
+  applyStyle(isSimple() ? 'simple' : 'advanced', false);
+  setTheme(isDark(), false);
   window.refreshLanding = () => { layout(); refreshRailLabels(); const tips = tipList(); if (!tips.includes(sub.textContent)) { tipIndex = 0; sub.textContent = tips[0]; } };
   new MutationObserver(() => { layout(); refreshRailLabels(); }).observe($('academyNavTitleText') || document.body, { childList: true, characterData: true, subtree: true });
   if (window.lucide) lucide.createIcons();
