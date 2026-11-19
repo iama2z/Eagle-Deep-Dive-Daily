@@ -356,13 +356,15 @@
     html.simple-mode #landingTitle, html.simple-mode #landingSubtitle, html.simple-mode #loungeBadgeText, html.simple-mode #loungeViewAllBtn { display: none; }
     html.simple-mode #simpleViewAllBtn { display: block; }
     html.simple-mode #simpleBanner { display: block; }
-    #simpleBanner { display: none; position: fixed; z-index: 45; left: 4rem; top: 1.15rem; max-width: calc(100vw - 14rem); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; pointer-events: none; font-family: 'DM Serif Display', Georgia, serif; font-weight: 800; font-size: 0.85rem; line-height: 1.3; color: #3f3f46; animation: banner-run 6s cubic-bezier(.5,0,.2,1) both; }
-    @keyframes banner-run {
-      0% { left: 100vw; top: 42vh; font-size: 3rem; color: #09090B; max-width: none; }
-      65% { left: 8vw; top: 42vh; font-size: 3rem; color: #09090B; max-width: none; }
-      100% { left: 4rem; top: 1.15rem; font-size: 0.85rem; color: #3f3f46; }
-    }
-    @media (prefers-reduced-motion: reduce) { #simpleBanner { animation: none; } }
+    #simpleBanner { display: none; visibility: hidden; position: fixed; z-index: 45; left: 4rem; top: 1.15rem; max-width: calc(100vw - 14rem); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; pointer-events: none; font-family: 'DM Serif Display', Georgia, serif; font-weight: 800; font-size: 0.85rem; line-height: 1.3; color: #3f3f46; }
+    #simpleBanner.show { visibility: visible; }
+    #simpleBanner.typing { left: 50%; top: 1.25rem; max-width: none; overflow: visible; transform: translateX(-50%); font-size: clamp(1.5rem, 6vw, 2.5rem); color: #09090B; }
+    #simpleBanner.flying { overflow: visible; }
+    #simpleBanner .bl { display: inline-block; white-space: pre; transform-origin: 0 0; will-change: transform; }
+    #simpleBanner .bl.hide { visibility: hidden; }
+    #simpleBanner .bcur { display: inline-block; position: relative; width: 0; height: 1em; vertical-align: -0.12em; }
+    #simpleBanner .bcur::after { content: ''; position: absolute; left: 0.04em; top: 0; width: 0.07em; height: 1.05em; background: #dc2626; animation: banner-blink 1s steps(1) infinite; }
+    @keyframes banner-blink { 50% { opacity: 0; } }
     .simple-shout #loungeQuotesContainer > div { cursor: pointer; transition: box-shadow .2s ease, border-color .2s ease; }
     .simple-shout #loungeQuotesContainer > div:hover, .simple-shout #loungeQuotesContainer > div:focus-visible { border-color: #dc2626; box-shadow: 0 6px 16px rgba(15,23,42,.12); outline: none; }
     .overlay-card { position: fixed; inset: 0; z-index: 55; display: none; align-items: center; justify-content: center; padding: 1rem; background: rgba(9,9,11,.55); backdrop-filter: blur(6px); }
@@ -3844,6 +3846,8 @@
             region.removeAttribute('aria-busy');
           });
           document.documentElement.classList.remove('site-loading');
+          window.siteLoadDone = true;
+          window.playTitleIntro?.();
         }
       }
     }
@@ -5685,13 +5689,63 @@
 
   // ---- Title, rotating tips, and search placement ----
   const siteTitle = $('siteTitleText');
+  let bannerBusy = false;
   const syncTitle = () => {
     const t = (siteTitle?.textContent || '').trim() || 'Eagle Deep Dive Daily';
-    $('simpleBanner').textContent = t;
+    if (!bannerBusy) $('simpleBanner').textContent = t;
     $('landingTitle').textContent = t;
     $('miniTitle').textContent = t;
   };
   syncTitle();
+  // Title intro: typewriter at top centre, then each letter is pulled to the masthead with a slight stagger.
+  window.playTitleIntro = () => {
+    const banner = $('simpleBanner');
+    if (!banner || bannerBusy) return;
+    const text = banner.textContent;
+    const done = () => { bannerBusy = false; banner.className = 'show'; syncTitle(); };
+    if (!root.classList.contains('simple-mode') || reduceMotion || !banner.animate || !text) { banner.classList.add('show'); return; }
+    bannerBusy = true;
+    banner.textContent = '';
+    const letters = [...text].map(ch => {
+      const el = document.createElement('span');
+      el.className = 'bl hide';
+      el.textContent = ch;
+      banner.appendChild(el);
+      return el;
+    });
+    const cursor = document.createElement('span');
+    cursor.className = 'bcur';
+    banner.insertBefore(cursor, letters[0]);
+    banner.className = 'show typing';
+    const TYPE_MS = 300;
+    let i = 0;
+    const typeNext = () => {
+      if (i >= letters.length) return setTimeout(fly, 700);
+      letters[i].classList.remove('hide');
+      letters[i].after(cursor);
+      i++;
+      setTimeout(typeNext, TYPE_MS);
+    };
+    const fly = () => {
+      const first = letters.map(l => l.getBoundingClientRect());
+      cursor.remove();
+      banner.className = 'show flying';
+      const last = letters.map(l => l.getBoundingClientRect());
+      let pending = letters.length;
+      letters.forEach((l, k) => {
+        const dx = first[k].left - last[k].left, dy = first[k].top - last[k].top;
+        const sc = last[k].height ? first[k].height / last[k].height : 1;
+        const anim = l.animate([
+          { transform: `translate(${dx}px, ${dy}px) scale(${sc})` },
+          { transform: `translate(${dx * 0.55}px, ${dy * 0.55}px) scale(${1 + (sc - 1) * 0.55})`, offset: 0.5 },
+          { transform: 'none' }
+        ], { duration: 1100, delay: k * 45, easing: 'cubic-bezier(.45,0,.2,1)', fill: 'backwards' });
+        anim.onfinish = () => { if (--pending === 0) done(); };
+      });
+    };
+    setTimeout(typeNext, 400);
+  };
+  if (window.siteLoadDone) window.playTitleIntro();
   if (siteTitle) new MutationObserver(syncTitle).observe(siteTitle, { childList: true, characterData: true, subtree: true });
   $('miniTitle').addEventListener('click', () => homeItem.run());
 
