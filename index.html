@@ -371,19 +371,24 @@
     .overlay-card .overlay-x { position: absolute; top: .6rem; right: .6rem; width: 2rem; height: 2rem; border-radius: 9999px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; }
 
     #simpleHome { margin-top: 1.5rem; }
-    #simpleHome { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; max-width: 72rem; margin-left: auto; margin-right: auto; align-items: center; }
+    #simpleHome { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; max-width: 72rem; margin-left: auto; margin-right: auto; align-items: stretch; }
     .simple-shout { grid-column: 1 / -1; grid-row: 1; max-width: 42rem; width: 100%; margin: 0 auto; }
     .simple-shout #loungeWidget > div:first-child { justify-content: center; }
     .simple-shout #loungeWidget > div:first-child svg { width: 1.5rem; height: 1.5rem; }
     .simple-shout #loungeHeadingText { font-size: 1.25rem; line-height: 1.75rem; }
     .simple-shout #loungeHeadingLink { text-align: center; }
     #simpleGrid { display: contents; }
+    .simple-shout #loungeWidget { height: 100%; }
+    #simpleHome .simple-card { justify-content: center; padding: 1.5rem 1rem; }
     .simple-card[data-slot="articles"] { grid-column: 1; grid-row: 2; }
     .simple-card[data-slot="submit"] { grid-column: 1; grid-row: 3; }
     .simple-card[data-slot="videos"] { grid-column: 2; grid-row: 2; }
     .simple-card[data-slot="saved"] { grid-column: 2; grid-row: 3; }
     @media (min-width: 768px) {
-      #simpleHome { grid-template-columns: minmax(8rem, 12rem) minmax(0, 42rem) minmax(8rem, 12rem); justify-content: center; gap: 1.25rem; }
+      #simpleHome { grid-template-columns: minmax(9rem, 13rem) minmax(0, 42rem) minmax(9rem, 13rem); justify-content: center; gap: 1.25rem; }
+      #simpleHome .simple-card .simple-icon { width: 4.5rem; height: 4.5rem; border-radius: 1.4rem; }
+      #simpleHome .simple-card .simple-icon svg { width: 2.25rem; height: 2.25rem; }
+      #simpleHome .simple-card .simple-title { font-size: 1.05rem; }
       .simple-shout { grid-column: 2; grid-row: 1 / span 2; }
       .simple-card[data-slot="articles"] { grid-column: 1; grid-row: 1; }
       .simple-card[data-slot="submit"] { grid-column: 1; grid-row: 2; }
