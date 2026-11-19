@@ -324,7 +324,7 @@
     /* ===== Site style (simplified is the default; advanced is the full site) and dark mode ===== */
     #simpleHome, #simpleLogoBtn, #simpleMenu { display: none; }
     html.simple-mode #simpleLogoBtn { display: flex; }
-    html.simple-mode #simpleHome { display: block; }
+    html.simple-mode #simpleHome { display: grid; }
     html.simple-mode #simpleMenu.open { display: block; }
     html.simple-mode #siteRail, html.simple-mode #railMobileBtn, html.simple-mode #railBackdrop,
     html.simple-mode #railTip, html.simple-mode #miniBar { display: none !important; }
@@ -371,9 +371,27 @@
     .overlay-card .overlay-x { position: absolute; top: .6rem; right: .6rem; width: 2rem; height: 2rem; border-radius: 9999px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; }
 
     #simpleHome { margin-top: 1.5rem; }
-    .simple-shout { max-width: 36rem; margin: 0 auto; }
+    #simpleHome { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; max-width: 72rem; margin-left: auto; margin-right: auto; align-items: center; }
+    .simple-shout { grid-column: 1 / -1; grid-row: 1; max-width: 42rem; width: 100%; margin: 0 auto; }
+    .simple-shout #loungeWidget > div:first-child { justify-content: center; }
+    .simple-shout #loungeWidget > div:first-child svg { width: 1.5rem; height: 1.5rem; }
+    .simple-shout #loungeHeadingText { font-size: 1.25rem; line-height: 1.75rem; }
+    .simple-shout #loungeHeadingLink { text-align: center; }
+    #simpleGrid { display: contents; }
+    .simple-card[data-slot="articles"] { grid-column: 1; grid-row: 2; }
+    .simple-card[data-slot="submit"] { grid-column: 1; grid-row: 3; }
+    .simple-card[data-slot="videos"] { grid-column: 2; grid-row: 2; }
+    .simple-card[data-slot="saved"] { grid-column: 2; grid-row: 3; }
+    @media (min-width: 768px) {
+      #simpleHome { grid-template-columns: minmax(8rem, 12rem) minmax(0, 42rem) minmax(8rem, 12rem); justify-content: center; gap: 1.25rem; }
+      .simple-shout { grid-column: 2; grid-row: 1 / span 2; }
+      .simple-card[data-slot="articles"] { grid-column: 1; grid-row: 1; }
+      .simple-card[data-slot="submit"] { grid-column: 1; grid-row: 2; }
+      .simple-card[data-slot="videos"] { grid-column: 3; grid-row: 1; }
+      .simple-card[data-slot="saved"] { grid-column: 3; grid-row: 2; }
+    }
     .simple-shout #loungeWidget { box-shadow: 0 2px 4px rgba(15,23,42,.06), 0 16px 36px rgba(15,23,42,.14), 0 36px 70px rgba(15,23,42,.12); border-color: #fca5a5; }
-    .simple-shout #loungeQuotesContainer { max-height: 16rem; overflow-y: auto; }
+    .simple-shout #loungeQuotesContainer { max-height: 19rem; overflow-y: auto; }
     .simple-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; max-width: 56rem; margin: 1.5rem auto 0; }
     @media (min-width: 768px) { .simple-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
     .simple-card { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; padding: 1.25rem 0.75rem; text-align: center; background: #fff; border: 1px solid #e2e8f0; border-radius: 1.25rem; box-shadow: 0 2px 4px rgba(15,23,42,.06), 0 12px 24px rgba(15,23,42,.10); transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
@@ -2446,7 +2464,8 @@
       const container = document.getElementById('loungeQuotesContainer');
       if (!container) return;
       container.innerHTML = '';
-      (APP_DATA.loungeQuotes || []).forEach((q, idx) => {
+      // Sheet rows are appended chronologically, so reverse for newest first
+      [...(APP_DATA.loungeQuotes || [])].reverse().forEach((q, idx) => {
         const div = document.createElement('div');
         div.className = idx % 2 === 0
           ? 'p-3.5 rounded-2xl bg-cream-100 border border-cream-200 space-y-1.5'
@@ -5776,15 +5795,16 @@
 
   // ---- Simplified home cards, site style, dark mode, and the Eagle logo menu ----
   const SIMPLE_ITEMS = [
-    { key: 'simple_articles', label: 'Articles', hint: 'Latest articles & resources', icon: 'newspaper', run: () => $('view-editorial').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' }) },
-    { key: 'simple_videos', label: 'Videos', hint: 'Tutorial video library', icon: 'clapperboard', run: () => click('.menu-nav-item[data-view="view-academy"]') },
-    { key: 'simple_submit', label: 'Submit an Article', hint: 'Share it for review', icon: 'pencil', run: () => click('#openShareTipModalBtn') },
-    { key: 'nav_saved', label: 'Saved Reading List', hint: 'Your bookmarks', icon: 'bookmark', run: () => click('.topic-pill[data-category="saved"]') }
+    { slot: 'articles', key: 'simple_articles', label: 'Articles', hint: 'Latest articles & resources', icon: 'newspaper', run: () => $('view-editorial').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' }) },
+    { slot: 'videos', key: 'simple_videos', label: 'Videos', hint: 'Tutorial video library', icon: 'clapperboard', run: () => click('.menu-nav-item[data-view="view-academy"]') },
+    { slot: 'submit', key: 'simple_submit', label: 'Submit an Article', hint: 'Share it for review', icon: 'pencil', run: () => click('#openShareTipModalBtn') },
+    { slot: 'saved', key: 'nav_saved', label: 'Saved Reading List', hint: 'Your bookmarks', icon: 'bookmark', run: () => click('.topic-pill[data-category="saved"]') }
   ];
   SIMPLE_ITEMS.forEach(it => {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'simple-card';
+    b.dataset.slot = it.slot;
     b.innerHTML = '<span class="simple-icon"><i data-lucide="' + it.icon + '"></i></span><span class="simple-title"></span><span class="simple-hint"></span>';
     b.querySelector('.simple-title').textContent = labelOf(it);
     b.querySelector('.simple-hint').textContent = hintOf(it);
