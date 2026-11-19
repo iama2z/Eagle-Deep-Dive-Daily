@@ -5726,7 +5726,7 @@
     const banner = $('simpleBanner');
     if (!banner || bannerBusy) return;
     const text = banner.textContent;
-    const done = () => { bannerBusy = false; banner.className = 'show'; syncTitle(); };
+    const done = () => { bannerBusy = false; banner.className = 'show'; banner.style.fontSize = banner.style.top = ''; syncTitle(); };
     if (!root.classList.contains('simple-mode') || reduceMotion || !banner.animate || !text) { banner.classList.add('show'); return; }
     bannerBusy = true;
     banner.textContent = '';
@@ -5741,10 +5741,20 @@
     cursor.className = 'bcur';
     banner.insertBefore(cursor, letters[0]);
     banner.className = 'show typing';
-    const TYPE_MS = 300;
+    banner.style.fontSize = banner.style.top = '';
+    // Keep the typed title in the free space above the home boxes
+    const homeTop = $('simpleHome')?.getBoundingClientRect().top ?? Infinity;
+    if (homeTop < Infinity) {
+      const room = Math.max(0, homeTop - 12);
+      const natural = parseFloat(getComputedStyle(banner).fontSize);
+      const size = Math.max(14, Math.min(natural, (room - 8) / 1.3));
+      banner.style.fontSize = size + 'px';
+      banner.style.top = Math.max(4, (room - size * 1.3) / 2) + 'px';
+    }
+    const TYPE_MS = 200; // ~60 wpm (5 chars per word)
     let i = 0;
     const typeNext = () => {
-      if (i >= letters.length) return setTimeout(fly, 700);
+      if (i >= letters.length) return setTimeout(fly, 400);
       letters[i].classList.remove('hide');
       letters[i].after(cursor);
       i++;
@@ -5753,6 +5763,7 @@
     const fly = () => {
       const first = letters.map(l => l.getBoundingClientRect());
       cursor.remove();
+      banner.style.fontSize = banner.style.top = '';
       banner.className = 'show flying';
       const last = letters.map(l => l.getBoundingClientRect());
       let pending = letters.length;
@@ -5763,11 +5774,11 @@
           { transform: `translate(${dx}px, ${dy}px) scale(${sc})` },
           { transform: `translate(${dx * 0.55}px, ${dy * 0.55}px) scale(${1 + (sc - 1) * 0.55})`, offset: 0.5 },
           { transform: 'none' }
-        ], { duration: 1100, delay: k * 45, easing: 'cubic-bezier(.45,0,.2,1)', fill: 'backwards' });
+        ], { duration: 600, delay: k * 20, easing: 'cubic-bezier(.45,0,.2,1)', fill: 'backwards' });
         anim.onfinish = () => { if (--pending === 0) done(); };
       });
     };
-    setTimeout(typeNext, 400);
+    setTimeout(typeNext, 250);
   };
   if (window.siteLoadDone) window.playTitleIntro();
   if (siteTitle) new MutationObserver(syncTitle).observe(siteTitle, { childList: true, characterData: true, subtree: true });
