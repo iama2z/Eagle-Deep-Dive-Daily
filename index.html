@@ -5740,6 +5740,19 @@
   window.playTitleIntro = () => {
     const banner = $('simpleBanner'), intro = $('titleIntro');
     if (!banner || !intro || bannerBusy) return;
+    // Wait until popups (e.g. "What's new") are closed so the intro isn't hidden behind them
+    if (document.querySelector('.overlay-card.show, #sitePopup.show')) {
+      if (!window.titleIntroWaiting) {
+        window.titleIntroWaiting = true;
+        const wait = setInterval(() => {
+          if (document.querySelector('.overlay-card.show, #sitePopup.show')) return;
+          clearInterval(wait);
+          window.titleIntroWaiting = false;
+          window.playTitleIntro();
+        }, 300);
+      }
+      return;
+    }
     const homeTop = $('simpleHome')?.getBoundingClientRect().top ?? 0;
     const room = Math.max(0, homeTop - 12);
     if (!root.classList.contains('simple-mode') || reduceMotion || room < 70) { banner.classList.add('show'); return; }
@@ -5748,10 +5761,16 @@
     intro.className = '';
     intro.innerHTML = TITLE_INTRO_SVG;
     intro.hidden = false;
-    const finish = () => { intro.hidden = true; intro.innerHTML = ''; bannerBusy = false; banner.className = 'show'; syncTitle(); };
+    const finish = (replay) => {
+      intro.hidden = true; intro.innerHTML = ''; bannerBusy = false;
+      if (replay) return window.playTitleIntro();
+      banner.className = 'show'; syncTitle();
+    };
     setTimeout(() => {
+      // A popup opened mid-animation and hid it: replay once it closes
+      const covered = !!document.querySelector('.overlay-card.show, #sitePopup.show');
       intro.classList.add('out');
-      setTimeout(finish, 450);
+      setTimeout(() => finish(covered), 450);
     }, 3200);
   };
   if (window.siteLoadDone) window.playTitleIntro();
