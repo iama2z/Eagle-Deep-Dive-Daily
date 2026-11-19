@@ -139,8 +139,8 @@
       flex-direction: column;
       align-items: center;
       gap: 0.75rem;
-      max-width: 20rem;
-      padding: 2rem;
+      width: min(100%, 28rem);
+      padding: 1.5rem 2rem 2rem;
       border: 1px solid #E2E8F0;
       border-radius: 1.5rem;
       background: #FFFFFF;
@@ -360,22 +360,20 @@
     html.simple-mode #simpleBanner { display: block; }
     #simpleBanner { display: none; visibility: hidden; position: fixed; z-index: 45; left: 4rem; top: 1.15rem; max-width: calc(100vw - 14rem); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; pointer-events: none; font-family: 'DM Serif Display', Georgia, serif; font-weight: 800; font-size: 0.85rem; line-height: 1.3; color: #3f3f46; }
     #simpleBanner.show { visibility: visible; }
-    /* Animated title intro: sits in the free space above the home boxes, never over them */
-    #titleIntro { position: fixed; z-index: 45; left: 4rem; right: 4rem; top: 0; display: flex; justify-content: center; align-items: center; pointer-events: none; transition: opacity .45s ease; }
-    #titleIntro[hidden] { display: none; }
-    #titleIntro.out { opacity: 0; }
-    #titleIntro .eddd-header { --eddd-title-color: #09090B; --eddd-subtitle-color: #3f3f46; --eddd-accent-start: #71717a; --eddd-accent-end: #dc2626; --eddd-eagle-color: #dc2626; --eddd-eagle-glow: rgba(220, 38, 38, 0.4); --eddd-letter-speed: 0.75s; --eddd-stagger: 0.055s; --eddd-swoop-duration: 2.1s; --eddd-swoop-delay: 0.25s; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
-    #titleIntro .eddd-svg { width: 100%; max-width: 840px; height: 100%; overflow: visible; }
-    #titleIntro .eddd-stop-start { stop-color: var(--eddd-accent-start); }
-    #titleIntro .eddd-stop-end { stop-color: var(--eddd-accent-end); }
-    #titleIntro .eddd-letter { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: eddd-draw var(--eddd-letter-speed) cubic-bezier(0.22, 1, 0.36, 1) forwards; animation-delay: calc(var(--i) * var(--eddd-stagger)); }
-    #titleIntro .eddd-title { stroke: var(--eddd-title-color); stroke-width: 4.5; }
-    #titleIntro .eddd-subtitle { stroke: var(--eddd-subtitle-color); stroke-width: 3.2; }
-    #titleIntro .eddd-trail { fill: none; stroke: url(#eddd-trail-grad); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0.9; animation: eddd-draw var(--eddd-swoop-duration) cubic-bezier(0.22, 1, 0.36, 1) forwards; animation-delay: var(--eddd-swoop-delay); }
-    #titleIntro .eddd-eagle { fill: var(--eddd-eagle-color); filter: drop-shadow(0 0 6px var(--eddd-eagle-glow)); transform-box: fill-box; transform-origin: center; offset-path: path("M 70,26 C 180,16 200,176 420,172 C 620,168 700,118 765,58"); offset-rotate: auto; offset-distance: 0%; opacity: 0; animation: eddd-swoop var(--eddd-swoop-duration) cubic-bezier(0.22, 1, 0.36, 1) forwards, eddd-eagle-fade 0.25s ease forwards; animation-delay: var(--eddd-swoop-delay), var(--eddd-swoop-delay); }
+    /* Animated SVG title header shown above the loading spinner */
+    .loading-card .eddd-header { --eddd-title-color: #09090B; --eddd-subtitle-color: #3f3f46; --eddd-accent-start: #71717a; --eddd-accent-end: #dc2626; --eddd-eagle-color: #dc2626; --eddd-eagle-glow: rgba(220, 38, 38, 0.4); --eddd-letter-speed: 0.75s; --eddd-stagger: 0.055s; --eddd-swoop-duration: 2.1s; --eddd-swoop-delay: 0.25s; display: block; width: 100%; }
+    .loading-card .eddd-svg { display: block; width: 100%; height: auto; overflow: visible; }
+    .loading-card .eddd-stop-start { stop-color: var(--eddd-accent-start); }
+    .loading-card .eddd-stop-end { stop-color: var(--eddd-accent-end); }
+    .loading-card .eddd-letter { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: eddd-draw var(--eddd-letter-speed) cubic-bezier(0.22, 1, 0.36, 1) forwards; animation-delay: calc(var(--i) * var(--eddd-stagger)); }
+    .loading-card .eddd-title { stroke: var(--eddd-title-color); stroke-width: 4.5; }
+    .loading-card .eddd-subtitle { stroke: var(--eddd-subtitle-color); stroke-width: 3.2; }
+    .loading-card .eddd-trail { fill: none; stroke: url(#eddd-trail-grad); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0.9; animation: eddd-draw var(--eddd-swoop-duration) cubic-bezier(0.22, 1, 0.36, 1) forwards; animation-delay: var(--eddd-swoop-delay); }
+    .loading-card .eddd-eagle { fill: var(--eddd-eagle-color); filter: drop-shadow(0 0 6px var(--eddd-eagle-glow)); transform-box: fill-box; transform-origin: center; offset-path: path("M 70,26 C 180,16 200,176 420,172 C 620,168 700,118 765,58"); offset-rotate: auto; offset-distance: 0%; opacity: 0; animation: eddd-swoop var(--eddd-swoop-duration) cubic-bezier(0.22, 1, 0.36, 1) forwards, eddd-eagle-fade 0.25s ease forwards; animation-delay: var(--eddd-swoop-delay), var(--eddd-swoop-delay); }
     @keyframes eddd-draw { to { stroke-dashoffset: 0; } }
     @keyframes eddd-swoop { from { offset-distance: 0%; } to { offset-distance: 100%; } }
     @keyframes eddd-eagle-fade { to { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) { .loading-card .eddd-letter, .loading-card .eddd-trail { animation: none; stroke-dashoffset: 0; } .loading-card .eddd-eagle { animation: none; opacity: 1; offset-distance: 100%; } }
     @keyframes banner-blink { 50% { opacity: 0; } }
     .simple-shout #loungeQuotesContainer > div { cursor: pointer; transition: box-shadow .2s ease, border-color .2s ease; }
     .simple-shout #loungeQuotesContainer > div:hover, .simple-shout #loungeQuotesContainer > div:focus-visible { border-color: #dc2626; box-shadow: 0 6px 16px rgba(15,23,42,.12); outline: none; }
@@ -647,6 +645,7 @@
   <!-- MAIN CONTENT AREA -->
   <div id="siteLoadStatus" role="status" aria-live="polite">
     <div class="loading-card">
+      <div class="eddd-header"><svg class="eddd-svg" viewBox="0 0 840 190" role="img" aria-label="Eagle's Daily Deep Dive"><defs><linearGradient id="eddd-trail-grad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" class="eddd-stop-start" stop-opacity="0.15" /><stop offset="55%" class="eddd-stop-start" /><stop offset="100%" class="eddd-stop-end" /></linearGradient></defs><g aria-hidden="true"><path class="eddd-letter eddd-title" pathLength="1" style="--i: 0" d="M310,46 L280,46 L280,90 L310,90 M280,68 L304,68" /><path class="eddd-letter eddd-title" pathLength="1" style="--i: 1" d="M326,90 L343,46 L360,90 M332,76 L354,76" /><path class="eddd-letter eddd-title" pathLength="1" style="--i: 2" d="M408,56 C404,48 396,46 390,46 C380,46 376,55 376,68 C376,81 380,90 392,90 C402,90 409,84 409,74 L409,69 L394,69" /><path class="eddd-letter eddd-title" pathLength="1" style="--i: 3" d="M426,46 L426,90 L454,90" /><path class="eddd-letter eddd-title" pathLength="1" style="--i: 4" d="M500,46 L470,46 L470,90 L500,90 M470,68 L494,68" /><path class="eddd-letter eddd-title" pathLength="1" style="--i: 5" d="M515,46 L512,58" /><path class="eddd-letter eddd-title" pathLength="1" style="--i: 6" d="M558,54 C556,48 549,46 543,46 C534,46 529,51 529,57 C529,64 535,66 544,68 C554,70 560,73 560,80 C560,86 553,90 543,90 C535,90 529,87 528,81" /></g><g transform="translate(26, 0)" aria-hidden="true"><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 7" d="M196,118 L196,148 L206,148 C214,148 218,142 218,133 C218,124 214,118 206,118 Z" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 8" d="M228,148 L239,118 L250,148 M232,139 L246,139" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 9" d="M260,118 L268,118 M264,118 L264,148 M260,148 L268,148" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 10" d="M278,118 L278,148 L296,148" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 11" d="M304,118 L315,133 L326,118 M315,133 L315,148" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 13" d="M352,118 L352,148 L362,148 C370,148 374,142 374,133 C374,124 370,118 362,118 Z" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 14" d="M404,118 L384,118 L384,148 L404,148 M384,133 L400,133" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 15" d="M434,118 L414,118 L414,148 L434,148 M414,133 L430,133" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 16" d="M444,148 L444,118 L456,118 C462,118 464,121 464,126 C464,131 462,134 456,134 L444,134" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 18" d="M490,118 L490,148 L500,148 C508,148 512,142 512,133 C512,124 508,118 500,118 Z" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 19" d="M522,118 L530,118 M526,118 L526,148 M522,148 L530,148" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 20" d="M540,118 L551,148 L562,118" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 21" d="M592,118 L572,118 L572,148 L592,148 M572,133 L588,133" /></g><path class="eddd-trail" pathLength="1" d="M 70,26 C 180,16 200,176 420,172 C 620,168 700,118 765,58" aria-hidden="true" /><g class="eddd-eagle" aria-hidden="true"><path d="M18,-1 C14,-4 9,-4 5,-2 L-6,-15 C-11,-17 -16,-14 -13,-8 L-6,-1 L-18,0 L-14,3 L-18,6 L-6,4 L-12,13 C-14,16 -9,17 -5,13 L5,3 C9,4 14,3 18,-1 Z" /></g></svg></div>
       <div class="loading-spinner" aria-hidden="true">
         <img src="eagle-logo.svg" alt="">
       </div>
@@ -5510,7 +5509,6 @@
     <button type="button" id="feedbackBtn" class="menu-row" role="menuitem"><i data-lucide="message-square-plus"></i><span>Submit feedback</span></button>
   </div>
   <div id="simpleBanner" aria-hidden="true"></div>
-  <div id="titleIntro" hidden></div>
   <div id="shoutModal" class="overlay-card" role="dialog" aria-modal="true" aria-label="Shout out">
     <div><button type="button" class="overlay-x" id="shoutModalClose" aria-label="Close"><i data-lucide="x" class="w-4 h-4"></i></button><div id="shoutModalBody" class="space-y-3"></div></div>
   </div>
@@ -5734,45 +5732,7 @@
     $('miniTitle').textContent = t;
   };
   syncTitle();
-  // Title intro: animated SVG header in the free space above the home boxes, then the masthead title settles in.
-  const TITLE_INTRO_SVG = `<div class="eddd-header"><svg class="eddd-svg" viewBox="0 0 840 190" role="img" aria-label="Eagle's Daily Deep Dive"><defs><linearGradient id="eddd-trail-grad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" class="eddd-stop-start" stop-opacity="0.15" /><stop offset="55%" class="eddd-stop-start" /><stop offset="100%" class="eddd-stop-end" /></linearGradient></defs><g aria-hidden="true"><path class="eddd-letter eddd-title" pathLength="1" style="--i: 0" d="M310,46 L280,46 L280,90 L310,90 M280,68 L304,68" /><path class="eddd-letter eddd-title" pathLength="1" style="--i: 1" d="M326,90 L343,46 L360,90 M332,76 L354,76" /><path class="eddd-letter eddd-title" pathLength="1" style="--i: 2" d="M408,56 C404,48 396,46 390,46 C380,46 376,55 376,68 C376,81 380,90 392,90 C402,90 409,84 409,74 L409,69 L394,69" /><path class="eddd-letter eddd-title" pathLength="1" style="--i: 3" d="M426,46 L426,90 L454,90" /><path class="eddd-letter eddd-title" pathLength="1" style="--i: 4" d="M500,46 L470,46 L470,90 L500,90 M470,68 L494,68" /><path class="eddd-letter eddd-title" pathLength="1" style="--i: 5" d="M515,46 L512,58" /><path class="eddd-letter eddd-title" pathLength="1" style="--i: 6" d="M558,54 C556,48 549,46 543,46 C534,46 529,51 529,57 C529,64 535,66 544,68 C554,70 560,73 560,80 C560,86 553,90 543,90 C535,90 529,87 528,81" /></g><g transform="translate(26, 0)" aria-hidden="true"><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 7" d="M196,118 L196,148 L206,148 C214,148 218,142 218,133 C218,124 214,118 206,118 Z" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 8" d="M228,148 L239,118 L250,148 M232,139 L246,139" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 9" d="M260,118 L268,118 M264,118 L264,148 M260,148 L268,148" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 10" d="M278,118 L278,148 L296,148" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 11" d="M304,118 L315,133 L326,118 M315,133 L315,148" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 13" d="M352,118 L352,148 L362,148 C370,148 374,142 374,133 C374,124 370,118 362,118 Z" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 14" d="M404,118 L384,118 L384,148 L404,148 M384,133 L400,133" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 15" d="M434,118 L414,118 L414,148 L434,148 M414,133 L430,133" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 16" d="M444,148 L444,118 L456,118 C462,118 464,121 464,126 C464,131 462,134 456,134 L444,134" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 18" d="M490,118 L490,148 L500,148 C508,148 512,142 512,133 C512,124 508,118 500,118 Z" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 19" d="M522,118 L530,118 M526,118 L526,148 M522,148 L530,148" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 20" d="M540,118 L551,148 L562,118" /><path class="eddd-letter eddd-subtitle" pathLength="1" style="--i: 21" d="M592,118 L572,118 L572,148 L592,148 M572,133 L588,133" /></g><path class="eddd-trail" pathLength="1" d="M 70,26 C 180,16 200,176 420,172 C 620,168 700,118 765,58" aria-hidden="true" /><g class="eddd-eagle" aria-hidden="true"><path d="M18,-1 C14,-4 9,-4 5,-2 L-6,-15 C-11,-17 -16,-14 -13,-8 L-6,-1 L-18,0 L-14,3 L-18,6 L-6,4 L-12,13 C-14,16 -9,17 -5,13 L5,3 C9,4 14,3 18,-1 Z" /></g></svg></div>
-`;
-  window.playTitleIntro = () => {
-    const banner = $('simpleBanner'), intro = $('titleIntro');
-    if (!banner || !intro || bannerBusy) return;
-    // Wait until popups (e.g. "What's new") are closed so the intro isn't hidden behind them
-    if (document.querySelector('.overlay-card.show, #sitePopup.show')) {
-      if (!window.titleIntroWaiting) {
-        window.titleIntroWaiting = true;
-        const wait = setInterval(() => {
-          if (document.querySelector('.overlay-card.show, #sitePopup.show')) return;
-          clearInterval(wait);
-          window.titleIntroWaiting = false;
-          window.playTitleIntro();
-        }, 300);
-      }
-      return;
-    }
-    const homeTop = $('simpleHome')?.getBoundingClientRect().top ?? 0;
-    const room = Math.max(0, homeTop - 12);
-    if (!root.classList.contains('simple-mode') || reduceMotion || room < 70) { banner.classList.add('show'); return; }
-    bannerBusy = true;
-    intro.style.height = room + 'px';
-    intro.className = '';
-    intro.innerHTML = TITLE_INTRO_SVG;
-    intro.hidden = false;
-    const finish = (replay) => {
-      intro.hidden = true; intro.innerHTML = ''; bannerBusy = false;
-      if (replay) return window.playTitleIntro();
-      banner.className = 'show'; syncTitle();
-    };
-    setTimeout(() => {
-      // A popup opened mid-animation and hid it: replay once it closes
-      const covered = !!document.querySelector('.overlay-card.show, #sitePopup.show');
-      intro.classList.add('out');
-      setTimeout(() => finish(covered), 450);
-    }, 3200);
-  };
+  window.playTitleIntro = () => { $('simpleBanner')?.classList.add('show'); };
   if (window.siteLoadDone) window.playTitleIntro();
   if (siteTitle) new MutationObserver(syncTitle).observe(siteTitle, { childList: true, characterData: true, subtree: true });
   $('miniTitle').addEventListener('click', () => homeItem.run());
