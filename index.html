@@ -361,19 +361,21 @@
     #simpleBanner { display: none; visibility: hidden; position: fixed; z-index: 45; left: 4rem; top: 1.15rem; max-width: calc(100vw - 14rem); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; pointer-events: none; font-family: 'DM Serif Display', Georgia, serif; font-weight: 800; font-size: 0.85rem; line-height: 1.3; color: #3f3f46; }
     #simpleBanner.show { visibility: visible; }
     /* Animated SVG title header shown above the loading spinner */
-    .loading-card .eddd-header { --eddd-title-color: #09090B; --eddd-subtitle-color: #3f3f46; --eddd-accent-start: #71717a; --eddd-accent-end: #dc2626; --eddd-eagle-color: #dc2626; --eddd-eagle-glow: rgba(220, 38, 38, 0.4); --eddd-letter-speed: 0.75s; --eddd-stagger: 0.055s; --eddd-swoop-duration: 2.1s; --eddd-swoop-delay: 0.25s; display: block; width: 100%; }
+    .loading-card .eddd-header { --eddd-title-color: #09090B; --eddd-subtitle-color: #3f3f46; --eddd-accent-start: #71717a; --eddd-accent-end: #dc2626; --eddd-eagle-color: #dc2626; --eddd-eagle-glow: rgba(220, 38, 38, 0.4); --eddd-letter-speed: 0.75s; --eddd-stagger: 0.055s; --eddd-swoop-duration: 2.1s; --eddd-swoop-delay: 0.25s; --eddd-loop-duration: 3.6s; display: block; width: 100%; }
     .loading-card .eddd-svg { display: block; width: 100%; height: auto; overflow: visible; }
     .loading-card .eddd-stop-start { stop-color: var(--eddd-accent-start); }
     .loading-card .eddd-stop-end { stop-color: var(--eddd-accent-end); }
     .loading-card .eddd-letter { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: eddd-draw var(--eddd-letter-speed) cubic-bezier(0.22, 1, 0.36, 1) forwards; animation-delay: calc(var(--i) * var(--eddd-stagger)); }
     .loading-card .eddd-title { stroke: var(--eddd-title-color); stroke-width: 4.5; }
     .loading-card .eddd-subtitle { stroke: var(--eddd-subtitle-color); stroke-width: 3.2; }
-    .loading-card .eddd-trail { fill: none; stroke: url(#eddd-trail-grad); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0.9; animation: eddd-draw var(--eddd-swoop-duration) cubic-bezier(0.22, 1, 0.36, 1) forwards; animation-delay: var(--eddd-swoop-delay); }
-    .loading-card .eddd-eagle { fill: var(--eddd-eagle-color); filter: drop-shadow(0 0 6px var(--eddd-eagle-glow)); transform-box: fill-box; transform-origin: center; offset-path: path("M 70,26 C 180,16 200,176 420,172 C 620,168 700,118 765,58"); offset-rotate: auto; offset-distance: 0%; opacity: 0; animation: eddd-swoop var(--eddd-swoop-duration) cubic-bezier(0.22, 1, 0.36, 1) forwards, eddd-eagle-fade 0.25s ease forwards; animation-delay: var(--eddd-swoop-delay), var(--eddd-swoop-delay); }
+    .loading-card .eddd-trail { fill: none; stroke: url(#eddd-trail-grad); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; animation: eddd-trail-loop var(--eddd-loop-duration) linear var(--eddd-swoop-delay) infinite; }
+    .loading-card .eddd-eagle { fill: var(--eddd-eagle-color); filter: drop-shadow(0 0 6px var(--eddd-eagle-glow)); transform-box: fill-box; transform-origin: center; offset-path: path("M 70,26 C 180,16 200,176 420,172 C 620,168 700,118 765,58"); offset-rotate: auto; offset-distance: 0%; opacity: 0; animation: eddd-eagle-loop var(--eddd-loop-duration) linear var(--eddd-swoop-delay) infinite; }
     @keyframes eddd-draw { to { stroke-dashoffset: 0; } }
     @keyframes eddd-swoop { from { offset-distance: 0%; } to { offset-distance: 100%; } }
-    @keyframes eddd-eagle-fade { to { opacity: 1; } }
-    @media (prefers-reduced-motion: reduce) { .loading-card .eddd-letter, .loading-card .eddd-trail { animation: none; stroke-dashoffset: 0; } .loading-card .eddd-eagle { animation: none; opacity: 1; offset-distance: 100%; } }
+    /* The eagle swoops along the trail, lingers, fades, then returns to the start and repeats while loading */
+    @keyframes eddd-trail-loop { 0% { stroke-dashoffset: 1; opacity: 0.9; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); } 60% { stroke-dashoffset: 0; opacity: 0.9; } 88% { stroke-dashoffset: 0; opacity: 0.9; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+    @keyframes eddd-eagle-loop { 0% { offset-distance: 0%; opacity: 1; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); } 60% { offset-distance: 100%; opacity: 1; } 88% { offset-distance: 100%; opacity: 1; } 100% { offset-distance: 100%; opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { .loading-card .eddd-letter, .loading-card .eddd-trail { animation: none; stroke-dashoffset: 0; opacity: 0.9; } .loading-card .eddd-eagle { animation: none; opacity: 1; offset-distance: 100%; } }
     @keyframes banner-blink { 50% { opacity: 0; } }
     .simple-shout #loungeQuotesContainer > div { cursor: pointer; transition: box-shadow .2s ease, border-color .2s ease; }
     .simple-shout #loungeQuotesContainer > div:hover, .simple-shout #loungeQuotesContainer > div:focus-visible { border-color: #dc2626; box-shadow: 0 6px 16px rgba(15,23,42,.12); outline: none; }
