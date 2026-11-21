@@ -365,7 +365,8 @@
     .simple-card[data-slot="saved"] { grid-column: 2; grid-row: 3; }
     /* Golden-ratio spiral: shout-outs is the largest tile, each following tile shrinks by ~1/phi */
     @media (min-width: 768px) {
-      #simpleHome { grid-template-columns: 1.618fr 1fr 0.618fr; grid-template-rows: minmax(12rem, 1.618fr) minmax(8rem, 1fr) minmax(6rem, 0.618fr); min-height: 36rem; gap: 1rem; }
+      #simpleHome { grid-template-columns: 1.618fr 1fr 0.618fr; grid-template-rows: 1.618fr 1fr 0.618fr; height: clamp(24rem, calc(100vh - 11rem), 44rem); gap: 1rem; }
+      #simpleHome > * { min-height: 0; overflow: hidden; }
       .simple-shout { grid-column: 1; grid-row: 1 / span 3; max-width: none; margin: 0; }
       .simple-card[data-slot="articles"] { grid-column: 2 / span 2; grid-row: 1; }
       .simple-card[data-slot="videos"] { grid-column: 2; grid-row: 2 / span 2; }
@@ -380,7 +381,8 @@
       #simpleHome .simple-card[data-slot="submit"] .simple-icon svg, #simpleHome .simple-card[data-slot="saved"] .simple-icon svg { width: 1.25rem; height: 1.25rem; }
       #simpleHome .simple-card[data-slot="submit"] .simple-title, #simpleHome .simple-card[data-slot="saved"] .simple-title { font-size: 0.9rem; }
       #simpleHome .simple-card[data-slot="submit"] .simple-hint, #simpleHome .simple-card[data-slot="saved"] .simple-hint { display: none; }
-      .simple-shout #loungeQuotesContainer { max-height: 26rem; }
+      .simple-shout #loungeWidget { overflow-y: auto; }
+      .simple-shout #loungeQuotesContainer { max-height: none; }
     }
     /* Article feed: alternating 8/5 then 5/8 column spans (~phi) on a 13-column grid */
     @media (min-width: 768px) {
@@ -400,7 +402,7 @@
     .simple-card .simple-hint { font-size: 0.7rem; color: #52525b; }
     /* Latest-item preview: image fills the top of the card, text sits below it */
     .simple-card.has-thumb { padding: 0; overflow: hidden; justify-content: flex-start; gap: 0; }
-    .simple-card .simple-thumb { width: 100%; flex: 1 1 auto; min-height: 7rem; max-height: 100%; object-fit: cover; display: block; border-bottom: 1px solid #e2e8f0; }
+    .simple-card .simple-thumb { width: 100%; flex: 1 1 auto; min-height: 0; max-height: 100%; object-fit: cover; display: block; border-bottom: 1px solid #e2e8f0; }
     .simple-card.has-thumb .simple-icon { display: none; }
     .simple-card.has-thumb .simple-title, .simple-card.has-thumb .simple-hint { padding: 0 0.9rem; }
     .simple-card.has-thumb .simple-title { padding-top: 0.7rem; }
