@@ -358,7 +358,7 @@
     .simple-shout #loungeHeadingLink { text-align: center; }
     #simpleGrid { display: contents; }
     .simple-shout #loungeWidget { height: 100%; }
-    #simpleHome .simple-card { justify-content: center; padding: 1.5rem 1rem; }
+    #simpleHome .simple-card:not(.has-thumb) { justify-content: center; padding: 1.5rem 1rem; }
     .simple-card[data-slot="articles"] { grid-column: 1; grid-row: 2; }
     .simple-card[data-slot="submit"] { grid-column: 1; grid-row: 3; }
     .simple-card[data-slot="videos"] { grid-column: 2; grid-row: 2; }
@@ -398,6 +398,13 @@
     .simple-card .simple-icon svg { width: 1.75rem; height: 1.75rem; }
     .simple-card .simple-title { font-weight: 700; font-size: 0.95rem; line-height: 1.2; color: #09090B; }
     .simple-card .simple-hint { font-size: 0.7rem; color: #52525b; }
+    /* Latest-item preview: image fills the top of the card, text sits below it */
+    .simple-card.has-thumb { padding: 0; overflow: hidden; justify-content: flex-start; gap: 0; }
+    .simple-card .simple-thumb { width: 100%; flex: 1 1 auto; min-height: 7rem; max-height: 100%; object-fit: cover; display: block; border-bottom: 1px solid #e2e8f0; }
+    .simple-card.has-thumb .simple-icon { display: none; }
+    .simple-card.has-thumb .simple-title, .simple-card.has-thumb .simple-hint { padding: 0 0.9rem; }
+    .simple-card.has-thumb .simple-title { padding-top: 0.7rem; }
+    .simple-card.has-thumb .simple-hint { padding-bottom: 0.8rem; padding-top: 0.2rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
     /* Editorial dark mode: warm palette, no inversion */
     html.dark { color-scheme: dark; }
@@ -414,6 +421,7 @@
     html.dark .bg-ink-900.text-white { color: #FFFFFF; }
     html.dark .stack-card .stack-icon, html.dark .simple-card .simple-icon { background: #262420; color: #EF4444; box-shadow: none; }
     html.dark .stack-arrow { color: #EAE6DF; }
+    html.dark .simple-card .simple-thumb { border-bottom-color: rgba(234, 230, 223, 0.12); }
     html.dark .stack-arrow:hover { background: #262420; }
     html.dark .loading-card .eddd-header { --eddd-title-color: #EAE6DF; --eddd-subtitle-color: #A69F95; --eddd-eagle-glow: transparent; }
     html.dark #heroFeatureSection, html.dark #articlesGridContainer > *, html.dark #quickWinsBanner { background-color: #1E1D1A; box-shadow: none; }
@@ -3311,6 +3319,7 @@
         author: text('author') || 'MMS Staff',
         readTime: text('read_time') || `${Math.max(1, Math.ceil(bodyText.split(/\s+/).length / 200))} min read`,
         date: formatDateLabel(item.published_at) || text('published_at'),
+        publishedTs: Date.parse(item.published_at || ''),
         featured: item.featured === true || text('featured').toLowerCase() === 'true',
         hasVideoDemo: item.has_video_demo === true || text('has_video_demo').toLowerCase() === 'true',
         image: resolveImageUrl(rawImage, category, rawId || title),
@@ -3328,6 +3337,7 @@
       const articles = [...new Map(rawItems.map(normalizePublishedArticle).filter(Boolean)
         .map(article => [article.id, article])).values()];
       APP_DATA.articles = articles;
+      window.updateSimpleThumbs?.();
       initFuse();
       renderArticlesGrid(activeCategory);
       document.getElementById('globalSearchInput')?.dispatchEvent(new Event('input'));
@@ -3826,6 +3836,7 @@
         pageContentAvailable = ['page_sections', 'content_blocks', 'videos', 'video_chapters']
           .every(key => Array.isArray(data[key]));
         pageContent = normalizePageContent(data);
+        window.updateSimpleThumbs?.();
 
         if (Array.isArray(data.image_library) && data.image_library.length > 0) {
           approvedImageLibrary = data.image_library
@@ -5841,6 +5852,46 @@
     b.addEventListener('click', it.run);
     $('simpleGrid').appendChild(b);
   });
+
+  // Article and Video cards preview the latest item's image (newest published_at, else the first article / last video row)
+  function videoThumbUrl(v) {
+    const direct = sanitizeHttpUrl(v.thumbnail_url || v.image_url || v.cover_image_url);
+    if (direct) return direct;
+    const embed = videoEmbedUrl(v.url);
+    const id = (embed.match(/youtube\.com\/embed\/([\w-]+)/) || [])[1];
+    return id ? 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg' : '';
+  }
+  function setSimpleThumb(slot, src, caption) {
+    const card = document.querySelector('.simple-card[data-slot="' + slot + '"]');
+    if (!card) return;
+    let img = card.querySelector('.simple-thumb');
+    const hint = card.querySelector('.simple-hint');
+    if (card.dataset.hint === undefined) card.dataset.hint = hint.textContent;
+    const reset = () => { card.querySelector('.simple-thumb')?.remove(); card.classList.remove('has-thumb'); hint.textContent = card.dataset.hint; };
+    if (!src) { reset(); return; }
+    if (!img) {
+      img = document.createElement('img');
+      img.className = 'simple-thumb';
+      img.alt = '';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.onerror = reset;
+      card.prepend(img);
+    }
+    if (img.getAttribute('src') !== src) img.src = src;
+    card.classList.add('has-thumb');
+    if (caption) hint.textContent = caption;
+  }
+  window.updateSimpleThumbs = function () {
+    const arts = APP_DATA.articles.filter(a => a.image);
+    const art = arts.reduce((best, a) => (!best || (a.publishedTs || -Infinity) > (best.publishedTs || -Infinity)) ? a : best, null);
+    setSimpleThumb('articles', art && art.image, art && art.title);
+    const vids = pageContent.videos.filter(v => videoThumbUrl(v));
+    const stamp = v => Date.parse(v.published_at || '') || -Infinity;
+    const vid = vids.length ? vids.reduce((best, v) => stamp(v) >= stamp(best) ? v : best, vids[vids.length - 1]) : null;
+    setSimpleThumb('videos', vid && videoThumbUrl(vid), vid && vid.title);
+  };
+  window.updateSimpleThumbs();
 
   const menu = $('simpleMenu'), logoBtn = $('simpleLogoBtn');
   function closeSimpleMenu() { menu.classList.remove('open'); logoBtn.setAttribute('aria-expanded', 'false'); }
